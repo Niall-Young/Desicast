@@ -36,7 +36,9 @@
   --color-chart-5: var(--nico-color-text-accent-pink);
   --color-primary-hover: var(--nico-color-background-brand-intense-hover);
   --color-secondary-hover: var(--nico-color-background-neutral-subtle-hover);
-  --color-destructive-hover: var(--nico-color-background-negative-intense-hover);
+  --color-destructive-hover: var(
+    --nico-color-background-negative-intense-hover
+  );
   --color-destructive-foreground: var(--nico-color-text-inverted);
   --color-brand-hover: var(--nico-color-interaction-hover-brand);
   --color-negative-hover: var(--nico-color-interaction-hover-negative);
@@ -168,6 +170,7 @@ code {
     scrollbar-color: var(--nico-color-background-neutral-subtle) transparent;
   }
   *:hover {
-    scrollbar-color: var(--nico-color-background-neutral-subtle-hover) transparent;
+    scrollbar-color: var(--nico-color-background-neutral-subtle-hover)
+      transparent;
   }
 }

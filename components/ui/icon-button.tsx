@@ -1,8 +1,8 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "cn"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 
 // Nico Icon Button · Figma 30:2610. The icon stays 16px at every size.
 const iconButtonVariants = cva("gap-0 [&_svg]:size-4", {
@@ -14,10 +14,13 @@ const iconButtonVariants = cva("gap-0 [&_svg]:size-4", {
     },
   },
   defaultVariants: { size: "md" },
-})
+});
 
-type IconButtonProps = Omit<React.ComponentProps<typeof Button>, "leftIcon" | "rightIcon" | "size"> &
-  VariantProps<typeof iconButtonVariants>
+type IconButtonProps = Omit<
+  React.ComponentProps<typeof Button>,
+  "leftIcon" | "rightIcon" | "size"
+> &
+  VariantProps<typeof iconButtonVariants>;
 
 function IconButton({
   className,
@@ -28,7 +31,7 @@ function IconButton({
   children,
   ...props
 }: IconButtonProps) {
-  const content = loading ? null : children
+  const content = loading ? null : children;
 
   return (
     <Button
@@ -40,13 +43,15 @@ function IconButton({
       loading={loading}
       className={cn(
         iconButtonVariants({ size }),
-        color === "brand" && kind !== "filled" && "text-(--nico-color-icon-subtle)",
-        className
+        color === "brand" &&
+          kind !== "filled" &&
+          "text-(--nico-color-icon-subtle)",
+        className,
       )}
     >
       {content}
     </Button>
-  )
+  );
 }
 
-export { IconButton, iconButtonVariants }
+export { IconButton, iconButtonVariants };

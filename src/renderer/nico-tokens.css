@@ -182,7 +182,9 @@
 
 /* Typography / CN */
 :root {
-  --nico-font-family-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --nico-font-family-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --nico-font-weight-regular: 400;
   --nico-font-weight-medium: 500;
   --nico-font-weight-bold: 600;
@@ -217,7 +219,9 @@
 
 /* Typography / EN */
 [data-typography="en"] {
-  --nico-font-family-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  --nico-font-family-sans:
+    system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+    "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
   --nico-font-weight-regular: 400;
   --nico-font-weight-medium: 500;
   --nico-font-weight-bold: 600;
@@ -251,7 +255,8 @@
 }
 
 /* Color / Light */
-:root, .light {
+:root,
+.light {
   --nico-color-text: var(--nico-color-grey-alpha-1300);
   --nico-color-text-subtle: var(--nico-color-grey-alpha-1000);
   --nico-color-text-subtlest: var(--nico-color-grey-alpha-800);
@@ -260,7 +265,9 @@
   --nico-color-text-fixed: var(--nico-color-grey-alpha-1500);
   --nico-color-text-fixed-inverted: var(--nico-color-grey-dark-alpha-1600);
   --nico-color-text-fixed-subtle: var(--nico-color-grey-alpha-1300);
-  --nico-color-text-fixed-inverted-subtle: var(--nico-color-grey-dark-alpha-1200);
+  --nico-color-text-fixed-inverted-subtle: var(
+    --nico-color-grey-dark-alpha-1200
+  );
   --nico-color-text-brand: var(--nico-color-grey-opaque-1300);
   --nico-color-text-negative: var(--nico-color-red-500);
   --nico-color-text-positive: var(--nico-color-green-500);
@@ -292,7 +299,9 @@
   --nico-color-icon-fixed: var(--nico-color-grey-alpha-1500);
   --nico-color-icon-fixed-subtle: var(--nico-color-grey-alpha-1300);
   --nico-color-icon-fixed-inverted: var(--nico-color-grey-dark-alpha-1600);
-  --nico-color-icon-fixed-inverted-subtle: var(--nico-color-grey-dark-alpha-1200);
+  --nico-color-icon-fixed-inverted-subtle: var(
+    --nico-color-grey-dark-alpha-1200
+  );
   --nico-color-icon-accent-red: var(--nico-color-red-500);
   --nico-color-icon-accent-orange: var(--nico-color-orange-500);
   --nico-color-icon-accent-yellow: var(--nico-color-yellow-500);
@@ -317,7 +326,9 @@
   --nico-color-border-fixed: var(--nico-color-grey-alpha-1500);
   --nico-color-border-fixed-subtle: var(--nico-color-grey-alpha-1300);
   --nico-color-border-fixed-inverted: var(--nico-color-grey-dark-alpha-1600);
-  --nico-color-border-fixed-inverted-subtle: var(--nico-color-grey-dark-alpha-1200);
+  --nico-color-border-fixed-inverted-subtle: var(
+    --nico-color-grey-dark-alpha-1200
+  );
   --nico-color-border-accent-red: var(--nico-color-red-500);
   --nico-color-border-accent-orange: var(--nico-color-orange-500);
   --nico-color-border-accent-yellow: var(--nico-color-yellow-500);
@@ -345,14 +356,26 @@
   --nico-color-skeleton: var(--nico-color-grey-alpha-300);
   --nico-color-skeleton-active: var(--nico-color-grey-alpha-400);
   --nico-color-interaction-hover: var(--nico-color-grey-alpha-300);
-  --nico-color-interaction-hover-brand: var(--nico-color-background-brand-subtle);
-  --nico-color-interaction-hover-negative: rgb(from var(--nico-color-background-negative-intense) r g b / 0.04);
+  --nico-color-interaction-hover-brand: var(
+    --nico-color-background-brand-subtle
+  );
+  --nico-color-interaction-hover-negative: rgb(
+    from var(--nico-color-background-negative-intense) r g b / 0.04
+  );
   --nico-color-interaction-press: var(--nico-color-grey-alpha-400);
-  --nico-color-interaction-press-brand: var(--nico-color-background-brand-subtle);
-  --nico-color-interaction-press-negative: rgb(from var(--nico-color-background-negative-intense) r g b / 0.04);
+  --nico-color-interaction-press-brand: var(
+    --nico-color-background-brand-subtle
+  );
+  --nico-color-interaction-press-negative: rgb(
+    from var(--nico-color-background-negative-intense) r g b / 0.04
+  );
   --nico-color-interaction-selected: var(--nico-color-grey-alpha-300);
-  --nico-color-interaction-selected-brand: var(--nico-color-background-brand-subtle);
-  --nico-color-interaction-selected-negative: rgb(from var(--nico-color-background-negative-intense) r g b / 0.04);
+  --nico-color-interaction-selected-brand: var(
+    --nico-color-background-brand-subtle
+  );
+  --nico-color-interaction-selected-negative: rgb(
+    from var(--nico-color-background-negative-intense) r g b / 0.04
+  );
   --nico-color-shadow-sm-primeter: var(--nico-color-grey-alpha-200);
   --nico-color-shadow-sm-spread: var(--nico-color-grey-alpha-300);
   --nico-color-shadow-md-primeter: var(--nico-color-grey-alpha-300);
@@ -379,15 +402,25 @@
   --nico-color-background-input-hover: var(--nico-color-grey-alpha-400);
   --nico-color-background-input-disabled: var(--nico-color-grey-alpha-200);
   --nico-color-background-neutral-subtle: var(--nico-color-grey-alpha-300);
-  --nico-color-background-neutral-subtle-hover: var(--nico-color-grey-alpha-400);
-  --nico-color-background-neutral-subtle-press: var(--nico-color-grey-alpha-500);
+  --nico-color-background-neutral-subtle-hover: var(
+    --nico-color-grey-alpha-400
+  );
+  --nico-color-background-neutral-subtle-press: var(
+    --nico-color-grey-alpha-500
+  );
   --nico-color-background-neutral-intense: var(--nico-color-grey-alpha-700);
-  --nico-color-background-neutral-intense-hover: var(--nico-color-grey-alpha-600);
-  --nico-color-background-neutral-intense-press: var(--nico-color-grey-alpha-800);
+  --nico-color-background-neutral-intense-hover: var(
+    --nico-color-grey-alpha-600
+  );
+  --nico-color-background-neutral-intense-press: var(
+    --nico-color-grey-alpha-800
+  );
   --nico-color-background-brand-subtle: var(--nico-color-grey-alpha-300);
   --nico-color-background-brand-subtle-hover: var(--nico-color-grey-alpha-400);
   --nico-color-background-brand-intense: var(--nico-color-grey-opaque-1700);
-  --nico-color-background-brand-intense-hover: var(--nico-color-grey-opaque-1500);
+  --nico-color-background-brand-intense-hover: var(
+    --nico-color-grey-opaque-1500
+  );
   --nico-color-background-negative-subtle: var(--nico-color-red-100);
   --nico-color-background-negative-subtle-hover: var(--nico-color-red-200);
   --nico-color-background-negative-intense: var(--nico-color-red-500);
@@ -407,10 +440,14 @@
   --nico-color-background-dark: var(--nico-color-grey-alpha-1500);
   --nico-color-background-dark-hover: var(--nico-color-grey-alpha-1300);
   --nico-color-background-white-intense: var(--nico-color-grey-opaque-100);
-  --nico-color-background-white-intense-hover: var(--nico-color-grey-opaque-300);
+  --nico-color-background-white-intense-hover: var(
+    --nico-color-grey-opaque-300
+  );
   --nico-color-background-accent-red: var(--nico-color-red-100);
   --nico-color-background-white-subtle: var(--nico-color-grey-dark-alpha-400);
-  --nico-color-background-white-subtle-hover: var(--nico-color-grey-dark-alpha-500);
+  --nico-color-background-white-subtle-hover: var(
+    --nico-color-grey-dark-alpha-500
+  );
   --nico-color-background-accent-orange: var(--nico-color-orange-100);
   --nico-color-background-accent-yellow: var(--nico-color-yellow-100);
   --nico-color-background-accent-lime: var(--nico-color-lime-100);
@@ -424,7 +461,9 @@
   --nico-color-border-opaque: rgb(0 0 0 / 0);
   --nico-color-interaction-hover-white: var(--nico-color-grey-dark-alpha-400);
   --nico-color-interaction-press-white: var(--nico-color-grey-dark-alpha-500);
-  --nico-color-interaction-selected-white: var(--nico-color-grey-dark-alpha-400);
+  --nico-color-interaction-selected-white: var(
+    --nico-color-grey-dark-alpha-400
+  );
 }
 
 /* Color / Dark */
@@ -437,7 +476,9 @@
   --nico-color-text-fixed: var(--nico-color-grey-dark-alpha-1500);
   --nico-color-text-fixed-inverted: var(--nico-color-grey-dark-alpha-1600);
   --nico-color-text-fixed-subtle: var(--nico-color-grey-dark-alpha-1300);
-  --nico-color-text-fixed-inverted-subtle: var(--nico-color-grey-dark-alpha-1200);
+  --nico-color-text-fixed-inverted-subtle: var(
+    --nico-color-grey-dark-alpha-1200
+  );
   --nico-color-text-brand: var(--nico-color-grey-opaque-200);
   --nico-color-text-negative: var(--nico-color-red-400);
   --nico-color-text-positive: var(--nico-color-green-400);
@@ -469,7 +510,9 @@
   --nico-color-icon-fixed: var(--nico-color-grey-dark-alpha-1500);
   --nico-color-icon-fixed-subtle: var(--nico-color-grey-dark-alpha-1300);
   --nico-color-icon-fixed-inverted: var(--nico-color-grey-dark-alpha-1600);
-  --nico-color-icon-fixed-inverted-subtle: var(--nico-color-grey-dark-alpha-1200);
+  --nico-color-icon-fixed-inverted-subtle: var(
+    --nico-color-grey-dark-alpha-1200
+  );
   --nico-color-icon-accent-red: var(--nico-color-red-400);
   --nico-color-icon-accent-orange: var(--nico-color-orange-400);
   --nico-color-icon-accent-yellow: var(--nico-color-yellow-400);
@@ -494,7 +537,9 @@
   --nico-color-border-fixed: var(--nico-color-grey-dark-alpha-1500);
   --nico-color-border-fixed-subtle: var(--nico-color-grey-dark-alpha-1300);
   --nico-color-border-fixed-inverted: var(--nico-color-grey-dark-alpha-1600);
-  --nico-color-border-fixed-inverted-subtle: var(--nico-color-grey-dark-alpha-1200);
+  --nico-color-border-fixed-inverted-subtle: var(
+    --nico-color-grey-dark-alpha-1200
+  );
   --nico-color-border-accent-red: var(--nico-color-red-400);
   --nico-color-border-accent-orange: var(--nico-color-orange-400);
   --nico-color-border-accent-yellow: var(--nico-color-yellow-400);
@@ -522,14 +567,26 @@
   --nico-color-skeleton: var(--nico-color-grey-dark-alpha-300);
   --nico-color-skeleton-active: var(--nico-color-grey-dark-alpha-400);
   --nico-color-interaction-hover: var(--nico-color-grey-dark-alpha-400);
-  --nico-color-interaction-hover-brand: var(--nico-color-background-brand-subtle);
-  --nico-color-interaction-hover-negative: rgb(from var(--nico-color-background-negative-intense) r g b / 0.08);
+  --nico-color-interaction-hover-brand: var(
+    --nico-color-background-brand-subtle
+  );
+  --nico-color-interaction-hover-negative: rgb(
+    from var(--nico-color-background-negative-intense) r g b / 0.08
+  );
   --nico-color-interaction-press: var(--nico-color-grey-dark-alpha-400);
-  --nico-color-interaction-press-brand: var(--nico-color-background-brand-subtle);
-  --nico-color-interaction-press-negative: rgb(from var(--nico-color-background-negative-intense) r g b / 0.08);
+  --nico-color-interaction-press-brand: var(
+    --nico-color-background-brand-subtle
+  );
+  --nico-color-interaction-press-negative: rgb(
+    from var(--nico-color-background-negative-intense) r g b / 0.08
+  );
   --nico-color-interaction-selected: var(--nico-color-grey-dark-alpha-300);
-  --nico-color-interaction-selected-brand: var(--nico-color-background-brand-subtle);
-  --nico-color-interaction-selected-negative: rgb(from var(--nico-color-background-negative-intense) r g b / 0.08);
+  --nico-color-interaction-selected-brand: var(
+    --nico-color-background-brand-subtle
+  );
+  --nico-color-interaction-selected-negative: rgb(
+    from var(--nico-color-background-negative-intense) r g b / 0.08
+  );
   --nico-color-shadow-sm-primeter: var(--nico-color-grey-alpha-400);
   --nico-color-shadow-sm-spread: var(--nico-color-grey-alpha-600);
   --nico-color-shadow-md-primeter: var(--nico-color-grey-alpha-600);
@@ -556,15 +613,29 @@
   --nico-color-background-input-hover: var(--nico-color-grey-dark-alpha-400);
   --nico-color-background-input-disabled: var(--nico-color-grey-dark-alpha-200);
   --nico-color-background-neutral-subtle: var(--nico-color-grey-dark-alpha-300);
-  --nico-color-background-neutral-subtle-hover: var(--nico-color-grey-dark-alpha-400);
-  --nico-color-background-neutral-subtle-press: var(--nico-color-grey-dark-alpha-500);
-  --nico-color-background-neutral-intense: var(--nico-color-grey-dark-alpha-700);
-  --nico-color-background-neutral-intense-hover: var(--nico-color-grey-dark-alpha-600);
-  --nico-color-background-neutral-intense-press: var(--nico-color-grey-dark-alpha-800);
+  --nico-color-background-neutral-subtle-hover: var(
+    --nico-color-grey-dark-alpha-400
+  );
+  --nico-color-background-neutral-subtle-press: var(
+    --nico-color-grey-dark-alpha-500
+  );
+  --nico-color-background-neutral-intense: var(
+    --nico-color-grey-dark-alpha-700
+  );
+  --nico-color-background-neutral-intense-hover: var(
+    --nico-color-grey-dark-alpha-600
+  );
+  --nico-color-background-neutral-intense-press: var(
+    --nico-color-grey-dark-alpha-800
+  );
   --nico-color-background-brand-subtle: var(--nico-color-grey-dark-alpha-300);
-  --nico-color-background-brand-subtle-hover: var(--nico-color-grey-dark-alpha-400);
+  --nico-color-background-brand-subtle-hover: var(
+    --nico-color-grey-dark-alpha-400
+  );
   --nico-color-background-brand-intense: var(--nico-color-grey-opaque-100);
-  --nico-color-background-brand-intense-hover: var(--nico-color-grey-opaque-300);
+  --nico-color-background-brand-intense-hover: var(
+    --nico-color-grey-opaque-300
+  );
   --nico-color-background-negative-subtle: var(--nico-color-red-800);
   --nico-color-background-negative-subtle-hover: var(--nico-color-red-700);
   --nico-color-background-negative-intense: var(--nico-color-red-400);
@@ -584,10 +655,14 @@
   --nico-color-background-dark: var(--nico-color-grey-opaque-300);
   --nico-color-background-dark-hover: var(--nico-color-grey-opaque-400);
   --nico-color-background-white-intense: var(--nico-color-grey-opaque-100);
-  --nico-color-background-white-intense-hover: var(--nico-color-grey-opaque-300);
+  --nico-color-background-white-intense-hover: var(
+    --nico-color-grey-opaque-300
+  );
   --nico-color-background-accent-red: var(--nico-color-red-800);
   --nico-color-background-white-subtle: var(--nico-color-grey-dark-alpha-400);
-  --nico-color-background-white-subtle-hover: var(--nico-color-grey-dark-alpha-500);
+  --nico-color-background-white-subtle-hover: var(
+    --nico-color-grey-dark-alpha-500
+  );
   --nico-color-background-accent-orange: var(--nico-color-orange-800);
   --nico-color-background-accent-yellow: var(--nico-color-yellow-800);
   --nico-color-background-accent-lime: var(--nico-color-lime-800);
@@ -601,480 +676,500 @@
   --nico-color-border-opaque: rgb(0 0 0 / 0);
   --nico-color-interaction-hover-white: var(--nico-color-grey-dark-alpha-400);
   --nico-color-interaction-press-white: var(--nico-color-grey-dark-alpha-500);
-  --nico-color-interaction-selected-white: var(--nico-color-grey-dark-alpha-400);
+  --nico-color-interaction-selected-white: var(
+    --nico-color-grey-dark-alpha-400
+  );
 }
 
 /* Effect styles retain their theme-aware variable bindings. */
-:root, .light, .dark {
+:root,
+.light,
+.dark {
   --nico-effect-focused-input: 0px 0px 0px 1px var(--nico-color-border-intense);
-  --nico-effect-focused-negative: 0px 0px 0px 1px var(--nico-color-border-negative);
-  --nico-effect-shadow-small: 0px 0px var(--nico-blur-xs) 0px var(--nico-color-shadow-sm-primeter), 0px var(--nico-offset-xs) var(--nico-blur-md) 0px var(--nico-color-shadow-sm-spread);
-  --nico-effect-shadow-medium: 0px var(--nico-offset-xs) var(--nico-blur-lg) 0px var(--nico-color-shadow-md-primeter), 0px var(--nico-offset-md) var(--nico-blur-2xl) 0px var(--nico-color-shadow-md-spread);
-  --nico-effect-shadow-large: 0px var(--nico-offset-lg) var(--nico-blur-xl) 0px var(--nico-color-shadow-lg-primeter), 0px var(--nico-offset-xl) var(--nico-blur-2xl) 0px var(--nico-color-shadow-lg-spread);
-  --nico-effect-overflow-left-fixed: var(--nico-offset-xs) 0px var(--nico-blur-sm) 0px var(--nico-color-shadow-overflow);
-  --nico-effect-overflow-top-fixed: 0px var(--nico-offset-xs) var(--nico-blur-sm) 0px var(--nico-color-shadow-overflow);
-  --nico-effect-overflow-bottom-fixed: 0px calc(-1 * var(--nico-offset-xs)) var(--nico-blur-sm) 0px var(--nico-color-shadow-overflow);
-  --nico-effect-overflow-right-fixed: calc(-1 * var(--nico-offset-xs)) 0px var(--nico-blur-sm) 0px var(--nico-color-shadow-overflow);
+  --nico-effect-focused-negative: 0px 0px 0px 1px
+    var(--nico-color-border-negative);
+  --nico-effect-shadow-small:
+    0px 0px var(--nico-blur-xs) 0px var(--nico-color-shadow-sm-primeter),
+    0px var(--nico-offset-xs) var(--nico-blur-md) 0px
+      var(--nico-color-shadow-sm-spread);
+  --nico-effect-shadow-medium:
+    0px var(--nico-offset-xs) var(--nico-blur-lg) 0px
+      var(--nico-color-shadow-md-primeter),
+    0px var(--nico-offset-md) var(--nico-blur-2xl) 0px
+      var(--nico-color-shadow-md-spread);
+  --nico-effect-shadow-large:
+    0px var(--nico-offset-lg) var(--nico-blur-xl) 0px
+      var(--nico-color-shadow-lg-primeter),
+    0px var(--nico-offset-xl) var(--nico-blur-2xl) 0px
+      var(--nico-color-shadow-lg-spread);
+  --nico-effect-overflow-left-fixed: var(--nico-offset-xs) 0px
+    var(--nico-blur-sm) 0px var(--nico-color-shadow-overflow);
+  --nico-effect-overflow-top-fixed: 0px var(--nico-offset-xs)
+    var(--nico-blur-sm) 0px var(--nico-color-shadow-overflow);
+  --nico-effect-overflow-bottom-fixed: 0px calc(-1 * var(--nico-offset-xs))
+    var(--nico-blur-sm) 0px var(--nico-color-shadow-overflow);
+  --nico-effect-overflow-right-fixed: calc(-1 * var(--nico-offset-xs)) 0px
+    var(--nico-blur-sm) 0px var(--nico-color-shadow-overflow);
 }
 
 @layer utilities {
-.nico-type-40-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-5xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-5xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-40-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-5xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-5xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-40-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-5xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-5xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-40-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-5xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-5xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-40-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-5xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-5xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-40-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-5xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-5xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-32-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-4xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-4xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-32-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-4xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-4xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-32-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-4xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-4xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-32-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-4xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-4xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-32-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-4xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-4xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-32-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-4xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-4xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-28-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-3xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-3xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-28-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-3xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-3xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-28-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-3xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-3xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-28-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-3xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-3xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-28-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-3xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-3xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-28-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-3xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-3xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-24-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-2xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-2xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-24-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-2xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-2xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-24-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-2xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-2xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-24-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-2xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-2xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-24-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-2xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-2xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-24-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-2xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-2xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-20-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-20-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xl);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-20-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-20-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xl);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-20-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-20-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xl);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-xl);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-18-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-lg);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-lg);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-18-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-lg);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-lg);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-18-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-lg);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-lg);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-18-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-lg);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-lg);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-18-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-lg);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-lg);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-18-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-lg);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-lg);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-16-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-md);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-md);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-16-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-md);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-md);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-16-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-md);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-md);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-16-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-md);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-md);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-16-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-md);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-md);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-16-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-md);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-md);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-14-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-sm);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-sm);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-14-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-sm);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-sm);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-14-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-sm);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-sm);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-14-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-sm);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-sm);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-14-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-sm);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-sm);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-14-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-sm);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-sm);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-12-regular-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xs);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-xs);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-12-regular-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xs);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: var(--nico-line-height-paragraph-xs);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-12-medium-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xs);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-xs);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-12-medium-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xs);
-  font-weight: var(--nico-font-weight-medium);
-  line-height: var(--nico-line-height-paragraph-xs);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-12-bold-default {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xs);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-xs);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-type-12-bold-paragraph {
-  font-family: var(--nico-font-family-sans);
-  font-size: var(--nico-font-size-xs);
-  font-weight: var(--nico-font-weight-bold);
-  line-height: var(--nico-line-height-paragraph-xs);
-  letter-spacing: 0px;
-  margin-block-end: 0px;
-}
-.nico-effect-focused-input {
-  box-shadow: var(--nico-effect-focused-input);
-}
-.nico-effect-focused-negative {
-  box-shadow: var(--nico-effect-focused-negative);
-}
-.nico-effect-shadow-small {
-  box-shadow: var(--nico-effect-shadow-small);
-}
-.nico-effect-shadow-medium {
-  box-shadow: var(--nico-effect-shadow-medium);
-}
-.nico-effect-shadow-large {
-  box-shadow: var(--nico-effect-shadow-large);
-}
-.nico-effect-overflow-left-fixed {
-  box-shadow: var(--nico-effect-overflow-left-fixed);
-}
-.nico-effect-overflow-top-fixed {
-  box-shadow: var(--nico-effect-overflow-top-fixed);
-}
-.nico-effect-overflow-bottom-fixed {
-  box-shadow: var(--nico-effect-overflow-bottom-fixed);
-}
-.nico-effect-overflow-right-fixed {
-  box-shadow: var(--nico-effect-overflow-right-fixed);
-}
+  .nico-type-40-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-5xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-5xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-40-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-5xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-5xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-40-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-5xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-5xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-40-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-5xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-5xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-40-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-5xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-5xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-40-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-5xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-5xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-32-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-4xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-4xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-32-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-4xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-4xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-32-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-4xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-4xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-32-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-4xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-4xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-32-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-4xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-4xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-32-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-4xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-4xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-28-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-3xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-3xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-28-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-3xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-3xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-28-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-3xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-3xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-28-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-3xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-3xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-28-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-3xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-3xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-28-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-3xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-3xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-24-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-2xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-2xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-24-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-2xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-2xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-24-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-2xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-2xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-24-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-2xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-2xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-24-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-2xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-2xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-24-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-2xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-2xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-20-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-20-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xl);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-20-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-20-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xl);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-20-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-20-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xl);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-xl);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-18-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-lg);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-lg);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-18-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-lg);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-lg);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-18-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-lg);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-lg);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-18-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-lg);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-lg);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-18-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-lg);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-lg);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-18-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-lg);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-lg);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-16-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-md);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-md);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-16-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-md);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-md);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-16-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-md);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-md);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-16-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-md);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-md);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-16-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-md);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-md);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-16-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-md);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-md);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-14-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-sm);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-sm);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-14-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-sm);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-sm);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-14-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-sm);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-sm);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-14-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-sm);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-sm);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-14-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-sm);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-sm);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-14-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-sm);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-sm);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-12-regular-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xs);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-xs);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-12-regular-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xs);
+    font-weight: var(--nico-font-weight-regular);
+    line-height: var(--nico-line-height-paragraph-xs);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-12-medium-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xs);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-xs);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-12-medium-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xs);
+    font-weight: var(--nico-font-weight-medium);
+    line-height: var(--nico-line-height-paragraph-xs);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-12-bold-default {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xs);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-xs);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-type-12-bold-paragraph {
+    font-family: var(--nico-font-family-sans);
+    font-size: var(--nico-font-size-xs);
+    font-weight: var(--nico-font-weight-bold);
+    line-height: var(--nico-line-height-paragraph-xs);
+    letter-spacing: 0px;
+    margin-block-end: 0px;
+  }
+  .nico-effect-focused-input {
+    box-shadow: var(--nico-effect-focused-input);
+  }
+  .nico-effect-focused-negative {
+    box-shadow: var(--nico-effect-focused-negative);
+  }
+  .nico-effect-shadow-small {
+    box-shadow: var(--nico-effect-shadow-small);
+  }
+  .nico-effect-shadow-medium {
+    box-shadow: var(--nico-effect-shadow-medium);
+  }
+  .nico-effect-shadow-large {
+    box-shadow: var(--nico-effect-shadow-large);
+  }
+  .nico-effect-overflow-left-fixed {
+    box-shadow: var(--nico-effect-overflow-left-fixed);
+  }
+  .nico-effect-overflow-top-fixed {
+    box-shadow: var(--nico-effect-overflow-top-fixed);
+  }
+  .nico-effect-overflow-bottom-fixed {
+    box-shadow: var(--nico-effect-overflow-bottom-fixed);
+  }
+  .nico-effect-overflow-right-fixed {
+    box-shadow: var(--nico-effect-overflow-right-fixed);
+  }
 }

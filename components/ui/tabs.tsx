@@ -1,15 +1,17 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "cn"
-import { Tabs as TabsPrimitive } from "@base-ui/react/tabs"
+import * as React from "react";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "cn";
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 
 function Tabs({
   className,
   orientation = "horizontal",
   ...props
-}: Omit<React.ComponentProps<typeof TabsPrimitive.Root>, "className"> & { className?: string }) {
+}: Omit<React.ComponentProps<typeof TabsPrimitive.Root>, "className"> & {
+  className?: string;
+}) {
   return (
     <TabsPrimitive.Root
       data-slot="tabs"
@@ -17,11 +19,11 @@ function Tabs({
       orientation={orientation}
       className={cn(
         "group/tabs flex gap-2 data-[orientation=horizontal]:flex-col",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 const tabsListVariants = cva(
@@ -36,15 +38,16 @@ const tabsListVariants = cva(
     defaultVariants: {
       variant: "default",
     },
-  }
-)
+  },
+);
 
 function TabsList({
   className,
   variant = "default",
   ...props
-}: Omit<React.ComponentProps<typeof TabsPrimitive.List>, "className"> & { className?: string } &
-  VariantProps<typeof tabsListVariants>) {
+}: Omit<React.ComponentProps<typeof TabsPrimitive.List>, "className"> & {
+  className?: string;
+} & VariantProps<typeof tabsListVariants>) {
   return (
     <TabsPrimitive.List
       data-slot="tabs-list"
@@ -52,13 +55,15 @@ function TabsList({
       className={cn(tabsListVariants({ variant }), className)}
       {...props}
     />
-  )
+  );
 }
 
 function TabsTrigger({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TabsPrimitive.Tab>, "className"> & { className?: string }) {
+}: Omit<React.ComponentProps<typeof TabsPrimitive.Tab>, "className"> & {
+  className?: string;
+}) {
   return (
     <TabsPrimitive.Tab
       data-slot="tabs-trigger"
@@ -67,24 +72,26 @@ function TabsTrigger({
         "group-data-[variant=line]/tabs-list:bg-transparent group-data-[variant=line]/tabs-list:hover:bg-(--nico-color-interaction-hover) group-data-[variant=line]/tabs-list:data-active:bg-transparent group-data-[variant=line]/tabs-list:data-active:hover:bg-(--nico-color-interaction-hover)",
         "data-active:bg-(--nico-color-surface) data-active:text-(--nico-color-text)",
         "after:absolute after:bg-(--nico-color-text) after:opacity-0 after:transition-opacity group-data-[orientation=horizontal]/tabs:after:inset-x-0 group-data-[orientation=horizontal]/tabs:after:bottom-[-5px] group-data-[orientation=horizontal]/tabs:after:h-0.5 group-data-[orientation=vertical]/tabs:after:inset-y-0 group-data-[orientation=vertical]/tabs:after:-right-1 group-data-[orientation=vertical]/tabs:after:w-0.5 group-data-[variant=line]/tabs-list:data-active:after:opacity-100",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 
 function TabsContent({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TabsPrimitive.Panel>, "className"> & { className?: string }) {
+}: Omit<React.ComponentProps<typeof TabsPrimitive.Panel>, "className"> & {
+  className?: string;
+}) {
   return (
     <TabsPrimitive.Panel
       data-slot="tabs-content"
       className={cn("flex-1 outline-none", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants }
+export { Tabs, TabsList, TabsTrigger, TabsContent, tabsListVariants };

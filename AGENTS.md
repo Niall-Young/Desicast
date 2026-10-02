@@ -13,6 +13,10 @@ Iconcast is a macOS Electron application and independent MCP server for public a
 
 Before changes, determine applicable root and nested AGENTS.md scopes, inspect adjacent `.agent-guides` entries, read their descriptions, and load only guides relevant to the task. Follow conditional references only when their stated conditions apply.
 
+## Development
+
+Use npm and the committed lockfile. `npm run dev` launches Electron with Vite. Run `npm run typecheck`, `npm test`, and `npm run test:ui` after relevant changes; UI checks need a current `npm run build`. `npm run package` creates local macOS artifacts. Packaging and desktop UI automation must run sequentially because native packaging utilities can interfere with window focus.
+
 ## Personal bookmark knowledge
 
 Use `$chrome-bookmark-knowledge` only when the user explicitly asks to search, inspect, browse, or use their Chrome bookmarks or saved bookmark knowledge. Do not invoke it automatically for public-web research, recommendations, comparisons, resource discovery, supplied URLs, or general requests for personal knowledge. When the user explicitly requests bookmark use and also supplies URLs, process the supplied URLs first, then search bookmarks if still relevant.

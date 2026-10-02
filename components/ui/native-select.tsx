@@ -1,6 +1,6 @@
-import * as React from "react"
-import { cn } from "cn"
-import { DownRegular } from "@mingcute/react/core-regular"
+import * as React from "react";
+import { cn } from "cn";
+import { DownRegular } from "@mingcute/react/core-regular";
 
 function NativeSelect({
   className,
@@ -19,7 +19,7 @@ function NativeSelect({
           "h-9 w-full min-w-0 appearance-none rounded-md border border-(--nico-color-border-intense) bg-(--nico-color-background-input) hover:bg-(--nico-color-background-input-hover) disabled:bg-(--nico-color-background-input-disabled) px-3 py-2 pr-9 text-sm transition-[color,box-shadow] outline-none selection:bg-(--nico-color-background-brand-intense) selection:text-(--nico-color-text-inverted) placeholder:text-(--nico-color-text-subtle) disabled:pointer-events-none disabled:cursor-not-allowed data-[size=sm]:h-8 data-[size=sm]:py-1",
           "focus-visible:border-(--nico-color-border-brand) focus-visible:ring-1 focus-visible:ring-(--nico-color-border-brand)",
           "aria-invalid:border-(--nico-color-background-negative-intense) aria-invalid:ring-(--nico-color-background-negative-intense)",
-          className
+          className,
         )}
         {...props}
       />
@@ -29,7 +29,7 @@ function NativeSelect({
         data-slot="native-select-icon"
       />
     </div>
-  )
+  );
 }
 
 function NativeSelectOption({
@@ -42,7 +42,7 @@ function NativeSelectOption({
       className={cn("bg-[Canvas] text-[CanvasText]", className)}
       {...props}
     />
-  )
+  );
 }
 
 function NativeSelectOptGroup({
@@ -55,7 +55,7 @@ function NativeSelectOptGroup({
       className={cn("bg-[Canvas] text-[CanvasText]", className)}
       {...props}
     />
-  )
+  );
 }
 
-export { NativeSelect, NativeSelectOptGroup, NativeSelectOption }
+export { NativeSelect, NativeSelectOptGroup, NativeSelectOption };

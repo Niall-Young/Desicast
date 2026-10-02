@@ -9,19 +9,28 @@ export interface SkeletonProps extends ComponentProps<"div"> {
   animated?: boolean;
 }
 
-function Skeleton({ className, shape = "rectangle", animated = true, ...props }: SkeletonProps) {
-  return <div
-    {...props}
-    data-slot="skeleton"
-    data-shape={shape}
-    aria-hidden="true"
-    className={cn(
-      "shrink-0 bg-(--nico-color-skeleton)",
-      shape === "circle" ? "size-4 aspect-square rounded-(--nico-border-radius-full)" : "h-4 w-full rounded-(--nico-border-radius-sm)",
-      animated && "nico-skeleton-shimmer",
-      className,
-    )}
-  />;
+function Skeleton({
+  className,
+  shape = "rectangle",
+  animated = true,
+  ...props
+}: SkeletonProps) {
+  return (
+    <div
+      {...props}
+      data-slot="skeleton"
+      data-shape={shape}
+      aria-hidden="true"
+      className={cn(
+        "shrink-0 bg-(--nico-color-skeleton)",
+        shape === "circle"
+          ? "size-4 aspect-square rounded-(--nico-border-radius-full)"
+          : "h-4 w-full rounded-(--nico-border-radius-sm)",
+        animated && "nico-skeleton-shimmer",
+        className,
+      )}
+    />
+  );
 }
 
 export { Skeleton };
