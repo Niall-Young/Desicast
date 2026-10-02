@@ -139,6 +139,7 @@ test("Authenticated HTTPS Git sync works without interactive prompts and atomica
     });
     const first = await service.sync(source.id);
     assert.equal(first.iconCount, 2);
+    assert.equal(first.changes, undefined);
     assert.ok(first.commit);
     await rm(join(seed, "icons/old.svg"));
     await writeFile(
@@ -151,6 +152,14 @@ test("Authenticated HTTPS Git sync works without interactive prompts and atomica
     const second = await service.sync(source.id);
     assert.notEqual(second.commit, first.commit);
     assert.equal(second.iconCount, 2);
+    assert.deepEqual(
+      second.changes && {
+        added: second.changes.added,
+        updated: second.changes.updated,
+        removed: second.changes.removed,
+      },
+      { added: 1, updated: 1, removed: 1 },
+    );
     assert.equal(service.store.icon(`${source.id}:icons/old.svg`), undefined);
     assert.match(
       service.store.icon(`${source.id}:icons/search.svg`)!.svg,

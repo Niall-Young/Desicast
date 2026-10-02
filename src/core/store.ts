@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { DatabaseSync } from "node:sqlite";
 import { mkdirSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -100,9 +101,49 @@ export class Store {
   }
   replace(source: Source, icons: Icon[]) {
     this.transaction(() => {
+      const previous = this.source(source.id);
+      if (previous?.syncedAt) {
+        const oldIcons = new Map(
+          this.local("", source.id).map((icon) => [icon.id, icon.svg]),
+        );
+        let added = 0,
+          updated = 0;
+        for (const icon of icons) {
+          if (!oldIcons.has(icon.id)) added++;
+          else if (oldIcons.get(icon.id) !== icon.svg) updated++;
+          oldIcons.delete(icon.id);
+        }
+        const removed = oldIcons.size;
+        source = { ...source, changes: previous.changes };
+        if (added || updated || removed)
+          source.changes = {
+            revision: randomUUID(),
+            detectedAt: new Date().toISOString(),
+            added: added + (previous.changes?.added ?? 0),
+            updated: updated + (previous.changes?.updated ?? 0),
+            removed: removed + (previous.changes?.removed ?? 0),
+          };
+      }
       this.db.prepare("DELETE FROM icons WHERE source=?").run(source.id);
       this.cache(icons);
       this.saveSource(source);
+    });
+  }
+  acknowledgeChanges(id: string, revision: string) {
+    this.transaction(() => {
+      if (id.startsWith("public:")) {
+        const key = `collection-changes:${id.slice(7)}`;
+        const changes = this.setting<
+          import("./types").LibraryChanges | undefined
+        >(key, undefined);
+        if (changes?.revision === revision) this.saveSetting(key, null);
+      } else {
+        const source = this.source(id);
+        if (source?.changes?.revision === revision) {
+          delete source.changes;
+          this.saveSource(source);
+        }
+      }
     });
   }
   private depth = 0;

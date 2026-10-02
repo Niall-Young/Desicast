@@ -99,7 +99,13 @@ async function call(method: string, input: unknown) {
     case "sources":
       return service.sources();
     case "collections":
-      return service.collections();
+      return service.collections(input === true);
+    case "acknowledgeChanges": {
+      const value = z
+        .object({ id: z.string(), revision: z.string() })
+        .parse(input);
+      return service.acknowledgeChanges(value.id, value.revision);
+    }
     case "settings":
       return {
         ...(await service.settings()),

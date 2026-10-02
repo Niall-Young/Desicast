@@ -1,5 +1,7 @@
 <a id="readme-top"></a>
 
+[中文](#中文) | [English](#english)
+
 <div align="center">
 
   <img src="./assets/icon.svg" width="112" height="112" alt="Iconcast Logo" />
@@ -43,7 +45,7 @@
 <a id="中文"></a>
 <a id="zh-cn"></a>
 
-## 🇨🇳 简体中文
+## 中文
 
 > 🌐 **语言切换 / Language**: [English Version](#-english) &nbsp;|&nbsp; [回到顶部 / Back to Top](#readme-top)
 
@@ -59,6 +61,10 @@ Iconcast 是 macOS Electron 应用，使用 [Gendesign Design System](https://gi
 - **双模搜索**：中英文关键词搜索；可使用用户配置的多模态模型进行参考图片的相似形状搜索。
 - **多技术导出**：一键复制 SVG、HTML、React TSX、Vue SFC 代码，导出 SwiftUI SVG image set 及配套调用代码。
 - **独立 MCP 服务**：随安装包内置运行入口，无需常驻 Electron 桌面，且无需终端用户配置独立 Node 环境。
+
+默认快捷入口包括 Lucide、Tabler Icons、Remix Icon、Unicons、MingCute、Google Material Icons 和 Eva Icons。侧栏显示公共目录的实际图标总数（不是下载缓存数量），团队库显示成功索引的 SVG 数量。公共目录每天缓存、每小时自动检查，并可使用「刷新图库」立即检查；团队库同步后记录新增、SVG 更新和删除。公共库徽标提示目录数量、可用版本及 API 最后修改时间变化；旧缓存会按需更新，网络失败时仍保留旧 SVG；徽标跨重启保留，可在图库内「标记已读」。默认库支持无关键词分页浏览。
+
+图库标识使用随应用打包的官方 SVG，并在 [来源记录](src/renderer/library-marks/provenance.json) 中保留地址；Lucide 使用官方亮暗版本，单色标识随主题文字颜色显示，其余保留原色。Unicons 尚未取得独立品牌 SVG，暂用其官方 cube 图标；Material 使用 Google Material 官方标识。品牌归各自所有者，图标许可不代表品牌使用授权。
 
 ### 快速开始
 
@@ -165,7 +171,7 @@ MCP stdout 仅用于标准 JSON-RPC 协议消息。可用工具列表：
 <a id="english"></a>
 <a id="en"></a>
 
-## 🇬🇧 English
+## English
 
 > 🌐 **Language / 语言切换**: [简体中文](#-简体中文) &nbsp;|&nbsp; [Back to Top / 回到顶部](#readme-top)
 
@@ -181,6 +187,10 @@ Iconcast is a native macOS Electron application built with real components, Base
 - **Dual-Mode Search**: Bilingual keyword search (English and Chinese aliases) alongside visual shape similarity search powered by user-configured multimodal models.
 - **Multi-Framework Exports**: One-click code copying for SVG, HTML, React TSX, and Vue SFC; full asset set export with usage code for SwiftUI.
 - **Standalone MCP Server**: Bundled runtime executable requiring no desktop window presence and no user-installed Node environment.
+
+Default shortcuts include Lucide, Tabler Icons, Remix Icon, Unicons, MingCute, Google Material Icons, and Eva Icons. Public sidebar counts use catalog totals rather than downloaded cache counts; team counts reflect successfully indexed SVGs. The public catalog is cached daily, checked hourly, and can be checked immediately with “Refresh library”. Team synchronization records additions, SVG changes, and deletions. Public badges indicate catalog count, published version, and API modification-time changes where available. Cached SVGs refresh on demand while remaining available if the network fails. Unread badges persist across restarts and can be marked as read within the library. Default collections support paginated browsing without a keyword.
+
+Library marks are bundled official SVGs with [source URLs](src/renderer/library-marks/provenance.json). Lucide uses its official light/dark variants, monochrome artwork follows theme text colors, and other marks retain their original colors. A separate Unicons brand SVG has not been obtained, so its official cube icon is used provisionally; Material uses Google's official Material mark. Brands belong to their respective owners; icon licenses do not grant brand usage rights.
 
 ### Quick Start
 

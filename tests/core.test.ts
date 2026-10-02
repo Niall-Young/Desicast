@@ -373,3 +373,136 @@ test("Vision sends image payloads and filters invented IDs and duplicates with a
   assert.equal(results.length, 1);
   assert.equal(results[0].reason, "相似轮廓");
 });
+
+test("Public catalog counts track decreases, persist unread changes, and protect newer revisions from stale acknowledgements", async () => {
+  await temporary(async (directory) => {
+    const store = new Store(directory);
+    let version = "1.0.0";
+    let total = 100,
+      fail = false;
+    const fetcher = (async () => {
+      if (fail) throw new Error("offline");
+      return new Response(
+        JSON.stringify({ ri: { name: "Remix", total, version } }),
+      );
+    }) as typeof fetch;
+    const library = new PublicLibrary(store, fetcher);
+    assert.equal((await library.collections())[0].changes, undefined);
+    total = 103;
+    const added = (await library.collections(true))[0];
+    assert.equal(added.total, 103);
+    assert.equal(added.changes?.added, 3);
+    total = 101;
+    const removed = (await library.collections(true))[0];
+    assert.equal(removed.changes?.removed, 2);
+    store.acknowledgeChanges("public:ri", added.changes!.revision);
+    assert.ok((await library.collections())[0].changes);
+    version = "1.1.0";
+    const released = (await library.collections(true))[0];
+    assert.equal(released.changes?.versionUpdated, true);
+    assert.equal(released.total, 101);
+    store.acknowledgeChanges("public:ri", removed.changes!.revision);
+    fail = true;
+    await assert.rejects(library.collections(true));
+    assert.equal((await library.collections())[0].total, 101);
+    store.close();
+    const reopened = new Store(directory);
+    const restored = new PublicLibrary(reopened, fetcher);
+    assert.equal((await restored.collections())[0].changes?.added, 3);
+    reopened.acknowledgeChanges("public:ri", released.changes!.revision);
+    assert.equal((await restored.collections())[0].changes, undefined);
+    reopened.close();
+  });
+});
+
+test("Repository unread diffs include same-count SVG updates and survive unchanged sync until acknowledged", async () => {
+  await temporary(async (directory) => {
+    const store = new Store(directory);
+    const source: Source = {
+      id: "team",
+      kind: "repository",
+      name: "Team",
+      iconCount: 0,
+      allowVision: false,
+      syncedAt: new Date().toISOString(),
+    };
+    store.saveSource({ ...source, syncedAt: undefined });
+    store.replace(source, [icon]);
+    assert.equal(store.source("team")?.changes, undefined);
+    store.replace({ ...source }, [{ ...icon, svg: mono }]);
+    const changes = store.source("team")!.changes!;
+    assert.equal(changes.updated, 1);
+    assert.equal(changes.added, 0);
+    store.replace({ ...source }, [{ ...icon, svg: mono }]);
+    assert.equal(store.source("team")?.changes?.revision, changes.revision);
+    store.acknowledgeChanges("team", changes.revision);
+    assert.equal(store.source("team")?.changes, undefined);
+    store.replace({ ...source }, []);
+    assert.equal(store.source("team")?.changes?.removed, 1);
+    store.close();
+  });
+});
+
+test("Empty public collection queries browse all canonical names with accurate pagination", async () => {
+  await temporary(async (directory) => {
+    const store = new Store(directory);
+    const requests: string[] = [];
+    const library = new PublicLibrary(store, (async (url) => {
+      requests.push(String(url));
+      if (String(url).endsWith("/collections"))
+        return new Response(
+          JSON.stringify({ ri: { name: "Remix", total: 3 } }),
+        );
+      if (String(url).includes("/collection?"))
+        return new Response(
+          JSON.stringify({
+            categories: { UI: ["c", "a"], Shapes: ["b", "a"] },
+          }),
+        );
+      return new Response(mono);
+    }) as typeof fetch);
+    const page = await library.search("", "ri", 2, 1);
+    assert.equal(page.total, 3);
+    assert.deepEqual(
+      page.icons.map((icon) => icon.name),
+      ["b", "c"],
+    );
+    assert.equal(
+      requests.some((url) => url.includes("/search")),
+      false,
+    );
+    store.close();
+  });
+});
+
+test("Same-count public modification updates badges and refreshes SVGs on demand while preserving offline artwork", async () => {
+  await temporary(async (directory) => {
+    const store = new Store(directory);
+    let modified = 100,
+      svg = mono,
+      offline = false;
+    const library = new PublicLibrary(store, (async (url) => {
+      if (String(url).endsWith("/collections"))
+        return Response.json({ eva: { name: "Eva", total: 1 } });
+      if (String(url).endsWith("/last-modified"))
+        return Response.json({ lastModified: { eva: modified } });
+      if (offline) throw new Error("offline");
+      return new Response(svg);
+    }) as typeof fetch);
+    await library.collections();
+    const initial = await library.get("public:eva:search");
+    modified = 200;
+    svg = mono.replace("M2 12h20", "M4 12h16");
+    const catalog = await library.collections(true);
+    assert.equal(catalog[0].changes?.catalogUpdated, true);
+    assert.equal(catalog[0].changes?.added, 0);
+    const refreshed = await library.get(initial.id);
+    assert.notEqual(refreshed.svg, initial.svg);
+    assert.equal(refreshed.publicRevision, "1::200");
+    modified = 300;
+    await library.collections(true);
+    offline = true;
+    assert.equal((await library.get(initial.id)).svg, refreshed.svg);
+    store.close();
+  });
+});

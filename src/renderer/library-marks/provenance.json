@@ -1,0 +1,42 @@
+{
+  "lucide": {
+    "url": "https://lucide.dev/logo.light.svg",
+    "sha256": "0a69607947d19ac6025524091016c4830148ed9ca4a69d4fcce4d848a35a3136",
+    "usage": "official brand mark"
+  },
+  "lucide-dark": {
+    "url": "https://lucide.dev/logo.dark.svg",
+    "sha256": "f89a0a92978c533a220fb25f648bea2e469825ebc8dc421eec89e2f17ed73902",
+    "usage": "official brand mark"
+  },
+  "tabler": {
+    "url": "https://raw.githubusercontent.com/tabler/tabler/dev/shared/static/logo-small.svg",
+    "sha256": "91dd78a0d197833bfa7afb3f737ac04f1859156896e5d7ab99236cc97854ca89",
+    "usage": "official brand mark"
+  },
+  "ri": {
+    "url": "https://www.remixicon.com/img/remixicon-logo.svg",
+    "sha256": "af0fc7133b7ce4246f1a821791455db2902b8385243f5813cf2fe4d36a4c3200",
+    "usage": "official brand mark"
+  },
+  "mingcute": {
+    "url": "https://raw.githubusercontent.com/mingcute-design/mingcute-icons/v3.0.2/assets/svg/core/regular/brands/mingcute.svg",
+    "sha256": "e447cbf3451a151c82e22e8e94230968f2100835ffb7da84741b129afa65853d",
+    "usage": "official brand mark"
+  },
+  "eva": {
+    "url": "https://cdn.prod.website-files.com/5cae1b363eb34f46e5045f93/5f466a89bc19cca93f2170e8_eva-logo.svg",
+    "sha256": "566bb95690b4adaf4abb0b66c4998bf6e24159241bc0bab5836f554cf272dccd",
+    "usage": "official brand mark"
+  },
+  "material": {
+    "url": "https://m3.material.io/static/assets/m3-favicon.svg",
+    "sha256": "fd89d2590cb45cfde16dd7697c82aa3a9dcc99dba6d8a97cb91db109b61589b5",
+    "usage": "official brand mark"
+  },
+  "uil": {
+    "url": "https://raw.githubusercontent.com/Iconscout/unicons/v4.2.0/svg/line/cube.svg",
+    "sha256": "671f695ed3aa614b75f26dde5fe7ff12533add994192ff978b44159c7c298579",
+    "usage": "official library artwork (cube), provisional brand fallback"
+  }
+}

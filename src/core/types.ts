@@ -8,6 +8,15 @@ export interface RepositoryInput {
   token?: string;
   allowVision: boolean;
 }
+export interface LibraryChanges {
+  versionUpdated?: boolean;
+  catalogUpdated?: boolean;
+  revision: string;
+  detectedAt: string;
+  added: number;
+  updated: number;
+  removed: number;
+}
 export interface Source {
   id: string;
   kind: "public" | "repository";
@@ -22,8 +31,10 @@ export interface Source {
   error?: string;
   iconCount: number;
   hasCredential?: boolean;
+  changes?: LibraryChanges;
 }
 export interface Icon {
+  publicRevision?: string;
   id: string;
   name: string;
   sourceId: string;
@@ -77,6 +88,9 @@ export interface Settings {
   model: ModelSettings;
 }
 export interface Collection {
+  lastModified?: number;
+  version?: string;
+  changes?: LibraryChanges;
   id: string;
   name: string;
   total: number;

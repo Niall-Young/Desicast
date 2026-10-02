@@ -44,7 +44,7 @@ select {
   display: flex;
 }
 .sidebar {
-  width: 220px;
+  width: 244px;
   flex-shrink: 0;
   border-right: 1px solid var(--nico-color-border);
   background: var(--nico-color-surface-sunken);
@@ -985,4 +985,57 @@ pre {
 .dark .card-art img.monochrome,
 .dark .detail-preview img.monochrome {
   filter: brightness(0) invert(0.85);
+}
+
+.public-heading {
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+.library-mark {
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  display: inline-flex;
+}
+.library-mark img,
+.library-mark-mask {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+.library-mark-mask {
+  background: currentColor;
+  mask-size: contain;
+  mask-position: center;
+  mask-repeat: no-repeat;
+}
+.library-mark .mark-dark {
+  display: none;
+}
+.dark .library-mark .mark-light {
+  display: none;
+}
+.dark .library-mark .mark-dark {
+  display: block;
+}
+.nav-count {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+.library-change-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex: 0 0 6px;
+  background: var(--nico-color-text-brand);
+}
+.library-change-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 20px;
+  border-bottom: 1px solid var(--nico-color-border);
+  color: var(--nico-color-text-subtle);
+  font-size: 12px;
 }

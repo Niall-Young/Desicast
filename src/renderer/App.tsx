@@ -1,3 +1,4 @@
+import { defaultLibraries, changeDescription } from "./libraries";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   SearchRegular,
@@ -48,6 +49,7 @@ import {
 } from "@/components/ui/dialog";
 import type {
   Collection,
+  LibraryChanges,
   ExportResult,
   Icon,
   RepositoryInput,
@@ -75,6 +77,17 @@ const labels: Record<Target, string> = {
 };
 function Glyph({ children }: { children: ReactNode }) {
   return <span className="glyph">{children}</span>;
+}
+function ChangeBadge({ changes }: { changes?: LibraryChanges }) {
+  if (!changes) return null;
+  return (
+    <span
+      className="library-change-dot"
+      role="img"
+      aria-label={`未读变更：${changeDescription(changes)}`}
+      title={changeDescription(changes)}
+    />
+  );
 }
 function Logo() {
   return (
@@ -138,7 +151,8 @@ export function App() {
     generation = useRef(0),
     searchInput = useRef<HTMLInputElement>(null),
     syncing = useRef(new Set<string>());
-  const sourceSnapshot = useRef("");
+  const sourceSnapshot = useRef(""),
+    catalogSnapshot = useRef("");
   const refreshSources = () =>
     api<Source[]>("sources").then((value) => {
       const next = JSON.stringify(
@@ -149,6 +163,21 @@ export function App() {
       sourceSnapshot.current = next;
       setSources(value);
     });
+  const refreshCollections = (force = false) =>
+    api<Collection[]>("collections", force).then((value) => {
+      const next = JSON.stringify(
+        value.map((item) => [
+          item.id,
+          item.total,
+          item.version,
+          item.lastModified,
+        ]),
+      );
+      if (catalogSnapshot.current && catalogSnapshot.current !== next)
+        setRevision((revision) => revision + 1);
+      catalogSnapshot.current = next;
+      setCollections(value);
+    });
   const flash = (message: string) => {
     setNotice(message);
     setTimeout(() => setNotice(""), 3500);
@@ -158,11 +187,16 @@ export function App() {
   useEffect(() => {
     refreshSources().catch(report);
     api<Settings>("settings").then(setSettings).catch(report);
-    api<Collection[]>("collections")
-      .then(setCollections)
-      .catch(() => {});
+    refreshCollections().catch(() => {});
+    const collectionTimer = setInterval(
+      () => refreshCollections(true).catch(() => {}),
+      3_600_000,
+    );
     const timer = setInterval(() => refreshSources().catch(() => {}), 4000);
-    return () => clearInterval(timer);
+    return () => {
+      clearInterval(timer);
+      clearInterval(collectionTimer);
+    };
   }, []);
   useEffect(() => {
     if (
@@ -254,13 +288,36 @@ export function App() {
     return () => {
       alive = false;
     };
-  }, [selected?.id, target, size, color]);
+  }, [selected?.id, selected?.svg, target, size, color]);
   function chooseSource(id: string) {
     setSourceId(id);
     setCollection("");
     setOffset(0);
     setQuery("");
     setPage("library");
+  }
+  async function acknowledgeChanges() {
+    if (!activeChanges) return;
+    try {
+      await api("acknowledgeChanges", {
+        id: collection ? `public:${collection}` : sourceId,
+        revision: activeChanges.revision,
+      });
+      await refreshSources();
+      await refreshCollections();
+    } catch (err) {
+      report(err);
+    }
+  }
+  async function refreshLibrary() {
+    if (activeSource?.kind === "repository") return sync(activeSource);
+    try {
+      await refreshCollections(true);
+      setRevision((value) => value + 1);
+      flash("图库目录已更新");
+    } catch (err) {
+      report(err);
+    }
   }
   async function sync(source: Source) {
     if (syncing.current.has(source.id)) return;
@@ -345,7 +402,14 @@ export function App() {
     }
   }
   const activeSource = sources.find((source) => source.id === sourceId),
-    heading = activeSource?.name ?? "全部图标";
+    heading =
+      defaultLibraries.find((item) => item.id === collection)?.name ??
+      collections.find((item) => item.id === collection)?.name ??
+      activeSource?.name ??
+      "全部图标";
+  const activeChanges = collection
+    ? collections.find((item) => item.id === collection)?.changes
+    : activeSource?.changes;
   const teams = sources.filter((source) => source.kind === "repository");
   const titles: Record<Page, string> = {
     library: heading,
@@ -394,15 +458,66 @@ export function App() {
             <span>全部图标</span>
           </button>
           <button
-            className={`nav-item ${page === "library" && sourceId === "public" ? "active" : ""}`}
+            className={`nav-item ${page === "library" && sourceId === "public" && !collection ? "active" : ""}`}
             onClick={() => chooseSource("public")}
           >
             <Glyph>
               <SearchRegular />
             </Glyph>
             <span>开源图库</span>
-            <span className="nav-count">{collections.length || "—"}</span>
+            <span className="nav-count">
+              {collections.length
+                ? collections
+                    .reduce((sum, item) => sum + item.total, 0)
+                    .toLocaleString()
+                : "—"}
+            </span>
           </button>
+          <div className="nav-caption public-heading">默认图库</div>
+          {defaultLibraries.map((library) => {
+            const metadata = collections.find((item) => item.id === library.id);
+            return (
+              <button
+                key={library.id}
+                data-testid={`library-${library.id}`}
+                className={`nav-item ${page === "library" && sourceId === "public" && collection === library.id ? "active" : ""}`}
+                title={`${library.name} · ${metadata ? metadata.total.toLocaleString() + " 个图标" : "数量暂不可用"}${metadata?.changes ? " · " + changeDescription(metadata.changes) : ""}`}
+                onClick={() => {
+                  chooseSource("public");
+                  setCollection(library.id);
+                }}
+              >
+                <span className="library-mark" aria-hidden="true">
+                  {library.monochrome ? (
+                    <span
+                      className="library-mark-mask"
+                      style={{ maskImage: `url("${library.mark}")` }}
+                    />
+                  ) : (
+                    <>
+                      <img
+                        className={library.darkMark ? "mark-light" : ""}
+                        src={library.mark}
+                        alt=""
+                      />
+                      {library.darkMark && (
+                        <img
+                          className="mark-dark"
+                          src={library.darkMark}
+                          alt=""
+                        />
+                      )}
+                    </>
+                  )}
+                </span>
+                <span>{library.name}</span>
+                <ChangeBadge changes={metadata?.changes} />
+                <span className="nav-count">
+                  {metadata ? metadata.total.toLocaleString() : "—"}
+                </span>
+              </button>
+            );
+          })}
           <div className="nav-caption team-heading">
             <span>团队图库</span>
             <IconButton
@@ -426,7 +541,10 @@ export function App() {
                   <FolderRegular />
                 </Glyph>
                 <span>{source.name}</span>
-                <span className="nav-count">{source.iconCount}</span>
+                <ChangeBadge changes={source.changes} />
+                <span className="nav-count">
+                  {source.iconCount.toLocaleString()}
+                </span>
               </button>
             ))
           ) : (
@@ -486,6 +604,17 @@ export function App() {
           </div>
         </aside>
         <main className="workspace">
+          {page === "library" && activeChanges && (
+            <div className="library-change-notice" role="status">
+              <span>
+                {heading}：{changeDescription(activeChanges)}
+                {collection ? "（目录变更）" : ""}
+              </span>
+              <Button kind="plain" size="sm" onClick={acknowledgeChanges}>
+                标记已读
+              </Button>
+            </div>
+          )}
           <div className="page-heading">
             <div className="heading-title">
               {titles[page]}
@@ -503,11 +632,7 @@ export function App() {
                   <IconButton
                     kind="plain"
                     aria-label="刷新图库"
-                    onClick={() =>
-                      activeSource?.kind === "repository"
-                        ? sync(activeSource)
-                        : setRevision((value) => value + 1)
-                    }
+                    onClick={refreshLibrary}
                   >
                     <Refresh1Regular size={16} />
                   </IconButton>

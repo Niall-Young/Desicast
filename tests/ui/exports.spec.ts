@@ -72,6 +72,7 @@ test("HTML, React and Vue exports render gradients and independent repeated inst
   delete env.ELECTRON_RUN_AS_NODE;
   const app = await electron.launch({ args: ["."], env });
   try {
+    await app.firstWindow();
     for (const target of ["html", "react", "vue"]) {
       const next = app.waitForEvent("window");
       await app.evaluate(

@@ -188,11 +188,12 @@ export async function syncRepository(
       iconCount: indexed.icons.length,
     };
     store.replace(updated, indexed.icons);
-    return updated;
+    return store.source(id)!;
   } catch (error) {
-    if (store.source(id))
+    const current = store.source(id);
+    if (current)
       store.saveSource({
-        ...source,
+        ...current,
         error: error instanceof Error ? error.message : "同步失败",
       });
     throw error;

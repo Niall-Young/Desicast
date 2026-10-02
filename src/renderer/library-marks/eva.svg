@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="202px" height="195px" viewBox="0 0 202 195" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Asset 3</title>
+    <defs>
+        <linearGradient x1="0%" y1="3.4053034%" x2="100%" y2="62.3860219%" id="linearGradient-1">
+            <stop stop-color="#3366FF" offset="0%"></stop>
+            <stop stop-color="#3957E0" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-2">
+            <stop stop-color="#F0F5FF" offset="0%"></stop>
+            <stop stop-color="#DCE8FF" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="50%" y1="0%" x2="50%" y2="100%" id="linearGradient-3">
+            <stop stop-color="#002963" offset="0%"></stop>
+            <stop stop-color="#003684" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="0%" y1="50%" x2="100%" y2="50%" id="linearGradient-4">
+            <stop stop-color="#356AFE" offset="0%"></stop>
+            <stop stop-color="#3958E2" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Promo-V2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Asset-3" fill-rule="nonzero">
+            <g>
+                <path d="M170,123 L202,123 L202,71 C202,31.9555218 169.177031,-3.12638804e-13 130,-3.12638804e-13 L-2.84217094e-14,-3.12638804e-13 L-2.84217094e-14,124 C-2.84217094e-14,163.044478 31.822969,195 71,195 L170,195 L170,123 Z" id="Path" fill="url(#linearGradient-1)"></path>
+                <path d="M170,123 L174,123 L174,70.9652632 C173.960091,47.8049492 155.092104,29.0396921 131.805,29 L29,29 L29,124.034737 C29.0199875,147.203273 47.8996291,165.980121 71.195,166 L170,166 L170,123 Z" id="Path" fill="url(#linearGradient-2)"></path>
+                <path d="M58,65 L74.56625,65 C81.4332205,65 87,70.5667795 87,77.43375 L87,123 L58,123 L58,65 Z" id="Path" fill="url(#linearGradient-3)"></path>
+                <path d="M115,65 L131.56625,65 C138.433221,65 144,70.5667795 144,77.43375 L144,123 L115,123 L115,65 Z" id="Path" fill="url(#linearGradient-3)"></path>
+                <rect id="Rectangle" fill="#FFFFFF" x="112" y="76" width="18" height="7"></rect>
+                <rect id="Rectangle" fill="#FFFFFF" x="54" y="76" width="18" height="7"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-4)" x="58" y="112" width="29" height="11"></rect>
+                <rect id="Rectangle" fill="url(#linearGradient-4)" x="115" y="112" width="29" height="11"></rect>
+                <path d="M170,162.8 L71,163 C49.7416249,162.980153 32.0199516,145.146489 32,124 L32,33 L131,33 C152.258375,33.0198466 169.980048,50.8535111 170,72 L170,123 L177,123 L177,72 C176.980043,46.8770624 156.255863,26.0198522 131,26 L25,26 L25,124 C25.0199572,149.122938 45.7441368,169.980148 71,170 L170,170 L170,162.8 Z" id="Path" fill="#003684"></path>
+            </g>
+        </g>
+    </g>
+</svg>

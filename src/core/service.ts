@@ -34,14 +34,12 @@ export class IconService {
   }
   async sources() {
     return Promise.all(
-      this.store
-        .sources()
-        .map(async (source) => ({
-          ...source,
-          hasCredential:
-            source.kind === "repository" &&
-            Boolean(await this.secrets.get(`repository:${source.id}`)),
-        })),
+      this.store.sources().map(async (source) => ({
+        ...source,
+        hasCredential:
+          source.kind === "repository" &&
+          Boolean(await this.secrets.get(`repository:${source.id}`)),
+      })),
     );
   }
   async settings(): Promise<Settings> {
@@ -145,8 +143,11 @@ export class IconService {
   sync(id: string) {
     return syncRepository(this.store, this.secrets, id);
   }
-  collections() {
-    return this.publicLibrary.collections();
+  collections(force = false) {
+    return this.publicLibrary.collections(force);
+  }
+  acknowledgeChanges(id: string, revision: string) {
+    this.store.acknowledgeChanges(id, revision);
   }
   async search(input: SearchInput): Promise<SearchResult> {
     const query = input.query.trim(),
@@ -198,11 +199,9 @@ export class IconService {
     }
   }
   async getIcon(input: ExportInput) {
-    const icon =
-      this.store.icon(input.id) ??
-      (input.id.startsWith("public:")
-        ? await this.publicLibrary.get(input.id)
-        : undefined);
+    const icon = input.id.startsWith("public:")
+      ? await this.publicLibrary.get(input.id)
+      : this.store.icon(input.id);
     if (!icon) throw new Error("图标不存在，请同步来源后重试");
     return exportIcon(icon, input);
   }

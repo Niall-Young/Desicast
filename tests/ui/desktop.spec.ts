@@ -40,6 +40,34 @@ test.beforeEach(async () => {
     svg,
   }));
   store.replace(source, icons);
+  const prefixes = ["lucide", "tabler", "ri", "uil", "mingcute", "ic", "eva"];
+  store.saveSetting("collections", {
+    time: Date.now(),
+    items: prefixes.map((id, index) => ({ id, name: id, total: 2000 + index })),
+  });
+  for (const prefix of prefixes) {
+    store.saveSetting(`collection-index:${prefix}`, {
+      time: Date.now(),
+      names: ["search"],
+    });
+    store.cache([
+      {
+        ...icons[0],
+        id: `public:${prefix}:search`,
+        sourceId: "public",
+        collection: prefix,
+        name: "search",
+        publicRevision: `${2000 + prefixes.indexOf(prefix)}::`,
+      },
+    ]);
+  }
+  store.saveSetting("collection-changes:ri", {
+    revision: "fixture-change",
+    detectedAt: new Date().toISOString(),
+    added: 3,
+    updated: 0,
+    removed: 1,
+  });
   store.close();
   const env: NodeJS.ProcessEnv = {
     ...process.env,
@@ -187,4 +215,92 @@ test("Image search uses the configured local vision endpoint and Gendesign crop 
     server.closeAllConnections();
     await new Promise<void>((resolve) => server.close(() => resolve()));
   }
+});
+
+test("Default libraries show official SVG assets, totals, theme variants and persistent change acknowledgements", async () => {
+  const page = await app.firstWindow();
+  for (const id of ["lucide", "tabler", "ri", "uil", "mingcute", "ic", "eva"]) {
+    const row = page.getByTestId(`library-${id}`);
+    await expect(row).toBeVisible();
+    await row.click();
+    await expect(page.getByTestId("icon-card")).toHaveAttribute(
+      "title",
+      `search · ${id}`,
+    );
+    await expect(page.locator(".filter-toolbar select")).toHaveValue(id);
+    await expect(row.locator(".nav-count")).toHaveText(
+      (
+        2000 +
+        ["lucide", "tabler", "ri", "uil", "mingcute", "ic", "eva"].indexOf(id)
+      ).toLocaleString(),
+    );
+  }
+  const remix = page.getByTestId("library-ri");
+  await expect(
+    remix.getByRole("img", { name: "未读变更：新增 3 · 删除 1" }),
+  ).toBeVisible();
+  await remix.click();
+  await expect(
+    page.getByRole("status").filter({ hasText: "新增 3 · 删除 1" }),
+  ).toBeVisible();
+  await page.screenshot({ path: ".work/screenshots/libraries-light.png" });
+  for (const theme of ["dark", "light"]) {
+    await page.getByRole("button", { name: "外观设置" }).click();
+    await page.getByLabel("外观主题").selectOption(theme);
+    await remix.click();
+    await expect(page.getByTestId("icon-card")).toHaveAttribute(
+      "title",
+      "search · ri",
+    );
+    await expect(
+      page
+        .getByTestId("library-lucide")
+        .locator(theme === "dark" ? ".mark-dark" : ".mark-light"),
+    ).toBeVisible();
+    const rendered = await page
+      .locator(".library-mark img:visible")
+      .evaluateAll((images) =>
+        images.every(
+          (image) =>
+            (image as HTMLImageElement).complete &&
+            (image as HTMLImageElement).naturalWidth > 0,
+        ),
+      );
+    expect(rendered).toBe(true);
+    await page.screenshot({ path: `.work/screenshots/libraries-${theme}.png` });
+  }
+  const nativeWindow = await app.browserWindow(page);
+  await nativeWindow.evaluate((window) => window.setSize(960, 640));
+  const layouts = await page
+    .locator('[data-testid^="library-"]')
+    .evaluateAll((rows) =>
+      rows.every((row) => {
+        const label = row.children[1].getBoundingClientRect();
+        const count = row.querySelector(".nav-count")!.getBoundingClientRect();
+        return label.right <= count.left;
+      }),
+    );
+  expect(layouts).toBe(true);
+  await page.screenshot({ path: ".work/screenshots/libraries-narrow.png" });
+  await page.getByRole("button", { name: "标记已读" }).click();
+  await expect(remix.locator(".library-change-dot")).toHaveCount(0);
+  await page.reload();
+  await expect(
+    page.getByTestId("library-ri").locator(".library-change-dot"),
+  ).toHaveCount(0);
+  const store = new Store(directory);
+  const team = store.source("repo-team")!;
+  store.replace(team, store.local("", team.id).slice(1));
+  store.close();
+  const teamRow = page.locator(".sidebar").getByRole("button", {
+    name: "Design team",
+    exact: false,
+  });
+  await expect(
+    teamRow.getByRole("img", { name: "未读变更：删除 1" }),
+  ).toBeVisible({ timeout: 10_000 });
+  await expect(teamRow.locator(".nav-count")).toHaveText("47");
+  await teamRow.click();
+  await page.getByRole("button", { name: "标记已读" }).click();
+  await expect(teamRow.locator(".library-change-dot")).toHaveCount(0);
 });
