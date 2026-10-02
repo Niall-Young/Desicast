@@ -1,0 +1,10 @@
+/node_modules/
+/dist/
+/release/
+/.work/
+/test-results/
+/playwright-report/
+/.env
+/.env.local
+.DS_Store
+*.log

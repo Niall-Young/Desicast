@@ -1,0 +1,173 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./nico-tokens.css";
+@custom-variant dark (&:is(.dark *));
+@theme inline {
+  --color-background: var(--nico-color-surface);
+  --color-foreground: var(--nico-color-text);
+  --color-card: var(--nico-color-surface);
+  --color-card-foreground: var(--nico-color-text);
+  --color-popover: var(--nico-color-surface-raised);
+  --color-popover-foreground: var(--nico-color-text);
+  --color-primary: var(--nico-color-background-brand-intense);
+  --color-primary-foreground: var(--nico-color-text-inverted);
+  --color-secondary: var(--nico-color-background-neutral-subtle);
+  --color-secondary-foreground: var(--nico-color-text);
+  --color-muted: var(--nico-color-surface-sunken);
+  --color-muted-foreground: var(--nico-color-text-subtle);
+  --color-accent: var(--nico-color-interaction-hover);
+  --color-accent-foreground: var(--nico-color-text);
+  --color-destructive: var(--nico-color-background-negative-intense);
+  --color-border: var(--nico-color-border);
+  --color-input: var(--nico-color-border-intense);
+  --color-ring: var(--nico-color-border-brand);
+  --color-sidebar: var(--nico-color-surface);
+  --color-sidebar-foreground: var(--nico-color-text);
+  --color-sidebar-primary: var(--nico-color-background-brand-intense);
+  --color-sidebar-primary-foreground: var(--nico-color-text-inverted);
+  --color-sidebar-accent: var(--nico-color-interaction-hover);
+  --color-sidebar-accent-foreground: var(--nico-color-text);
+  --color-sidebar-border: var(--nico-color-border);
+  --color-sidebar-ring: var(--nico-color-border-brand);
+  --color-chart-1: var(--nico-color-text-accent-sky);
+  --color-chart-2: var(--nico-color-text-accent-green);
+  --color-chart-3: var(--nico-color-text-accent-purple);
+  --color-chart-4: var(--nico-color-text-accent-orange);
+  --color-chart-5: var(--nico-color-text-accent-pink);
+  --color-primary-hover: var(--nico-color-background-brand-intense-hover);
+  --color-secondary-hover: var(--nico-color-background-neutral-subtle-hover);
+  --color-destructive-hover: var(--nico-color-background-negative-intense-hover);
+  --color-destructive-foreground: var(--nico-color-text-inverted);
+  --color-brand-hover: var(--nico-color-interaction-hover-brand);
+  --color-negative-hover: var(--nico-color-interaction-hover-negative);
+  --color-surface-hover: var(--nico-color-surface-hover);
+  --color-surface-raised: var(--nico-color-surface-raised);
+  --color-input-surface: var(--nico-color-background-input);
+  --color-input-hover: var(--nico-color-background-input-hover);
+  --color-input-disabled: var(--nico-color-background-input-disabled);
+  --color-overlay: var(--nico-color-overlay);
+  --color-skeleton: var(--nico-color-skeleton);
+  --color-selected: var(--nico-color-interaction-selected);
+  --color-press: var(--nico-color-interaction-press);
+  --color-link: var(--nico-color-link);
+  --color-thumb: var(--nico-color-background-white-intense);
+  --color-neutral-intense: var(--nico-color-background-neutral-intense);
+  --color-text-disabled: var(--nico-color-text-disabled);
+  --radius-xs: var(--nico-border-radius-xs);
+  --radius-sm: var(--nico-border-radius-xs);
+  --radius-md: var(--nico-border-radius-sm);
+  --radius-lg: var(--nico-border-radius-md);
+  --radius-xl: var(--nico-border-radius-lg);
+  --radius-2xl: var(--nico-border-radius-xl);
+  --radius-3xl: var(--nico-border-radius-2xl);
+  --radius-full: var(--nico-border-radius-full);
+  --text-xs: var(--nico-font-size-xs);
+  --text-xs--line-height: var(--nico-line-height-xs);
+  --text-sm: var(--nico-font-size-sm);
+  --text-sm--line-height: var(--nico-line-height-sm);
+  --text-base: var(--nico-font-size-md);
+  --text-base--line-height: var(--nico-line-height-md);
+  --text-lg: var(--nico-font-size-lg);
+  --text-lg--line-height: var(--nico-line-height-lg);
+  --text-xl: var(--nico-font-size-xl);
+  --text-xl--line-height: var(--nico-line-height-xl);
+  --text-2xl: var(--nico-font-size-2xl);
+  --text-2xl--line-height: var(--nico-line-height-2xl);
+  --text-3xl: var(--nico-font-size-3xl);
+  --text-3xl--line-height: var(--nico-line-height-3xl);
+  --text-4xl: var(--nico-font-size-4xl);
+  --text-4xl--line-height: var(--nico-line-height-4xl);
+  --text-5xl: var(--nico-font-size-5xl);
+  --text-5xl--line-height: var(--nico-line-height-5xl);
+  --font-weight-normal: var(--nico-font-weight-regular);
+  --font-weight-medium: var(--nico-font-weight-medium);
+  --font-weight-semibold: var(--nico-font-weight-bold);
+  --font-weight-bold: var(--nico-font-weight-bold);
+  --blur-xs: var(--nico-blur-xs);
+  --blur-sm: var(--nico-blur-sm);
+  --blur-md: var(--nico-blur-md);
+  --blur-lg: var(--nico-blur-lg);
+  --blur-xl: var(--nico-blur-xl);
+  --blur-2xl: var(--nico-blur-2xl);
+  --blur-3xl: var(--nico-blur-3xl);
+  --blur-4xl: var(--nico-blur-4xl);
+  --font-sans: var(--nico-font-family-sans);
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --shadow-2xs: var(--nico-effect-shadow-small);
+  --shadow-xs: var(--nico-effect-shadow-small);
+  --shadow-sm: var(--nico-effect-shadow-small);
+  --shadow-md: var(--nico-effect-shadow-medium);
+  --shadow-lg: var(--nico-effect-shadow-large);
+  --shadow-xl: var(--nico-effect-shadow-large);
+  --shadow-2xl: var(--nico-effect-shadow-large);
+}
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  button,
+  a,
+  input {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+body {
+  margin: 0;
+  font-family: var(--nico-font-family-sans);
+  font-size: var(--nico-font-size-sm);
+  line-height: var(--nico-line-height-sm);
+}
+button,
+a {
+  touch-action: manipulation;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: default;
+}
+a {
+  text-decoration: none;
+}
+code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+::selection {
+  background: var(--nico-color-interaction-selected);
+  color: var(--nico-color-text);
+}
+
+/* Native scrollbars share the same Nico colors in pages and popup scroll areas. */
+@supports selector(::-webkit-scrollbar) {
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--nico-color-background-neutral-subtle);
+    border-radius: var(--nico-border-radius-full);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--nico-color-background-neutral-subtle-hover);
+  }
+}
+
+/* Firefox exposes scrollbar colors on the scroll container, not the thumb. */
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--nico-color-background-neutral-subtle) transparent;
+  }
+  *:hover {
+    scrollbar-color: var(--nico-color-background-neutral-subtle-hover) transparent;
+  }
+}
