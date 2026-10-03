@@ -52,7 +52,7 @@ export function AddLibraryDialog({
   const [username, setUsername] = useState(source?.username ?? "");
   const [token, setToken] = useState("");
   const [visible, setVisible] = useState(false);
-  const [allowVision, setAllowVision] = useState(source?.allowVision ?? false);
+  const [allowVision, setAllowVision] = useState(source?.allowVision ?? true);
   const [metadata, setMetadata] = useState<Metadata>();
   const [loading, setLoading] = useState(false);
   const [busy, setBusy] = useState(false);

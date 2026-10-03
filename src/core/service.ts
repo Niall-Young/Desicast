@@ -268,6 +268,12 @@ export class IconService {
     this.store.acknowledgeChanges(id, revision);
   }
   async search(input: SearchInput): Promise<SearchResult> {
+    return this.searchIcons(input);
+  }
+  private async searchIcons(
+    input: SearchInput,
+    visionOnly = false,
+  ): Promise<SearchResult> {
     const query = input.query.trim(),
       limit = Math.max(1, Math.min(input.limit ?? 48, 96)),
       offset = Math.max(0, input.offset ?? 0);
@@ -290,8 +296,14 @@ export class IconService {
               ].map((icon) => [icon.id, icon]),
             ).values(),
           ];
-    const team = expanded.filter((icon) => icon.sourceId !== "public");
-    if (input.sourceId && input.sourceId !== "public")
+    const eligible = visionOnly
+      ? expanded.filter((icon) => this.store.source(icon.sourceId)?.allowVision)
+      : expanded;
+    const team = eligible.filter((icon) => icon.sourceId !== "public");
+    if (
+      (input.sourceId && input.sourceId !== "public") ||
+      (visionOnly && !this.store.source("public")?.allowVision)
+    )
       return { icons: team.slice(offset, offset + limit), total: team.length };
     if (team.length >= offset + limit)
       return { icons: team.slice(offset, offset + limit), total: team.length };
@@ -310,8 +322,8 @@ export class IconService {
       };
     } catch {
       return {
-        icons: expanded.slice(offset, offset + limit),
-        total: expanded.length,
+        icons: eligible.slice(offset, offset + limit),
+        total: eligible.length,
         warning: "公共图库暂时无法连接，当前显示本地缓存",
       };
     }
@@ -341,12 +353,15 @@ export class IconService {
     const description = await model.describe(input.dataUrl),
       candidates: Icon[] = [];
     for (const keyword of description.keywords.slice(0, 4)) {
-      const result = await this.search({
-        query: keyword,
-        sourceId: input.sourceId,
-        collection: input.collection,
-        limit: 12,
-      });
+      const result = await this.searchIcons(
+        {
+          query: keyword,
+          sourceId: input.sourceId,
+          collection: input.collection,
+          limit: 12,
+        },
+        true,
+      );
       candidates.push(
         ...result.icons.filter(
           (icon) => this.store.source(icon.sourceId)?.allowVision,

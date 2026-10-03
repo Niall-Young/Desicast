@@ -1,4 +1,5 @@
 import { test } from "node:test";
+import { repositorySchema } from "../src/core/contracts";
 import assert from "node:assert/strict";
 import { mkdtemp, mkdir, writeFile, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -290,6 +291,107 @@ test("Secrets stay outside persisted source/settings and disabled team vision is
       service.close();
     }
   }));
+test("New repositories default to vision enabled and preserve an explicit opt-out", () => {
+  const repository = {
+    name: "Team",
+    url: "https://github.com/team/icons",
+    branch: "main",
+    directories: ["icons"],
+  };
+  assert.equal(repositorySchema.parse(repository).allowVision, true);
+  assert.equal(
+    repositorySchema.parse({ ...repository, allowVision: false }).allowVision,
+    false,
+  );
+});
+
+test("Global vision excludes disabled libraries before limiting candidates", async (t) =>
+  temporary(async (path) => {
+    const service = new IconService(path, new MemorySecrets());
+    try {
+      for (const [id, allowVision] of [
+        ["disabled", false],
+        ["enabled", true],
+      ] as const) {
+        service.store.saveSource({
+          id,
+          name: id,
+          kind: "repository",
+          allowVision,
+          iconCount: 0,
+        });
+      }
+      service.store.cache([
+        ...Array.from({ length: 20 }, (_, index) => ({
+          ...icon,
+          id: `disabled:search-${index}`,
+          name: `search-${index}`,
+          sourceId: "disabled",
+        })),
+        { ...icon, id: "enabled:search", sourceId: "enabled", name: "search" },
+      ]);
+      await service.saveSettings({
+        theme: "system",
+        model: {
+          baseUrl: "https://model.example/v1",
+          model: "fixture",
+          consent: true,
+        },
+      });
+      t.mock.method(VisionModel.prototype, "describe", async () => ({
+        keywords: ["search"],
+        shape: "circle",
+        style: "outline",
+      }));
+      const ranked: string[][] = [];
+      t.mock.method(
+        VisionModel.prototype,
+        "rank",
+        async (_image: string, candidates: Icon[]) => {
+          ranked.push(candidates.map((candidate) => candidate.id));
+          return candidates;
+        },
+      );
+      let publicSearches = 0;
+      t.mock.method(service.publicLibrary, "search", async () => {
+        publicSearches++;
+        return {
+          icons: [{ ...icon, id: "public:fixture:search", sourceId: "public" }],
+          total: 1,
+        };
+      });
+      const dataUrl = "data:image/png;base64,aGVsbG8=";
+      const result = await service.vision({ dataUrl });
+      assert.deepEqual(
+        result.icons.map((candidate) => candidate.id),
+        ["enabled:search", "public:fixture:search"],
+      );
+      assert.deepEqual(ranked[0], ["enabled:search", "public:fixture:search"]);
+      assert.equal(publicSearches, 1);
+      service.store.saveSource({
+        ...service.store.source("public")!,
+        allowVision: false,
+      });
+      assert.deepEqual(
+        (await service.vision({ dataUrl })).icons.map(
+          (candidate) => candidate.id,
+        ),
+        ["enabled:search"],
+      );
+      assert.equal(publicSearches, 1);
+      await assert.rejects(
+        service.vision({ dataUrl, sourceId: "disabled" }),
+        /禁用/,
+      );
+      assert.ok(
+        (await service.search({ query: "search", sourceId: "disabled" })).icons
+          .length > 0,
+      );
+    } finally {
+      service.close();
+    }
+  }));
+
 test("Repository access type persists and switching to public removes private credentials", async () =>
   temporary(async (path) => {
     const secrets = new MemorySecrets();

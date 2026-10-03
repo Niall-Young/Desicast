@@ -221,6 +221,9 @@ export function App() {
     [selected, setSelected] = useState<Icon>(),
     [busy, setBusy] = useState(false),
     [revision, setRevision] = useState(0);
+  const visionEnabled = sourceId
+    ? Boolean(sources.find((source) => source.id === sourceId)?.allowVision)
+    : sources.some((source) => source.allowVision);
   const [target, setTarget] = useState<Target>("svg"),
     [exported, setExported] = useState<ExportResult>(),
     [exportPending, setExportPending] = useState(false),
@@ -457,6 +460,7 @@ export function App() {
     }
   }
   async function loadFile(file: File) {
+    if (!visionEnabled) return;
     if (
       !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
       file.size > 8 * 1024 * 1024
@@ -476,6 +480,7 @@ export function App() {
     reader.readAsDataURL(file);
   }
   async function searchImage(dataUrl: string) {
+    if (!visionEnabled) return;
     setReference(dataUrl);
     setCropOpen(false);
     if (!settings.model.model || !settings.model.consent) {
@@ -955,14 +960,16 @@ export function App() {
                     />
                     <div className="grid-toolbar-actions">
                       <div className="grid-search-actions">
-                        <IconButton
-                          kind="plain"
-                          size="md"
-                          aria-label="以图搜图"
-                          onClick={() => fileInput.current?.click()}
-                        >
-                          <DesignIcon name="image-search" />
-                        </IconButton>
+                        {visionEnabled && (
+                          <IconButton
+                            kind="plain"
+                            size="md"
+                            aria-label="以图搜图"
+                            onClick={() => fileInput.current?.click()}
+                          >
+                            <DesignIcon name="image-search" />
+                          </IconButton>
+                        )}
                         <IconButton
                           kind="plain"
                           size="md"
@@ -1027,7 +1034,7 @@ export function App() {
                       )}
                     </span>
                   </div>
-                  {reference && (
+                  {visionEnabled && reference && (
                     <div className="reference-strip">
                       <img src={reference} alt="图片搜索参考" />
                       <span>参考图片</span>
@@ -1516,7 +1523,7 @@ export function App() {
           )}
         </AddLibraryDialog>
       )}
-      {cropOpen && reference && (
+      {visionEnabled && cropOpen && reference && (
         <CropDialog
           image={reference}
           onClose={() => setCropOpen(false)}

@@ -27,7 +27,7 @@ export const repositorySchema = z.object({
   directories: z.array(z.string().max(500)).min(1).max(20),
   username: z.string().max(200).optional(),
   token: z.string().max(4096).optional(),
-  allowVision: z.boolean().default(false),
+  allowVision: z.boolean().default(true),
 });
 export const settingsSchema = z.object({
   theme: z.enum(["system", "light", "dark"]),

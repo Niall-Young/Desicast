@@ -867,11 +867,11 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
     );
     await expect(
       page.getByRole("switch", { name: "开启视觉检索" }),
-    ).not.toBeChecked();
+    ).toBeChecked();
     await page.getByRole("switch", { name: "开启视觉检索" }).click();
     await expect(
       page.getByRole("switch", { name: "开启视觉检索" }),
-    ).toBeChecked();
+    ).not.toBeChecked();
     await page.getByRole("button", { name: "取消", exact: true }).click();
     await expect(dialog).toHaveCount(0);
     await expect(page.getByTestId("icon-card")).toHaveCount(48);
