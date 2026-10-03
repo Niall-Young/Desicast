@@ -13,7 +13,7 @@ import model from "./design-assets/settings-model.svg?url";
 import library from "./design-assets/settings-library.svg?url";
 
 const sections = [
-  { id: "general", label: "通用设置", icon: general },
+  { id: "general", label: "通用设置", icon: general, group: "基础配置" },
   { id: "appearance", label: "外观", icon: appearance },
   { id: "connector", label: "连接器", icon: connector, group: "连接配置" },
   { id: "model", label: "模型配置", icon: model },
@@ -58,7 +58,8 @@ export function SettingsPage({
       // The final section may be too short to reach the top of the viewport.
       if (
         container.scrollTop > 0 &&
-        container.scrollTop + container.clientHeight >= container.scrollHeight - 1
+        container.scrollTop + container.clientHeight >=
+          container.scrollHeight - 1
       )
         current = sections[sections.length - 1].id;
       setActive(current);
@@ -185,10 +186,8 @@ export function SettingsPage({
         </section>
         <section id="settings-connector">
           <h2>连接器</h2>
-          <p className="settings-section-description">
-            请复制下方内容在终端中执行，连接 MCP
-          </p>
           <MCPClientPanel
+            descriptionPlacement="above-tabs"
             info={info}
             loadError={loadError}
             onError={onError}

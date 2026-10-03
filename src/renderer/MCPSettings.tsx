@@ -148,14 +148,30 @@ export function MCPClientPanel({
   loadError = "",
   onError,
   onNotice,
+  descriptionPlacement = "panel",
 }: {
   info?: MCPInfo;
   loadError?: string;
   onError: (error: unknown) => void;
   onNotice: (message: string) => void;
+  descriptionPlacement?: "panel" | "above-tabs";
 }) {
+  const [activeClient, setActiveClient] = useState<string>("codex");
+  const description = (clientId: string) =>
+    clientId === "other"
+      ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接。"
+      : clientId === "claude"
+        ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP。"
+        : "请复制下方内容在终端中执行，连接 Codex 的 MCP。";
   return (
-    <Tabs defaultValue="codex" className="mcp-clients">
+    <Tabs
+      value={activeClient}
+      onValueChange={setActiveClient}
+      className="mcp-clients"
+    >
+      {descriptionPlacement === "above-tabs" && (
+        <p className="mcp-client-description">{description(activeClient)}</p>
+      )}
       <TabsList aria-label="MCP 客户端">
         {clients.map((client) => (
           <TabsTrigger key={client.id} value={client.id}>
@@ -166,13 +182,9 @@ export function MCPClientPanel({
       </TabsList>
       {clients.map((client) => (
         <TabsContent key={client.id} value={client.id} className="mcp-panel">
-          <p className="mcp-client-description">
-            {client.id === "other"
-              ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接。"
-              : client.id === "claude"
-                ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP。"
-                : "请复制下方内容在终端中执行，连接 Codex 的 MCP。"}
-          </p>
+          {descriptionPlacement === "panel" && (
+            <p className="mcp-client-description">{description(client.id)}</p>
+          )}
           <div className="mcp-code">
             <div className="mcp-code-header">
               <span>{client.id === "other" ? "JSON" : "Bash"}</span>
