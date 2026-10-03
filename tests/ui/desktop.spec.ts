@@ -237,9 +237,12 @@ test("Themes, settings forms and 960px layout remain usable", async () => {
   await window.evaluate((window) => window.setSize(960, 640));
   await openSettings(page, "仓库管理");
   await page.getByRole("button", { name: "添加仓库", exact: true }).click();
-  await expect(page.getByLabel("仓库地址")).toBeVisible();
-  await expect(page.getByRole("button", { name: "连接并同步" })).toBeVisible();
+  await expect(page.getByLabel("仓库链接")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "添加", exact: true }),
+  ).toBeVisible();
   await page.screenshot({ path: ".work/screenshots/repositories-dark.png" });
+  await page.getByRole("button", { name: "取消", exact: true }).click();
   await openSettings(page, "视觉模型");
   await page.getByLabel("模型名称", { exact: true }).fill("vision-model");
   await page.getByLabel("允许发送图片到模型").click();
@@ -304,7 +307,7 @@ test("Image search uses the configured local vision endpoint and Gendesign crop 
     const page = await app.firstWindow();
     await openSettings(page, "仓库管理");
     await page.getByRole("button", { name: "编辑", exact: true }).click();
-    await page.getByLabel("允许团队图标发送给模型").click();
+    await page.getByRole("switch", { name: "开启视觉检索" }).click();
     await page.getByRole("button", { name: "保存配置" }).click();
     await openSettings(page, "视觉模型");
     const address = server.address() as { port: number };
@@ -430,17 +433,18 @@ test("Default libraries show bundled design SVG assets, totals, theme variants a
   await expect(teamRow.locator(".library-change-dot")).toHaveCount(0);
 });
 
-test("Repository form loads branches and cascaded directory selections without credential inputs", async () => {
+test("Repository dialog loads branches and cascaded directory selections with optional credentials", async () => {
   const page = await app.firstWindow();
   await openSettings(page, "仓库管理");
   await page.getByRole("button", { name: "添加仓库", exact: true }).click();
-  await expect(page.getByLabel("Git 用户名")).toHaveCount(0);
-  await expect(page.getByLabel("仓库访问令牌")).toHaveCount(0);
+  await expect(page.getByLabel("用户名", { exact: true })).toBeVisible();
+  await expect(page.getByLabel("访问令牌", { exact: true })).toBeVisible();
+  await page.getByLabel("图标库名称").fill("Lucide test");
   await expect(
-    page.getByRole("button", { name: "连接并同步", exact: true }),
+    page.getByRole("button", { name: "添加", exact: true }),
   ).toBeDisabled();
   await page
-    .getByLabel("仓库地址")
+    .getByLabel("仓库链接")
     .fill("https://github.com/lucide-icons/lucide.git");
   await page.getByRole("button", { name: "读取仓库信息" }).click();
   await expect(page.getByText(/已连接 ·/)).toBeVisible({ timeout: 45000 });
@@ -462,7 +466,7 @@ test("Repository form loads branches and cascaded directory selections without c
     page.getByRole("button", { name: "移除目录 packages/lucide-react" }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "连接并同步", exact: true }),
+    page.getByRole("button", { name: "添加", exact: true }),
   ).toBeEnabled();
   await page
     .getByRole("button", { name: "移除目录 packages/lucide-react" })
@@ -471,9 +475,9 @@ test("Repository form loads branches and cascaded directory selections without c
     .getByRole("button", { name: "移除目录 packages/lucide-static" })
     .click();
   await expect(
-    page.getByRole("button", { name: "连接并同步", exact: true }),
+    page.getByRole("button", { name: "添加", exact: true }),
   ).toBeDisabled();
-  await page.getByLabel("仓库地址").fill("https://github.com/team/other.git");
+  await page.getByLabel("仓库链接").fill("https://github.com/team/other.git");
   await expect(page.getByLabel("仓库分支")).toBeDisabled();
 });
 
@@ -619,10 +623,122 @@ test("Icon workspace reflows between grid, list and export details while retaini
         panel.scrollWidth <= panel.clientWidth,
     );
   expect(fits).toBe(true);
-  await page.getByRole("button", { name: "复制代码", exact: true }).scrollIntoViewIfNeeded();
-  await expect(page.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+  await page
+    .getByRole("button", { name: "复制代码", exact: true })
+    .scrollIntoViewIfNeeded();
+  await expect(
+    page.getByRole("button", { name: "复制代码", exact: true }),
+  ).toBeVisible();
   await page.screenshot({
     path: ".work/screenshots/icon-detail-narrow.png",
     scale: "css",
   });
+});
+
+test("Add library matches Figma modal geometry, masks tokens, dismisses and preserves library selection", async () => {
+  const page = await app.firstWindow();
+  await page
+    .locator(".sidebar")
+    .getByRole("button", { name: "Design team", exact: false })
+    .click();
+  await expect(page.getByTestId("icon-card")).toHaveCount(48);
+  for (const theme of ["light", "dark"]) {
+    await openSettings(page, "外观设置");
+    await page.getByLabel("外观主题").selectOption(theme);
+    await page
+      .locator(".sidebar")
+      .getByRole("button", { name: "Design team", exact: false })
+      .click();
+    await page.getByRole("button", { name: "添加图标库", exact: true }).click();
+    const dialog = page.getByRole("dialog", {
+      name: "添加图标库",
+      exact: true,
+    });
+    await expect(dialog).toBeVisible();
+    const bounds = await dialog.boundingBox();
+    expect(bounds!.width).toBe(640);
+    expect(bounds!.height).toBe(465);
+    const assets = await dialog.locator("img").evaluateAll((images) =>
+      images.map((image) => ({
+        loaded: (image as HTMLImageElement).naturalWidth > 0,
+        width: image.getBoundingClientRect().width,
+        height: image.getBoundingClientRect().height,
+      })),
+    );
+    expect(assets).toHaveLength(3);
+    for (const asset of assets)
+      expect(asset).toEqual({ loaded: true, width: 16, height: 16 });
+    await dialog.screenshot({
+      path: `.work/screenshots/add-library-${theme}.png`,
+      scale: "css",
+    });
+    await page.getByLabel("图标库名称").fill("Design team");
+    await expect(dialog.getByText("11/20", { exact: true })).toBeVisible();
+    await page.getByLabel("访问令牌", { exact: true }).fill("test-only-token");
+    await expect(page.getByLabel("访问令牌", { exact: true })).toHaveAttribute(
+      "type",
+      "password",
+    );
+    await page.getByRole("button", { name: "显示令牌" }).click();
+    await expect(page.getByLabel("访问令牌", { exact: true })).toHaveAttribute(
+      "type",
+      "text",
+    );
+    await page.getByRole("button", { name: "隐藏令牌" }).click();
+    await expect(page.getByLabel("访问令牌", { exact: true })).toHaveAttribute(
+      "type",
+      "password",
+    );
+    await expect(
+      page.getByRole("switch", { name: "开启视觉检索" }),
+    ).not.toBeChecked();
+    await page.getByRole("switch", { name: "开启视觉检索" }).click();
+    await expect(
+      page.getByRole("switch", { name: "开启视觉检索" }),
+    ).toBeChecked();
+    await page.getByRole("button", { name: "取消", exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+    await expect(page.getByTestId("icon-card")).toHaveCount(48);
+  }
+  for (const close of ["Escape", "关闭添加图标库"]) {
+    await page.getByRole("button", { name: "添加图标库", exact: true }).click();
+    await expect(page.getByLabel("访问令牌", { exact: true })).toHaveValue("");
+    if (close === "Escape") await page.keyboard.press("Escape");
+    else await page.getByRole("button", { name: close }).click();
+    await expect(
+      page.getByRole("dialog", { name: "添加图标库", exact: true }),
+    ).toHaveCount(0);
+  }
+  await openSettings(page, "仓库管理");
+  await page.getByRole("button", { name: "编辑", exact: true }).click();
+  await expect(page.getByLabel("图标库名称")).toHaveValue("Design team");
+  await page.getByLabel("用户名", { exact: true }).fill("test-user");
+  await page.getByLabel("访问令牌", { exact: true }).fill("test-only-token");
+  await page.getByRole("switch", { name: "开启视觉检索" }).click();
+  await page.getByRole("button", { name: "保存配置", exact: true }).click();
+  await expect(page.getByRole("dialog", { name: "编辑图标库" })).toHaveCount(0);
+  const store = new Store(directory);
+  expect(store.source("repo-team")).toMatchObject({
+    username: "test-user",
+    allowVision: true,
+  });
+  expect(JSON.stringify(store.source("repo-team"))).not.toContain(
+    "test-only-token",
+  );
+  store.close();
+  await page.getByTestId("library-tabler").click({ button: "right" });
+  await page.getByRole("menuitem", { name: "移除图标库", exact: true }).click();
+  await page
+    .getByRole("dialog")
+    .getByRole("button", { name: "移除", exact: true })
+    .click();
+  await expect(page.getByTestId("library-tabler")).toHaveCount(0);
+  await page.getByRole("button", { name: "添加图标库", exact: true }).click();
+  await page
+    .getByRole("button", { name: "重新添加 Tabler Icons", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "添加图标库", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.getByTestId("library-tabler")).toBeVisible();
 });

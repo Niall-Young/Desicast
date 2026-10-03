@@ -1,3 +1,4 @@
+import { AddLibraryDialog } from "./AddLibraryDialog";
 import { MCPSettings } from "./MCPSettings";
 import { LibraryFilterMenu } from "./LibraryFilterMenu";
 import { filterLibraries, type LibraryFilter } from "./library-filter";
@@ -15,7 +16,6 @@ import {
   PopoverTrigger,
   PopoverContent,
 } from "@/components/ui/popover";
-import { DirectoryCascader } from "./DirectoryCascader";
 import { defaultLibraries, changeDescription } from "./libraries";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
@@ -61,7 +61,6 @@ import type {
   LibraryChanges,
   ExportResult,
   Icon,
-  RepositoryInput,
   SearchResult,
   Settings,
   Source,
@@ -142,6 +141,7 @@ export function App() {
   const [configureLibrary, setConfigureLibrary] = useState<string>();
   const [configurationName, setConfigurationName] = useState("");
   const [savingLibrary, setSavingLibrary] = useState(false);
+  const [addLibraryOpen, setAddLibraryOpen] = useState(false);
   const [editRepository, setEditRepository] = useState<string>();
   const [repositoryEditRevision, setRepositoryEditRevision] = useState(0);
   async function saveLibrary(id: string, patch: LibraryPreference) {
@@ -656,9 +656,7 @@ export function App() {
               className="nav-item"
               kind="plain"
               onClick={() => {
-                setEditRepository(undefined);
-                setRepositoryEditRevision((value) => value + 1);
-                navigate("repositories");
+                setAddLibraryOpen(true);
               }}
             >
               <DesignIcon name="add" />
@@ -1438,6 +1436,41 @@ export function App() {
           </ModalContent>
         </Modal>
       )}
+      {addLibraryOpen && (
+        <AddLibraryDialog
+          onClose={() => setAddLibraryOpen(false)}
+          onSaved={() => {
+            refreshSources();
+            setRevision((value) => value + 1);
+          }}
+          onNotice={flash}
+        >
+          {defaultLibraries.some(
+            (library) => libraryPreferences[library.id]?.hidden,
+          ) && (
+            <div className="add-library-restores">
+              <p>已移除的公共图标库</p>
+              {defaultLibraries
+                .filter((library) => libraryPreferences[library.id]?.hidden)
+                .map((library) => (
+                  <Button
+                    key={library.id}
+                    kind="tonal"
+                    size="sm"
+                    onClick={() => {
+                      saveLibrary(library.id, { hidden: false })
+                        .then(() => setAddLibraryOpen(false))
+                        .catch(report);
+                    }}
+                  >
+                    重新添加{" "}
+                    {libraryPreferences[library.id]?.name ?? library.name}
+                  </Button>
+                ))}
+            </div>
+          )}
+        </AddLibraryDialog>
+      )}
       {cropOpen && reference && (
         <CropDialog
           image={reference}
@@ -1466,94 +1499,18 @@ function RepositorySettings({
   onError: (err: unknown) => void;
   onNotice: (message: string) => void;
 }) {
-  const [editing, setEditing] = useState<string>(),
-    [showForm, setShowForm] = useState(false),
-    [busy, setBusy] = useState(false),
-    [name, setName] = useState(""),
-    [url, setUrl] = useState(""),
-    [branch, setBranch] = useState(""),
-    [directories, setDirectories] = useState<string[]>([]),
-    [metadata, setMetadata] = useState<{
-      branches: string[];
-      directories: string[];
-      authorization: string;
-    }>(),
-    [loading, setLoading] = useState(false),
-    [loadError, setLoadError] = useState(""),
-    [allowVision, setAllowVision] = useState(false);
+  const [editing, setEditing] = useState<Source>();
+  const [showForm, setShowForm] = useState(false);
   function edit(source?: Source) {
-    requestVersion.current++;
-    setLoading(false);
-    setEditing(source?.id);
-    setName(source?.name ?? "");
-    setUrl(source?.url ?? "");
-    setBranch(source?.branch ?? "");
-    setDirectories(source?.directories ?? []);
-    setMetadata(undefined);
-    setLoadError("");
-    setAllowVision(source?.allowVision ?? false);
+    setEditing(source);
     setShowForm(true);
   }
-  const requestVersion = useRef(0);
   useEffect(() => {
     if (initialEditing) {
       const source = sources.find((source) => source.id === initialEditing);
       if (source) edit(source);
     }
   }, [initialEditing]);
-  async function loadRepository(selectedBranch?: string) {
-    const version = ++requestVersion.current;
-    setLoading(true);
-    setMetadata(undefined);
-    setLoadError("");
-    try {
-      const result = await api<{
-        branches: string[];
-        directories: string[];
-        authorization: string;
-        branch: string;
-      }>("browseRepository", { url, branch: selectedBranch });
-      if (version !== requestVersion.current) return;
-      setMetadata(result);
-      setBranch(result.branch);
-      setDirectories((current) =>
-        current.filter((p) => p === "." || result.directories.includes(p)),
-      );
-    } catch (err) {
-      if (version === requestVersion.current)
-        setLoadError(err instanceof Error ? err.message : "读取失败");
-    } finally {
-      if (version === requestVersion.current) setLoading(false);
-    }
-  }
-  async function save() {
-    setBusy(true);
-    try {
-      const repository: RepositoryInput = {
-        name,
-        url,
-        branch,
-        directories,
-        username: editing
-          ? sources.find((source) => source.id === editing)?.username
-          : undefined,
-        allowVision,
-      };
-      if (editing) await api("updateRepository", { id: editing, repository });
-      else await api("addRepository", repository);
-      setShowForm(false);
-      onRefresh();
-      onNotice(
-        editing
-          ? "仓库配置已更新，请同步获取最新图标"
-          : "仓库已添加，正在拉取图标",
-      );
-    } catch (err) {
-      onError(err);
-    } finally {
-      setBusy(false);
-    }
-  }
   return (
     <div className="settings-content wide">
       <div className="settings-intro intro-row">
@@ -1566,137 +1523,12 @@ function RepositorySettings({
         </Button>
       </div>
       {showForm && (
-        <form
-          className="repository-form"
-          onSubmit={(event) => {
-            event.preventDefault();
-            save();
-          }}
-        >
-          <h2>{editing ? "编辑仓库" : "连接仓库"}</h2>
-          <div className="form-grid">
-            <Field label="图库名称">
-              <Input
-                aria-label="图库名称"
-                required
-                placeholder="例如 Design team"
-                value={name}
-                onValueChange={setName}
-              />
-            </Field>
-            <Field label="分支">
-              <NativeSelect
-                aria-label="仓库分支"
-                value={branch}
-                disabled={!metadata || loading}
-                onChange={(event) => {
-                  setBranch(event.target.value);
-                  setDirectories([]);
-                  loadRepository(event.target.value);
-                }}
-              >
-                {!metadata && (
-                  <option value={branch}>{branch || "先读取仓库"}</option>
-                )}
-                {metadata?.branches.map((item) => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </NativeSelect>
-            </Field>
-          </div>
-          <Field label="仓库地址">
-            <Input
-              aria-label="仓库地址"
-              required
-              placeholder="https://github.com/your-team/icons.git"
-              value={url}
-              onValueChange={(value) => {
-                requestVersion.current++;
-                setUrl(value);
-                setMetadata(undefined);
-                setBranch("");
-                setDirectories([]);
-                setLoading(false);
-                setLoadError("");
-              }}
-            />
-          </Field>
-          <div className="repository-access-row">
-            <Button
-              kind="ghost"
-              loading={loading}
-              disabled={!url || loading}
-              onClick={() => loadRepository(branch || undefined)}
-            >
-              读取仓库信息
-            </Button>
-            <span className="hint">
-              {metadata
-                ? `已连接 · ${metadata.authorization}`
-                : "自动使用本机 Git 凭据或 gh / glab 登录，无需填写用户名和令牌"}
-            </span>
-          </div>
-          {loadError && (
-            <p role="alert" className="repository-error">
-              {loadError}
-            </p>
-          )}
-          <Field
-            label="SVG 目录"
-            hint="逐级浏览，可选择多个目录；选中父目录会包含其全部子目录"
-          >
-            <DirectoryCascader
-              paths={metadata?.directories ?? []}
-              value={directories}
-              onChange={setDirectories}
-              disabled={!metadata || loading}
-            />
-          </Field>
-          <div className="toggle-row">
-            <div>
-              <strong>允许模型图片搜索</strong>
-              <p>视觉搜索可能发送这个仓库的候选图标预览。</p>
-            </div>
-            <Switch
-              aria-label="允许团队图标发送给模型"
-              checked={allowVision}
-              onCheckedChange={setAllowVision}
-            />
-          </div>
-          <div className="form-actions">
-            <Button
-              kind="plain"
-              onClick={() => {
-                requestVersion.current++;
-                setShowForm(false);
-              }}
-            >
-              取消
-            </Button>
-            <Button
-              type="submit"
-              loading={busy}
-              disabled={
-                loading ||
-                !directories.length ||
-                (!metadata &&
-                  !(
-                    editing &&
-                    sources.some(
-                      (source) =>
-                        source.id === editing &&
-                        source.url === url &&
-                        source.branch === branch,
-                    )
-                  ))
-              }
-            >
-              {editing ? "保存配置" : "连接并同步"}
-            </Button>
-          </div>
-        </form>
+        <AddLibraryDialog
+          source={editing}
+          onClose={() => setShowForm(false)}
+          onSaved={onRefresh}
+          onNotice={onNotice}
+        />
       )}
       <div className="repository-list">
         {sources.length

@@ -12,7 +12,10 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { z } from "zod";
 import { browseRepository } from "../core/repository-access";
 import { IconService } from "../core/service";
-import { libraryPreferences, saveLibraryPreference } from "../core/library-management";
+import {
+  libraryPreferences,
+  saveLibraryPreference,
+} from "../core/library-management";
 import { KeychainSecrets, MemorySecrets } from "../core/secrets";
 import {
   searchSchema,
@@ -133,9 +136,21 @@ async function call(method: string, input: unknown) {
         .object({
           url: z.string().max(2000),
           branch: z.string().max(200).optional(),
+          username: z.string().max(200).optional(),
+          token: z.string().max(4096).optional(),
         })
         .parse(input);
-      return browseRepository(value.url, value.branch);
+      return browseRepository(
+        value.url,
+        value.branch,
+        value.token
+          ? {
+              username: value.username || "oauth2",
+              password: value.token,
+              method: "访问令牌",
+            }
+          : undefined,
+      );
     }
     case "addRepository": {
       const source = await service.addRepository(repositorySchema.parse(input));

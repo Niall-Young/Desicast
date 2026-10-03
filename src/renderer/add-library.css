@@ -1,0 +1,131 @@
+/* Figma 2018:11975 · Gendesign controls and Nico tokens. */
+.add-library-dialog {
+  width: 640px;
+}
+.add-library-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+}
+.add-library-field {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: 4px;
+  font-size: var(--nico-font-size-sm);
+  line-height: 22px;
+  color: var(--nico-color-text-subtle);
+}
+.add-library-full {
+  grid-column: 1 / -1;
+}
+.add-library-hint {
+  color: var(--nico-color-text-subtlest);
+}
+.add-library-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+.dark .add-library-icon {
+  filter: invert(1);
+}
+.add-library-select,
+.add-library-password {
+  position: relative;
+}
+.add-library-select [data-slot="native-select-wrapper"] {
+  width: 100%;
+  opacity: 1;
+}
+.add-library-select [data-slot="native-select"] {
+  height: 32px;
+  border: 1px solid var(--nico-color-border-opaque);
+  border-radius: var(--nico-border-radius-sm);
+  padding: 4px 32px 4px 11px;
+  background: var(--nico-color-background-input);
+  font-size: 14px;
+}
+.add-library-select [data-slot="native-select"]:disabled {
+  color: var(--nico-color-text-disabled);
+}
+.add-library-select [data-slot="native-select-icon"] {
+  display: none;
+}
+.add-library-select > img,
+.add-library-password > img {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  pointer-events: none;
+}
+.add-library-password:not(.is-visible) [data-slot="password-input-icon"] {
+  visibility: hidden;
+}
+.add-library-dialog .directory-picker {
+  min-height: 32px;
+  gap: 4px;
+  padding: 0;
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-background-input);
+}
+.add-library-dialog .directory-picker > button {
+  width: 100%;
+  height: 32px;
+  padding: 4px 11px;
+  justify-content: flex-start;
+  border: 1px solid var(--nico-color-border-opaque);
+  border-radius: var(--nico-border-radius-sm);
+  background: transparent;
+  color: var(--nico-color-text-disabled);
+  opacity: 1;
+  overflow: hidden;
+}
+.add-library-dialog .directory-picker > button svg {
+  display: none;
+}
+.add-library-dialog .directory-tags:empty {
+  display: none;
+}
+.add-library-dialog .directory-tags:not(:empty) {
+  padding: 0 8px 4px;
+}
+.add-library-vision {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 22px;
+}
+.add-library-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+  font-size: 12px;
+  line-height: 20px;
+  color: var(--nico-color-text-subtlest);
+}
+.add-library-status [role="alert"] {
+  color: var(--nico-color-text-negative);
+  overflow-wrap: anywhere;
+}
+@media (max-width: 560px) {
+  .add-library-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+}
+
+.add-library-restores {
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.add-library-restores p {
+  width: 100%;
+  margin: 0;
+  color: var(--nico-color-text-subtle);
+}

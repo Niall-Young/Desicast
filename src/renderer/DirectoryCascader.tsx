@@ -12,11 +12,13 @@ export function DirectoryCascader({
   value,
   onChange,
   disabled,
+  placeholder = "选择目录",
 }: {
   paths: string[];
   value: string[];
   onChange: (value: string[]) => void;
   disabled: boolean;
+  placeholder?: string;
 }) {
   const [trail, setTrail] = useState<string[]>([]);
   const columns = ["", ...trail];
@@ -35,7 +37,8 @@ export function DirectoryCascader({
             <Button kind="ghost" disabled={disabled} aria-label="SVG 目录" />
           }
         >
-          选择目录 <RightRegular size={16} />
+          {value.length ? `已选择 ${value.length} 个目录` : placeholder}{" "}
+          <RightRegular size={16} />
         </PopoverTrigger>
         <PopoverContent className="directory-cascader" align="start">
           <label className="directory-option">

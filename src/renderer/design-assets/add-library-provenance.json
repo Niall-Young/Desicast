@@ -1,0 +1,26 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "nodeId": "2018:11975",
+  "retrievedAt": "2026-10-03",
+  "assets": {
+    "add-library-close.svg": {
+      "layer": "Modal / Header / Icon button / Left icon",
+      "width": "16",
+      "height": "16",
+      "sha256": "2887ff71f8b27b80b9312d787d70c8cc0b55e8e652f1016b3fa7cc903e630dd9"
+    },
+    "add-library-expand.svg": {
+      "layer": "2018:12096 / Select / Expand icon",
+      "width": "16",
+      "height": "16",
+      "sha256": "280279e07713846fa70e1da5647bfdd59897ec983a7840ee93fbb60b237fa37f"
+    },
+    "add-library-hidden.svg": {
+      "layer": "2018:12170 / Password Input / Visible icon",
+      "width": "16",
+      "height": "16",
+      "sha256": "1cf27cbd549ead167b971f48a2b92b5ba6a24059ef34045d7cade6c1946ff2c8"
+    }
+  },
+  "source": "Figma get_design_context assets, revision retrieved 2026-10-03"
+}

@@ -157,7 +157,7 @@ test("library context actions, confirmations, re-add and persistence work in Ele
       .click();
     await page.getByTestId("library-repo-menu").click({ button: "right" });
     await page.getByRole("menuitem", { name: "配置", exact: true }).click();
-    await expect(page.getByLabel("图库名称")).toHaveValue("Menu team");
+    await expect(page.getByLabel("图标库名称")).toHaveValue("Menu team");
     await page.getByRole("button", { name: "取消", exact: true }).click();
     await page.getByTestId("library-repo-menu").click({ button: "right" });
     await page
