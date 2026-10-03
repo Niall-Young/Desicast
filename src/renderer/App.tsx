@@ -370,7 +370,9 @@ export function App() {
   }, [query, sourceId, collection, offset, revision, page]);
   useEffect(() => {
     let alive = true;
-    if (selected && lastExportIconId.current !== selected.id) {
+    const switchingIcon =
+      selected !== undefined && lastExportIconId.current !== selected.id;
+    if (switchingIcon) {
       lastExportIconId.current = selected.id;
       setExported(undefined);
     }
@@ -378,7 +380,7 @@ export function App() {
       setExportPending(false);
       return;
     }
-    setExportPending(true);
+    if (switchingIcon) setExportPending(true);
     api<ExportResult>("getIcon", {
       id: selected.id,
       target,
