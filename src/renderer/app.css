@@ -373,7 +373,7 @@ select {
   align-items: center;
   justify-content: space-between;
   color: var(--nico-color-text-subtlest);
-  font-size: 10px;
+  font-size: 14px;
 }
 .pager {
   display: flex;
