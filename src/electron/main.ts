@@ -183,6 +183,10 @@ async function call(method: string, input: unknown) {
       return service.selectModelProvider(
         z.string().min(1).max(100).parse(input),
       );
+    case "removeModelProvider":
+      return service.removeModelProvider(
+        z.string().min(1).max(100).parse(input),
+      );
     case "testModel":
       return service.testModel(
         input === undefined

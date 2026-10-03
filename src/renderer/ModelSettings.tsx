@@ -17,6 +17,7 @@ import type { Settings } from "../core/types";
 import { api } from "./api";
 import emptyIcon from "./design-assets/model-empty.svg?url";
 import closeIcon from "./design-assets/model-close.svg?url";
+import deleteIcon from "./design-assets/model-delete.svg?url";
 import "./model-settings.css";
 
 export function ModelSettings({
@@ -32,9 +33,11 @@ export function ModelSettings({
 }) {
   const [open, setOpen] = useState(false);
   const [selecting, setSelecting] = useState(false);
+  const [deleting, setDeleting] = useState<string>();
+  const pending = selecting || Boolean(deleting);
   const providers = settings.modelProviders ?? [];
   const addButton = (
-    <Button kind="ghost" onClick={() => setOpen(true)}>
+    <Button kind="ghost" disabled={pending} onClick={() => setOpen(true)}>
       添加供应商
     </Button>
   );
@@ -47,8 +50,9 @@ export function ModelSettings({
           className="model-provider-list"
           layout="vertical"
           value={settings.model.id ?? ""}
-          disabled={selecting}
+          disabled={pending}
           onValueChange={async (id) => {
+            if (pending) return;
             setSelecting(true);
             try {
               onSettings(await api<Settings>("selectModelProvider", id));
@@ -60,10 +64,35 @@ export function ModelSettings({
           }}
         >
           {providers.map((provider) => (
-            <label className="model-provider-row" key={provider.id}>
-              <span title={provider.model}>{provider.model}</span>
-              <Radio value={provider.id} aria-label={provider.model} />
-            </label>
+            <div className="model-provider-row" key={provider.id}>
+              <label className="model-provider-option">
+                <Radio value={provider.id} aria-label={provider.model} />
+                <span title={provider.model}>{provider.model}</span>
+              </label>
+              <IconButton
+                kind="tonal"
+                aria-label={`删除供应商 ${provider.model}`}
+                title={`删除供应商 ${provider.model}`}
+                disabled={pending}
+                loading={deleting === provider.id}
+                onClick={async () => {
+                  if (pending) return;
+                  setDeleting(provider.id);
+                  try {
+                    onSettings(
+                      await api<Settings>("removeModelProvider", provider.id),
+                    );
+                    onNotice("模型供应商已删除");
+                  } catch (error) {
+                    onError(error);
+                  } finally {
+                    setDeleting(undefined);
+                  }
+                }}
+              >
+                <img className="model-delete-icon" src={deleteIcon} alt="" />
+              </IconButton>
+            </div>
           ))}
         </RadioGroup>
       ) : (

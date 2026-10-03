@@ -107,6 +107,85 @@ test("legacy model and Keychain key remain selectable after adding a provider", 
   });
 });
 
+test("provider deletion preserves selection, falls back, clears keys, and persists the empty state", async () => {
+  await fixture(async (service, secrets, directory) => {
+    const first = await service.addModelProvider({
+      baseUrl: "https://first.example/v1",
+      model: "First",
+      apiKey: "first-secret",
+    });
+    const second = await service.addModelProvider({
+      baseUrl: "https://second.example/v1",
+      model: "Second",
+      apiKey: "second-secret",
+    });
+    const third = await service.addModelProvider({
+      baseUrl: "https://third.example/v1",
+      model: "Third",
+      apiKey: "third-secret",
+    });
+    const inactiveRemoved = await service.removeModelProvider(second.model.id!);
+    assert.equal(inactiveRemoved.model.id, third.model.id);
+    assert.equal(await secrets.get(`model:${second.model.id}`), undefined);
+    assert.equal(await secrets.get(`model:${third.model.id}`), "third-secret");
+    const activeRemoved = await service.removeModelProvider(third.model.id!);
+    assert.equal(activeRemoved.model.id, first.model.id);
+    assert.equal(activeRemoved.model.hasKey, true);
+    assert.equal(activeRemoved.model.consent, true);
+    assert.equal(await secrets.get(`model:${third.model.id}`), undefined);
+    const snapshot = JSON.stringify(service.store.settings());
+    await assert.rejects(service.removeModelProvider("missing"), /不存在/);
+    assert.equal(JSON.stringify(service.store.settings()), snapshot);
+    const empty = await service.removeModelProvider(first.model.id!);
+    assert.deepEqual(empty.modelProviders, []);
+    assert.equal(empty.model.model, "");
+    assert.equal(empty.model.id, undefined);
+    assert.equal(empty.model.consent, false);
+    assert.equal(empty.model.hasKey, false);
+    assert.equal(await secrets.get(`model:${first.model.id}`), undefined);
+    await service.saveSettings({ ...empty, theme: "dark" });
+    const reopened = new IconService(directory, secrets);
+    try {
+      assert.deepEqual((await reopened.settings()).modelProviders, []);
+      assert.equal((await reopened.settings()).model.consent, false);
+      await assert.rejects(
+        reopened.selectModelProvider(first.model.id!),
+        /不存在/,
+      );
+    } finally {
+      reopened.close();
+    }
+  });
+});
+
+test("deleting a legacy provider clears its legacy key and does not recreate it", async () => {
+  await fixture(async (service, secrets) => {
+    service.store.saveSetting("preferences", {
+      theme: "system",
+      model: {
+        baseUrl: "https://legacy.example/v1",
+        model: "Legacy",
+        consent: true,
+      },
+    });
+    await secrets.set("model", "legacy-secret");
+    const next = await service.addModelProvider({
+      baseUrl: "https://next.example/v1",
+      model: "Next",
+      apiKey: "next-secret",
+    });
+    await service.selectModelProvider("legacy");
+    const settings = await service.removeModelProvider("legacy");
+    assert.equal(settings.model.id, next.model.id);
+    assert.equal(settings.model.hasKey, true);
+    assert.equal(settings.modelProviders?.length, 1);
+    assert.equal(await secrets.get("model"), undefined);
+    assert.equal(await secrets.get(`model:${next.model.id}`), "next-secret");
+    await service.removeModelProvider(next.model.id!);
+    assert.deepEqual((await service.settings()).modelProviders, []);
+  });
+});
+
 test("draft connection tests send image input and draft key without saving on success or failure", async (t) => {
   await fixture(async (service, secrets) => {
     const saved = await service.addModelProvider({

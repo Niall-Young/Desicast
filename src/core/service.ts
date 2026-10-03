@@ -157,6 +157,30 @@ export class IconService {
     });
     return this.settings();
   }
+  async removeModelProvider(id: string) {
+    const settings = this.store.settings();
+    const providers = this.modelProviders(settings);
+    const provider = providers.find((provider) => provider.id === id);
+    if (!provider) throw new Error("模型供应商不存在");
+    const remaining = providers
+      .filter((provider) => provider.id !== id)
+      .map(({ id, baseUrl, model, consent }) => ({
+        id,
+        baseUrl,
+        model,
+        consent,
+      }));
+    const activeId = settings.model.id ?? "legacy";
+    const active =
+      remaining.find((provider) => provider.id === activeId) ?? remaining[0];
+    await this.secrets.delete(this.modelSecret(provider));
+    this.store.saveSetting("preferences", {
+      ...settings,
+      model: active ? { ...active, consent: true } : { ...defaults.model },
+      modelProviders: remaining,
+    });
+    return this.settings();
+  }
   async addRepository(input: RepositoryInput): Promise<Source> {
     const url = repositoryUrl(input.url),
       directories = repositoryDirectories(input.directories);

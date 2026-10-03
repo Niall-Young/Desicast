@@ -20,6 +20,13 @@
       "sha256": "2887ff71f8b27b80b9312d787d70c8cc0b55e8e652f1016b3fa7cc903e630dd9",
       "width": "16",
       "height": "16"
+    },
+    "model-delete": {
+      "localFile": "model-delete.svg",
+      "nodeId": "I2023:19698;30:2794",
+      "sha256": "2d368067fe8a85b32d344790bb828e4b1ce8b64e075225f70d05642ed24decc9",
+      "width": "16",
+      "height": "16"
     }
   },
   "components": {
