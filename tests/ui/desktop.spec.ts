@@ -523,9 +523,9 @@ test("Repository dialog uses metadata fixtures and upstream multiselect director
     .getByLabel("仓库链接")
     .fill("https://github.com/lucide-icons/lucide.git");
   await page.getByRole("button", { name: "读取仓库信息" }).click();
-  await expect(page.getByText(/已连接 ·/)).toBeVisible({ timeout: 45000 });
   const branch = page.getByRole("combobox", { name: "仓库分支" });
-  await expect(branch).toBeEnabled();
+  await expect(branch).toBeEnabled({ timeout: 45000 });
+  await expect(page.locator(".add-library-status")).toHaveCount(0);
   await expect(branch).toHaveCSS(
     "background-color",
     await page
