@@ -10,9 +10,10 @@
     "model-empty": {
       "localFile": "model-empty.svg",
       "nodeId": "2023:19373",
-      "sha256": "2d04f2671d6760c816b91e0f1eb8e38147167870de0d49404065295f617e48b3",
+      "sha256": "bdcf7bb64b0790458d80eeed54c3efffa9cef99340b9fc1c2782a8b8906aa631",
       "width": "20",
-      "height": "20"
+      "height": "20",
+      "iconName": "search_ai_line"
     },
     "model-close": {
       "localFile": "model-close.svg",

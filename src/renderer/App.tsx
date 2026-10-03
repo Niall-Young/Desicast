@@ -11,6 +11,7 @@ import {
 } from "./library-filter";
 import { LibraryContextMenu } from "./LibraryContextMenu";
 import { RemoveLibraryDialog } from "./RemoveLibraryDialog";
+import { RepositoryEmptyState } from "./RepositoryEmptyState";
 import type {
   LibraryPreferences,
   LibraryPreference,
@@ -1635,14 +1636,7 @@ function RepositorySettings({
               </div>
             ))
           : !showForm && (
-              <div className="repository-empty">
-                <FolderRegular size={32} />
-                <h2>团队的图标，在这里集合</h2>
-                <p>选择仓库和目录，DesiCast 会同步 SVG 并提供给 MCP</p>
-                <Button kind="ghost" onClick={() => edit()}>
-                  连接第一个仓库
-                </Button>
-              </div>
+              <RepositoryEmptyState onAdd={() => edit()} />
             )}
       </div>
       <div className="settings-note">

@@ -1,0 +1,40 @@
+.repository-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 20px;
+  border: 1px solid var(--nico-color-border);
+  border-radius: var(--nico-border-radius-md);
+  text-align: center;
+}
+.repository-empty-state-icon {
+  display: flex;
+  padding: 12px;
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-background-neutral-subtle);
+}
+.repository-empty-state-icon img {
+  width: 20px;
+  height: 20px;
+}
+.dark .repository-empty-state-icon img {
+  filter: invert(1);
+}
+.repository-empty-state-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  line-height: 22px;
+}
+.repository-empty-state-copy h2,
+.repository-empty-state-copy p {
+  margin: 0;
+  font-size: 14px;
+}
+.repository-empty-state-copy h2 {
+  font-weight: var(--nico-font-weight-medium);
+}
+.repository-empty-state-copy p {
+  color: var(--nico-color-text-subtlest);
+}

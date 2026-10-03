@@ -1,0 +1,15 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "nodeId": "2023:18910",
+  "retrievedAt": "2026-10-03",
+  "assets": {
+    "repository-empty": {
+      "localFile": "repository-empty.svg",
+      "nodeId": "2023:19136",
+      "iconName": "book_5_line",
+      "sha256": "2d04f2671d6760c816b91e0f1eb8e38147167870de0d49404065295f617e48b3",
+      "width": "20",
+      "height": "20"
+    }
+  }
+}
