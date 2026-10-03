@@ -117,6 +117,48 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
   }
   await page.screenshot({ path: ".work/screenshots/team-light.png" });
   await page.getByRole("button", { name: "MCP 连接", exact: false }).click();
+  await expect(
+    page.getByRole("heading", { name: "连接 Codex", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "连接 Claude Code", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "其他 MCP 客户端", exact: true }),
+  ).toBeVisible();
+  for (const [label, prefix] of [
+    ["复制 Codex 命令", "codex mcp add iconcast"],
+    ["复制 Claude Code 命令", "claude mcp add"],
+  ]) {
+    const button = page.getByRole("button", { name: label, exact: true });
+    await expect(button).toBeEnabled();
+    const shown = await button.locator("..").locator("pre").innerText();
+    await button.click();
+    await expect
+      .poll(() => app.evaluate(({ clipboard }) => clipboard.readText()))
+      .toBe(shown);
+    const copied = await app.evaluate(({ clipboard }) => clipboard.readText());
+    expect(copied).toBe(shown);
+    expect(copied).toContain(prefix);
+    expect(copied).toContain("--env ELECTRON_RUN_AS_NODE=1");
+    expect(copied).toContain(`'${directory}'`);
+    if (label.includes("Claude")) {
+      expect(copied).toContain("--transport stdio --scope user iconcast -- ");
+    }
+  }
+  await page
+    .getByRole("button", { name: "复制 MCP JSON", exact: true })
+    .click();
+  await expect
+    .poll(() => app.evaluate(({ clipboard }) => clipboard.readText()))
+    .toContain('"mcpServers"');
+  const configuration = JSON.parse(
+    await app.evaluate(({ clipboard }) => clipboard.readText()),
+  );
+  expect(configuration.mcpServers.iconcast.args).toContain(directory);
+  expect(configuration.mcpServers.iconcast.env).toEqual({
+    ELECTRON_RUN_AS_NODE: "1",
+  });
   await page.getByRole("button", { name: "检查 MCP 连接" }).click();
   await expect(page.getByText("连接正常 · 5 个工具 · 2 个来源")).toBeVisible({
     timeout: 20_000,

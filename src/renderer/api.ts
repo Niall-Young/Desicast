@@ -5,6 +5,7 @@ export interface MCPInfo {
   env: Record<string, string>;
   configuration: string;
   codexCommand: string;
+  claudeCommand: string;
   dataDirectory: string;
   packaged: boolean;
 }

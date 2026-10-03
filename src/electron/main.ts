@@ -58,6 +58,7 @@ function mcpInfo() {
       2,
     ),
     codexCommand: `codex mcp add iconcast ${app.isPackaged ? "" : "--env ELECTRON_RUN_AS_NODE=1 "}-- ${[command, ...allArgs].map(quote).join(" ")}`,
+    claudeCommand: `claude mcp add ${app.isPackaged ? "" : "--env ELECTRON_RUN_AS_NODE=1 "}--transport stdio --scope user iconcast -- ${[command, ...allArgs].map(quote).join(" ")}`,
     dataDirectory,
     packaged: app.isPackaged,
   };

@@ -1654,7 +1654,10 @@ function MCPSettings({
           <LinkRegular size={28} />
         </div>
         <h1>把图标交给你的 Agent</h1>
-        <p>同一份图库，通过 MCP 搜索、获取并用于你的项目。</p>
+        <p>
+          连接 Codex、Claude Code 或其他 MCP
+          客户端，在项目中搜索并使用同一份图库。
+        </p>
       </div>
       <div className="connection-summary">
         <StatusIndicator color="positive">本地 stdio 服务</StatusIndicator>
@@ -1676,7 +1679,27 @@ function MCPSettings({
           <CopyRegular size={16} />
         </IconButton>
       </div>
+      <h2 className="settings-subheading">连接 Claude Code</h2>
+      <p className="hint">
+        复制命令到终端执行，为当前用户的所有项目添加 Iconcast。随后在新的 Claude
+        Code 会话中输入 /mcp 查看连接状态。
+      </p>
+      <div className="config-code">
+        <pre>{info?.claudeCommand ?? "正在读取…"}</pre>
+        <IconButton
+          size="sm"
+          kind="plain"
+          aria-label="复制 Claude Code 命令"
+          disabled={!info}
+          onClick={() => copy(info!.claudeCommand)}
+        >
+          <CopyRegular size={16} />
+        </IconButton>
+      </div>
       <h2 className="settings-subheading">其他 MCP 客户端</h2>
+      <p className="hint">
+        将以下配置合并到客户端的 MCP 配置中，然后重新连接。
+      </p>
       <div className="config-code">
         <pre>{info?.configuration ?? "正在读取…"}</pre>
         <IconButton

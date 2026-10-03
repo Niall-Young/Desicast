@@ -130,7 +130,7 @@ npm run package      # 生成 macOS DMG / ZIP 安装包
 
 ### MCP 服务与 CLI
 
-在桌面应用「MCP 连接」中可复制适用于当前安装位置的 Codex 命令或通用客户端 JSON。开发时可直接运行：
+在桌面应用「MCP 连接」中可复制适用于当前安装位置的 Codex、Claude Code 注册命令或其他客户端的通用 JSON。Claude Code 命令使用 `--transport stdio --scope user`，让当前用户的所有项目都能使用 Iconcast；执行后在新的 Claude Code 会话中输入 `/mcp` 查看连接状态。命令会自动携带图库数据目录，开发模式也会包含所需的 Electron 环境变量。开发时可直接运行：
 
 ```sh
 npm run mcp        # 运行构建产物
@@ -256,7 +256,7 @@ Vision similarity tests use controlled mock responses; user-configured models ar
 
 ### MCP Server & CLI
 
-In the desktop app under "MCP Connection", copy the installation-specific Codex command or universal client JSON. For development:
+In the desktop app under "MCP Connection", copy the installation-specific registration command for Codex or Claude Code, or generic JSON for other clients. The Claude Code command uses `--transport stdio --scope user` to make Iconcast available across the current user's projects; after running it, enter `/mcp` in a new Claude Code session to check the connection. Commands include the library data directory and, in development, the required Electron environment variable. For development:
 
 ```sh
 npm run mcp        # Run compiled MCP server
