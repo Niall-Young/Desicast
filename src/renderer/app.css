@@ -9,8 +9,7 @@ body,
   box-sizing: border-box;
 }
 button,
-input,
-select {
+input {
   font: inherit;
 }
 .app {
@@ -263,10 +262,8 @@ select {
   gap: 12px;
   min-width: 0;
 }
-.filter-left select {
+.filter-left [data-slot="select-wrapper"] {
   max-width: 185px;
-  border-color: var(--nico-color-border);
-  font-size: 12px;
 }
 .filter-hint,
 .result-count {
@@ -430,7 +427,7 @@ select {
   font-size: 12px;
   font-weight: 500;
 }
-.field [data-slot="native-select-wrapper"] {
+.field [data-slot="select-wrapper"] {
   width: 100%;
 }
 .hint {

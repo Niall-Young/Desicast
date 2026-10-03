@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { NativeSelect } from "@/components/ui/native-select";
+import { Select } from "./Select";
 import { ArrowLeftRegular } from "@mingcute/react/core-regular";
 import type { Settings } from "../core/types";
 import { api, type MCPInfo } from "./api";
@@ -167,19 +167,19 @@ export function SettingsPage({
                 <p>模式</p>
                 <p className="settings-cell-description">亮暗模式切换</p>
               </div>
-              <NativeSelect
-                size="sm"
+              <Select
                 aria-label="外观主题"
+                items={[
+                  { value: "system", label: "系统" },
+                  { value: "light", label: "浅色" },
+                  { value: "dark", label: "深色" },
+                ]}
                 value={settings.theme}
                 disabled={busy}
-                onChange={(event) =>
-                  saveTheme(event.target.value as Settings["theme"])
-                }
-              >
-                <option value="system">系统</option>
-                <option value="light">浅色</option>
-                <option value="dark">深色</option>
-              </NativeSelect>
+                onValueChange={(value) => {
+                  if (value) saveTheme(value as Settings["theme"]);
+                }}
+              />
             </div>
           </div>
         </section>

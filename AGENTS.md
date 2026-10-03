@@ -5,6 +5,7 @@ DesiCast is a macOS Electron application and independent MCP server for public a
 ## Project rules
 
 - Use the user's Gendesign component source and Nico tokens for the desktop UI. Preserve upstream APIs and record the imported revision. Application controls use MingCute; library icons retain their original artwork.
+- Never import, implement, or use NativeSelect. Do not recreate it with a native HTML select; use the shared Select with the Nico Input appearance and a trailing dropdown arrow.
 - Keep credentials outside ordinary configuration, repository URLs, logs, and MCP responses. Use macOS Keychain in production.
 - Repository synchronization is read-only. Do not execute scripts or hooks from icon repositories.
 - Keep SVG as the canonical artwork and preserve source provenance in exported results.

@@ -6,6 +6,8 @@ description: Use when implementing or changing desktop layouts, components, them
 
 Use Gendesign components with their original Base UI APIs. Text actions use Button; icon-only actions use IconButton with an accessible name. Do not introduce shadcn or Radix wrappers.
 
+NativeSelect is prohibited by project policy. Use the shared Select composition with Base UI selection semantics and the Nico Input appearance: the same field background, borderless outline, radius and height, with a trailing dropdown arrow.
+
 Before choosing a control, inspect the exports and examples at the revision recorded in [GENDESIGN.md](../GENDESIGN.md). Reuse the component that supports the required interaction, including selection, keyboard behavior, icons and motion. Application CSS may arrange controls, but must not repaint their internal slots, hide built-in icons, or replace interaction states to imitate another component. When upstream has no matching component, record the limitation and the minimal composition in GENDESIGN.md rather than claim it is an upstream control.
 
 Load the supplied Nico token CSS and theme mapping. New appearance uses semantic Nico variables directly; do not substitute custom palettes. Follow system appearance by default and support explicit light/dark modes.

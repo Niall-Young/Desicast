@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { Select } from "./Select";
 import { Switch } from "@/components/ui/switch";
 import {
   Modal,
@@ -202,29 +202,22 @@ export function AddLibraryDialog({
             <label className="add-library-field">
               <span>分支</span>
               <div className="add-library-select">
-                <NativeSelect
+                <Select
                   aria-label="仓库分支"
-                  size="sm"
-                  value={branch}
+                  items={(metadata?.branches ?? []).map((item) => ({
+                    value: item,
+                    label: item,
+                  }))}
+                  value={branch || null}
+                  placeholder={loading ? "正在读取分支…" : "请选择分支"}
                   disabled={!metadata || loading || busy}
-                  onChange={(event) => {
-                    if (metadata?.branch === event.target.value) return;
-                    setBranch(event.target.value);
+                  onValueChange={(value) => {
+                    if (!value || metadata?.branch === value) return;
+                    setBranch(value);
                     setDirectories([]);
-                    void loadRepository(event.target.value);
+                    void loadRepository(value);
                   }}
-                >
-                  {!metadata && (
-                    <option value={branch}>
-                      {loading ? "正在读取分支…" : branch || "请选择分支"}
-                    </option>
-                  )}
-                  {metadata?.branches.map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
-                </NativeSelect>
+                />
               </div>
             </label>
             <div className="add-library-field add-library-full">

@@ -1,3 +1,4 @@
+import { selectValue } from "./select-control";
 import {
   test,
   expect,
@@ -245,7 +246,7 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
 test("Themes, settings forms and 960px layout remain usable", async () => {
   const page = await app.firstWindow();
   await openSettings(page, "外观设置");
-  await page.getByLabel("外观主题").selectOption("dark");
+  await selectValue(page, "外观主题", "dark");
   await page
     .locator(".settings-page")
     .getByRole("button", { name: "返回", exact: true })
@@ -389,7 +390,7 @@ test("Default libraries show bundled design SVG assets, totals, theme variants a
       "title",
       `search · ${id}`,
     );
-    await expect(page.locator(".filter-toolbar select")).toHaveValue(id);
+    await expect(page.locator('.filter-toolbar [data-slot="select-trigger"]')).toContainText(id);
     await expect(row.locator(".nav-count")).toHaveText(
       (
         2000 +
@@ -408,7 +409,7 @@ test("Default libraries show bundled design SVG assets, totals, theme variants a
   await page.screenshot({ path: ".work/screenshots/libraries-light.png" });
   for (const theme of ["dark", "light"]) {
     await openSettings(page, "外观设置");
-    await page.getByLabel("外观主题").selectOption(theme);
+    await selectValue(page, "外观主题", theme);
     await page
       .locator(".settings-page")
       .getByRole("button", { name: "返回", exact: true })
@@ -513,8 +514,26 @@ test("Repository dialog uses metadata fixtures and upstream multiselect director
     .fill("https://github.com/lucide-icons/lucide.git");
   await page.getByRole("button", { name: "读取仓库信息" }).click();
   await expect(page.getByText(/已连接 ·/)).toBeVisible({ timeout: 45000 });
-  await page.getByLabel("仓库分支").selectOption("main");
-  await expect(page.getByLabel("仓库分支")).toHaveValue("main");
+  const branch = page.getByRole("combobox", { name: "仓库分支" });
+  await expect(branch).toBeEnabled();
+  await expect(branch).toHaveCSS(
+    "background-color",
+    await page
+      .getByLabel("仓库链接")
+      .locator("xpath=../..")
+      .evaluate((element) => getComputedStyle(element).backgroundColor),
+  );
+  await branch.focus();
+  await branch.press("Space");
+  await page
+    .getByRole("option", { name: "main", exact: true })
+    .press("ArrowDown");
+  await page
+    .getByRole("option", { name: "preview", exact: true })
+    .press("Enter");
+  await expect(branch).toContainText("preview");
+  await selectValue(page, "仓库分支", "main");
+  await expect(page.getByLabel("仓库分支")).toContainText("main");
   await expect(
     page.getByRole("button", { name: "SVG 目录", exact: true }),
   ).toBeEnabled({ timeout: 45000 });
@@ -534,7 +553,7 @@ test("Repository dialog uses metadata fixtures and upstream multiselect director
   await expect(
     page.getByRole("button", { name: "移除目录 packages/lucide-react" }),
   ).toBeVisible();
-  await page.getByLabel("仓库分支").selectOption("main");
+  await selectValue(page, "仓库分支", "main");
   await expect(
     page.getByRole("button", { name: "移除目录 packages/lucide-react" }),
   ).toBeVisible();
@@ -565,7 +584,7 @@ test("Figma home opens existing libraries and preserves global search, settings 
   await expect(page.locator(".home-library-card")).toHaveCount(7);
   for (const theme of ["light", "dark"]) {
     await openSettings(page, "外观设置");
-    await page.getByLabel("外观主题").selectOption(theme);
+    await selectValue(page, "外观主题", theme);
     await page
       .locator(".settings-page")
       .getByRole("button", { name: "返回", exact: true })
@@ -622,14 +641,14 @@ test("Figma home opens existing libraries and preserves global search, settings 
     });
   }
   await page.getByTestId("home-library-uil").click();
-  await expect(page.locator(".filter-toolbar select")).toHaveValue("uil");
+  await expect(page.locator('.filter-toolbar [data-slot="select-trigger"]')).toContainText("uil");
   await expect(page.getByTestId("icon-card")).toHaveCount(1);
   await page.getByRole("button", { name: "返回", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Hello，今天想用什么图标库？" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "前进", exact: true }).click();
-  await expect(page.locator(".filter-toolbar select")).toHaveValue("uil");
+  await expect(page.locator('.filter-toolbar [data-slot="select-trigger"]')).toContainText("uil");
   await openSettings(page, "首页");
   await window.evaluate((window) => window.setSize(960, 640));
   await page.setViewportSize({ width: 960, height: 640 });
@@ -713,7 +732,7 @@ test("Icon workspace reflows between grid, list and export details while retaini
   ).toHaveCount(0);
   await page.getByRole("tab", { name: "网格视图" }).click();
   await openSettings(page, "外观设置");
-  await page.getByLabel("外观主题").selectOption("dark");
+  await selectValue(page, "外观主题", "dark");
   await page
     .locator(".settings-page")
     .getByRole("button", { name: "返回", exact: true })
@@ -762,7 +781,7 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
   await expect(page.getByTestId("icon-card")).toHaveCount(48);
   for (const theme of ["light", "dark"]) {
     await openSettings(page, "外观设置");
-    await page.getByLabel("外观主题").selectOption(theme);
+    await selectValue(page, "外观主题", theme);
     await page
       .locator(".settings-page")
       .getByRole("button", { name: "返回", exact: true })
@@ -793,9 +812,18 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
     expect(assets).toHaveLength(1);
     for (const asset of assets)
       expect(asset).toEqual({ loaded: true, width: 16, height: 16 });
-    await expect(
-      dialog.locator('[data-slot="native-select-icon"]'),
-    ).toBeVisible();
+    await expect(dialog.locator('[data-slot="select-icon"]')).toBeVisible();
+    const inputAppearance = await dialog
+      .locator('[data-slot="input-wrapper"]')
+      .first()
+      .evaluate((element) => {
+        const style = getComputedStyle(element);
+        return { height: style.height, radius: style.borderRadius };
+      });
+    const branch = dialog.getByRole("combobox", { name: "仓库分支" });
+    await expect(branch).toHaveCSS("height", inputAppearance.height);
+    await expect(branch).toHaveCSS("border-radius", inputAppearance.radius);
+    await expect(branch).toHaveCSS("border-width", "0px");
     await expect(
       dialog.locator('[data-slot="password-input-icon"]'),
     ).toBeVisible();
@@ -946,7 +974,7 @@ test("Settings page navigation, persistent theme and connector copy stay usable"
     page.getByRole("navigation", { name: "设置分类" }),
   ).toBeVisible();
   await dialog.getByRole("button", { name: "外观", exact: true }).click();
-  await dialog.getByLabel("外观主题").selectOption("dark");
+  await selectValue(page, "外观主题", "dark");
   await expect(page.locator("html")).toHaveClass("dark");
   await dialog.getByRole("button", { name: "返回", exact: true }).click();
   await expect(dialog).toHaveCount(0);
@@ -954,7 +982,7 @@ test("Settings page navigation, persistent theme and connector copy stay usable"
     page.getByRole("heading", { name: "Hello，今天想用什么图标库？" }),
   ).toBeVisible();
   await openSettings(page, "外观设置");
-  await expect(page.getByLabel("外观主题")).toHaveValue("dark");
+  await expect(page.getByLabel("外观主题")).toContainText("深色");
   const window = await app.browserWindow(page);
   await window.evaluate((window) => window.setSize(960, 640));
   await openSettings(page, "连接器");

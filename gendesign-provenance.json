@@ -73,11 +73,6 @@
       "normalizedSha256": "8df3eb5d381d0191d89b5241b064bfa49c193aa68e96c7948d05c152a53c7dbc",
       "parser": "typescript"
     },
-    "components/ui/native-select.tsx": {
-      "sha256": "69afa6756960749ed265a21ee1c431fca3770a043a0548a0ebeb397a31fef74f",
-      "normalizedSha256": "b9ac093927f87a2bb982714b24515d74f78666482589ef7ec07aeecb4379373f",
-      "parser": "typescript"
-    },
     "components/ui/password-input.tsx": {
       "sha256": "5fc722f9247a5e52e2376068395b78882d76631132d93cc27bc98f9a2c6e8452",
       "normalizedSha256": "2b09a892184960a18cfd1f10662102dac52d0f44e99b6725d2c73975fe294692",

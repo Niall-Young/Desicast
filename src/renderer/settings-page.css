@@ -85,7 +85,7 @@
   margin: -4px 0 12px;
   line-height: 22px;
 }
-.settings-cell [data-slot="native-select-wrapper"] {
+.settings-cell [data-slot="select-wrapper"] {
   width: 160px;
   flex: 0 0 160px;
 }
@@ -162,7 +162,7 @@
   .settings-cell {
     flex-wrap: wrap;
   }
-  .settings-cell [data-slot="native-select-wrapper"] {
+  .settings-cell [data-slot="select-wrapper"] {
     flex-basis: 100%;
     width: 100%;
   }

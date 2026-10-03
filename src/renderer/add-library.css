@@ -33,7 +33,7 @@
 .dark .add-library-icon {
   filter: invert(1);
 }
-.add-library-select [data-slot="native-select-wrapper"] {
+.add-library-select [data-slot="select-wrapper"] {
   width: 100%;
 }
 .add-library-vision {

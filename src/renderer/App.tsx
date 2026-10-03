@@ -44,7 +44,7 @@ import { useMessage } from "@/components/ui/message";
 import { SearchBox } from "@/components/ui/search-box";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { Select } from "./Select";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
@@ -1003,23 +1003,23 @@ export function App() {
                     hidden={Boolean(sourceId) && !visionResult}
                   >
                     <div className="filter-left">
-                      <NativeSelect
-                        size="sm"
+                      <Select
                         aria-label="图标集"
+                        items={[
+                          { value: "", label: "全部图标集" },
+                          ...collections.map((item) => ({
+                            value: item.id,
+                            label: item.name,
+                          })),
+                        ]}
                         value={collection}
-                        onChange={(event) => {
-                          setCollection(event.target.value);
+                        onValueChange={(value) => {
+                          if (value === undefined) return;
+                          setCollection(value);
                           setOffset(0);
                         }}
                         disabled={Boolean(activeSource?.kind === "repository")}
-                      >
-                        <option value="">全部图标集</option>
-                        {collections.map((item) => (
-                          <option key={item.id} value={item.id}>
-                            {item.name}
-                          </option>
-                        ))}
-                      </NativeSelect>
+                      />
                       {visionResult ? (
                         <span className="filter-hint">按形状与风格匹配</span>
                       ) : (
@@ -1366,23 +1366,25 @@ export function App() {
                       <p>界面使用 Gendesign 组件与 Nico 主题。</p>
                     </div>
                     <Field label="外观">
-                      <NativeSelect
+                      <Select
                         aria-label="外观主题"
+                        items={[
+                          { value: "system", label: "跟随系统" },
+                          { value: "light", label: "浅色" },
+                          { value: "dark", label: "深色" },
+                        ]}
                         value={settings.theme}
-                        onChange={(event) => {
+                        onValueChange={(value) => {
+                          if (!value) return;
                           const next = {
                             ...settings,
-                            theme: event.target.value as Settings["theme"],
+                            theme: value as Settings["theme"],
                           };
                           api<Settings>("saveSettings", { settings: next })
                             .then(setSettings)
                             .catch(report);
                         }}
-                      >
-                        <option value="system">跟随系统</option>
-                        <option value="light">浅色</option>
-                        <option value="dark">深色</option>
-                      </NativeSelect>
+                      />
                     </Field>
                     <div className="settings-note">
                       DesiCast 0.1.0 · 本地图库与独立 MCP 服务

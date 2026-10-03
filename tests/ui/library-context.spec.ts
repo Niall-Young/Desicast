@@ -1,3 +1,4 @@
+import { selectValue } from "./select-control";
 import { test, expect, _electron as electron } from "@playwright/test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -145,7 +146,7 @@ test("library context actions, confirmations, re-add and persistence work in Ele
     await page.getByRole("button", { name: "设置", exact: true }).click();
     const settings = page.locator(".settings-page");
     await settings.getByRole("button", { name: "外观", exact: true }).click();
-    await page.getByLabel("外观主题").selectOption("dark");
+    await selectValue(page, "外观主题", "dark");
     await settings.getByRole("button", { name: "返回", exact: true }).click();
     await expect(settings).toHaveCount(0);
     await page.getByTestId("library-repo-menu").click({ button: "right" });

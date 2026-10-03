@@ -70,7 +70,7 @@ DesiCast 是 macOS Electron 应用，使用 [Gendesign Design System](https://gi
 
 首页、侧栏、图标网格和详情面板按用户的 Figma 设计还原，图库标识与控件 SVG 随应用打包；设计节点、尺寸与校验值见 [设计素材来源记录](src/renderer/design-assets/provenance.json)，原始品牌来源见 [来源记录](src/renderer/library-marks/provenance.json)。Lucide 保留官方深色版本，其余品牌保留设计原色。Unicons 使用用户提供图片的矢量重建版本，并非官方原始 SVG。品牌归各自所有者，图标许可不代表品牌使用授权。
 
-图库筛选与排序使用 Base UI Checkbox、RadioGroup/Radio 原语组合，选中项在文字右侧显示无边框 MingCute 对勾；SVG 目录使用上游支持多选的 TreeSelect/Tree。组件源码及资源校验值见 [Gendesign 来源清单](gendesign-provenance.json)，`npm test` 校验导入源码与记录版本一致。该版本没有独立 Segmented/Menu，Tabs 没有滑块动画；动作弹层和右键菜单的组合边界见 [GENDESIGN.md](GENDESIGN.md)。
+图库筛选与排序使用 Base UI Checkbox、RadioGroup/Radio 原语组合，选中项在文字右侧显示无边框 MingCute 对勾；SVG 目录使用上游支持多选的 TreeSelect/Tree。普通单选使用 Base UI Select，外观与 Nico Input 一致并在右侧显示下拉箭头；禁止使用 NativeSelect。组件源码及资源校验值见 [Gendesign 来源清单](gendesign-provenance.json)，`npm test` 校验导入源码与记录版本一致。该版本没有独立 Segmented/Menu，Tabs 没有滑块动画；动作弹层和右键菜单的组合边界见 [GENDESIGN.md](GENDESIGN.md)。
 
 ### 快速开始
 
@@ -206,7 +206,7 @@ Right-click any library in the sidebar or home screen to open it, pin/unpin it, 
 
 The home screen, sidebar, icon grid, and detail panel follow the user's Figma design, with library marks and control SVGs bundled locally. [Design asset provenance](src/renderer/design-assets/provenance.json) records nodes, dimensions, and checksums; [original brand sources](src/renderer/library-marks/provenance.json) remain available. Lucide retains its official dark variant; other brands retain the design's colors. Unicons uses a vector reconstruction of the user-supplied image, not an official original SVG. Brands belong to their respective owners; icon licenses do not grant brand usage rights.
 
-Library filters and sorting compose Base UI Checkbox and RadioGroup/Radio primitives with a borderless MingCute check mark to the right of selected labels. SVG directories use upstream TreeSelect/Tree with multiple selection. [Gendesign provenance](gendesign-provenance.json) records component and asset checksums; `npm test` verifies imported source against the recorded revision. That revision has no standalone Segmented/Menu and its Tabs have no sliding indicator; [GENDESIGN.md](GENDESIGN.md) documents action popup and context menu compositions.
+Library filters and sorting compose Base UI Checkbox and RadioGroup/Radio primitives with a borderless MingCute check mark to the right of selected labels. SVG directories use upstream TreeSelect/Tree with multiple selection. Flat single selection uses Base UI Select with the Nico Input appearance and a trailing dropdown arrow; NativeSelect is prohibited. [Gendesign provenance](gendesign-provenance.json) records component and asset checksums; `npm test` verifies imported source against the recorded revision. That revision has no standalone Segmented/Menu and its Tabs have no sliding indicator; [GENDESIGN.md](GENDESIGN.md) documents action popup and context menu compositions.
 
 ### Quick Start
 
