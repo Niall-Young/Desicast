@@ -37,6 +37,15 @@
 .add-library-full {
   grid-column: 1 / -1;
 }
+.add-library-repository-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.add-library-repository-link [data-slot="input-wrapper"] {
+  flex: 1;
+  min-width: 0;
+}
 .add-library-hint {
   color: var(--nico-color-text-subtlest);
 }

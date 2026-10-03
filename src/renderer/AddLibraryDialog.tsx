@@ -57,6 +57,7 @@ export function AddLibraryDialog({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const version = useRef(0);
+  const activeRequest = useRef<number | undefined>(undefined);
   useEffect(
     () => () => {
       version.current++;
@@ -70,8 +71,10 @@ export function AddLibraryDialog({
     setError("");
   }
   async function loadRepository(selectedBranch?: string) {
-    if (!url.trim() || busy) return;
+    if (!url.trim() || busy || activeRequest.current === version.current)
+      return;
     const request = ++version.current;
+    activeRequest.current = request;
     setLoading(true);
     setMetadata(undefined);
     setError("");
@@ -97,6 +100,7 @@ export function AddLibraryDialog({
       if (request === version.current)
         setError(error instanceof Error ? error.message : "读取仓库失败");
     } finally {
+      if (activeRequest.current === request) activeRequest.current = undefined;
       if (request === version.current) setLoading(false);
     }
   }
@@ -231,27 +235,38 @@ export function AddLibraryDialog({
                 </RadioGroup>
               </div>
               <div className="add-library-grid">
-                <label className="add-library-field add-library-full">
-                  <span>仓库链接</span>
-                  <Input
-                    aria-label="仓库链接"
-                    required
-                    placeholder="https://github.com/your-team/icons.git"
-                    value={url}
-                    clearAll={false}
-                    disabled={busy}
-                    onValueChange={(value) => {
-                      invalidate();
-                      setUrl(value);
-                      setBranch("");
-                      setDirectories([]);
-                    }}
-                    onBlur={() => {
-                      if (url.trim() && !metadata && !loading)
-                        void loadRepository(branch || undefined);
-                    }}
-                  />
-                </label>
+                <div className="add-library-field add-library-full">
+                  <span id="repository-url-label">仓库链接</span>
+                  <div className="add-library-repository-link">
+                    <Input
+                      aria-labelledby="repository-url-label"
+                      required
+                      placeholder="https://github.com/your-team/icons.git"
+                      value={url}
+                      clearAll={false}
+                      disabled={busy}
+                      onValueChange={(value) => {
+                        invalidate();
+                        setUrl(value);
+                        setBranch("");
+                        setDirectories([]);
+                      }}
+                      onBlur={() => {
+                        if (url.trim() && !metadata && !loading)
+                          void loadRepository(branch || undefined);
+                      }}
+                    />
+                    <Button
+                      type="button"
+                      kind="tonal"
+                      loading={loading}
+                      disabled={busy || !url.trim()}
+                      onClick={() => loadRepository(branch || undefined)}
+                    >
+                      解析仓库
+                    </Button>
+                  </div>
+                </div>
                 {access === "private" && (
                   <>
                     <label className="add-library-field">
@@ -356,14 +371,6 @@ export function AddLibraryDialog({
                         ? "配置凭据后读取仓库信息"
                         : "公开仓库无需配置凭据")}
               </span>
-              <Button
-                size="sm"
-                kind="plain"
-                disabled={loading || busy || !url.trim()}
-                onClick={() => loadRepository(branch || undefined)}
-              >
-                读取仓库信息
-              </Button>
             </div>
           )}
         </ModalBody>
