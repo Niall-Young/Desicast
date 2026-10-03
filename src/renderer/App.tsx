@@ -219,7 +219,12 @@ export function App() {
   const [target, setTarget] = useState<Target>("svg"),
     [exported, setExported] = useState<ExportResult>(),
     [copyState, setCopyState] = useState(false),
+    [exportPending, setExportPending] = useState(false),
     [detailOpen, setDetailOpen] = useState(false);
+  const [codeAnimation, setCodeAnimation] = useState<{
+    key: number;
+    direction: "forward" | "backward";
+  }>({ key: 0, direction: "forward" });
   const [detailMounted, setDetailMounted] = useState(false);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [reference, setReference] = useState<string>(),
@@ -229,6 +234,9 @@ export function App() {
     generation = useRef(0),
     searchInput = useRef<HTMLInputElement>(null),
     syncing = useRef(new Set<string>());
+  const lastExportTarget = useRef<Target>(target),
+    pendingExportDirection = useRef<"forward" | "backward">("forward"),
+    lastExportIconId = useRef<string | undefined>(undefined);
   const sourceSnapshot = useRef(""),
     catalogSnapshot = useRef("");
   const refreshSources = () =>
@@ -363,17 +371,35 @@ export function App() {
   }, [query, sourceId, collection, offset, revision, page]);
   useEffect(() => {
     let alive = true;
-    setExported(undefined);
-    if (selected)
-      api<ExportResult>("getIcon", {
-        id: selected.id,
-        target,
-        color: "currentColor",
+    if (selected && lastExportIconId.current !== selected.id) {
+      lastExportIconId.current = selected.id;
+      setExported(undefined);
+    }
+    if (!selected) {
+      setExportPending(false);
+      return;
+    }
+    setExportPending(true);
+    api<ExportResult>("getIcon", {
+      id: selected.id,
+      target,
+      color: "currentColor",
+    })
+      .then((value) => {
+        if (!alive) return;
+        setExported(value);
+        if (lastExportTarget.current !== target) {
+          lastExportTarget.current = target;
+          setCodeAnimation((previous) => ({
+            key: previous.key + 1,
+            direction: pendingExportDirection.current,
+          }));
+        }
       })
-        .then((value) => {
-          if (alive) setExported(value);
-        })
-        .catch(report);
+      .catch(report)
+      .finally(() => {
+        if (alive) setExportPending(false);
+      });
     return () => {
       alive = false;
     };
@@ -470,7 +496,7 @@ export function App() {
     }
   }
   async function copy() {
-    if (!exported) return;
+    if (!exported || exportPending) return;
     try {
       await api("copy", exported.code);
       setCopyState(true);
@@ -1160,7 +1186,15 @@ export function App() {
                       <div className="export-section">
                         <Tabs
                           value={target}
-                          onValueChange={(value) => setTarget(value as Target)}
+                          onValueChange={(value) => {
+                            const next = value as Target;
+                            pendingExportDirection.current =
+                              targets.indexOf(next) >
+                              targets.indexOf(target)
+                                ? "forward"
+                                : "backward";
+                            setTarget(next);
+                          }}
                         >
                           <TabsList className="target-tabs">
                             {targets.map((value) => (
@@ -1171,7 +1205,10 @@ export function App() {
                           </TabsList>
                         </Tabs>
                         <div className="code-preview">
-                          <pre>
+                          <pre
+                            key={codeAnimation.key}
+                            className={`code-slide-${codeAnimation.direction}`}
+                          >
                             {exported?.code.replace(
                               /^(?:\/\/ Source:[^\n]*\n|<!-- Source:[^\n]* -->\n)/,
                               "",
@@ -1179,7 +1216,10 @@ export function App() {
                           </pre>
                         </div>
                         <div className="export-actions">
-                          <Button disabled={!exported} onClick={copy}>
+                          <Button
+                            disabled={!exported || exportPending}
+                            onClick={copy}
+                          >
                             {copyState ? "已复制" : "复制代码"}
                           </Button>
                           <IconButton
@@ -1190,7 +1230,7 @@ export function App() {
                                 ? "导出后将 .imageset 拖入 Assets.xcassets"
                                 : "导出资源文件"
                             }
-                            disabled={!exported}
+                            disabled={!exported || exportPending}
                             onClick={download}
                           >
                             <DesignIcon name="download" />
