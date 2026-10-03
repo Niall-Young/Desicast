@@ -37,8 +37,6 @@ import {
   CodeRegular,
   TerminalRegular,
   GridRegular,
-  LeftRegular,
-  RightRegular,
 } from "@mingcute/react/core-regular";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
@@ -47,6 +45,7 @@ import { SearchBox } from "@/components/ui/search-box";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { NativeSelect } from "@/components/ui/native-select";
+import { Pagination } from "@/components/ui/pagination";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
@@ -1062,31 +1061,13 @@ export function App() {
                       ? "视觉匹配结果"
                       : `${result.total.toLocaleString()} 个图标`}
                   </span>
-                  <div className="pager">
-                    <IconButton
-                      size="sm"
-                      kind="plain"
-                      aria-label="上一页"
-                      disabled={!offset || busy || visionResult}
-                      onClick={() =>
-                        setOffset((value) => Math.max(0, value - 48))
-                      }
-                    >
-                      <LeftRegular size={16} />
-                    </IconButton>
-                    <span>{Math.floor(offset / 48) + 1}</span>
-                    <IconButton
-                      size="sm"
-                      kind="plain"
-                      aria-label="下一页"
-                      disabled={
-                        offset + 48 >= result.total || busy || visionResult
-                      }
-                      onClick={() => setOffset((value) => value + 48)}
-                    >
-                      <RightRegular size={16} />
-                    </IconButton>
-                  </div>
+                  <Pagination
+                    size="sm"
+                    count={Math.ceil(result.total / 48)}
+                    page={Math.floor(offset / 48) + 1}
+                    disabled={busy || visionResult}
+                    onPageChange={(value) => setOffset((value - 1) * 48)}
+                  />
                 </footer>
               </section>
               {detailOpen && (

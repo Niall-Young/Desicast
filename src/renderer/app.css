@@ -375,14 +375,6 @@ select {
   color: var(--nico-color-text-subtlest);
   font-size: 14px;
 }
-.pager {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-}
-.pager > span {
-  font-size: 11px;
-}
 .detail {
   width: 304px;
   flex-shrink: 0;
