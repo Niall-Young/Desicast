@@ -193,11 +193,6 @@ export function MCPClientPanel({
       ) : (
         <div className="mcp-dialog-client-header">
           {clientTabs}
-          <p className="mcp-client-description">
-            {activeClient === "other"
-              ? "请将下方 JSON 合并到客户端的 MCP 配置中"
-              : "请复制下方内容在终端中执行"}
-          </p>
         </div>
       )}
       {clients.map((client) => (

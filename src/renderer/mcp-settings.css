@@ -1,6 +1,6 @@
 .mcp-dialog {
   width: 640px;
-  height: 354px;
+  height: 615px;
 }
 .mcp-dialog > [data-slot="modal-body"] {
   flex: 1;
@@ -151,12 +151,6 @@
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 12px;
-}
-.mcp-dialog-client-header .mcp-client-description {
-  margin: 0;
-  color: var(--nico-color-text-subtlest);
-  font-size: var(--nico-font-size-sm);
-  line-height: var(--nico-line-height-sm);
 }
 .mcp-dialog .mcp-code pre {
   margin: 0;
