@@ -67,7 +67,9 @@ export function ModelSettings({
             <div className="model-provider-row" key={provider.id}>
               <label className="model-provider-option">
                 <Radio value={provider.id} aria-label={provider.model} />
-                <span title={provider.model}>{provider.model}</span>
+                <span className="model-provider-name" title={provider.model}>
+                  {provider.model}
+                </span>
               </label>
               <IconButton
                 kind="tonal"

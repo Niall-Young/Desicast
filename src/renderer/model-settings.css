@@ -40,7 +40,7 @@
   gap: 12px;
   cursor: pointer;
 }
-.model-provider-option > span {
+.model-provider-name {
   flex: 1;
   min-width: 0;
   overflow: hidden;
