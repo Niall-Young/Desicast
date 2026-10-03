@@ -1,0 +1,37 @@
+.icon-view-switch {
+  display: flex;
+  width: 64px;
+  height: 32px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-background-neutral-subtle);
+}
+
+.icon-view-switch > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 7px;
+  border: var(--nico-border-weight-base) solid transparent;
+  border-radius: var(--nico-border-radius-sm);
+  background: transparent;
+  cursor: pointer;
+}
+
+.icon-view-switch > button:hover {
+  background: var(--nico-color-interaction-hover);
+}
+
+.icon-view-switch > button[data-active] {
+  border-color: var(--nico-color-border);
+  background: var(--nico-color-surface);
+  box-shadow: var(--nico-effect-shadow-small);
+}
+
+.icon-view-switch > button:focus-visible {
+  outline: 2px solid var(--nico-color-border-brand);
+  outline-offset: -2px;
+}

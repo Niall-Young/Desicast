@@ -85,7 +85,7 @@ npm run dev
 
 ### 使用方法
 
-图标页面支持网格/列表切换，点击图标打开独立详情面板，顶部代码按钮可收起详情。搜索选项保留以图搜图与刷新入口；详情可复制名称、切换导出格式和导出文件，单色图标默认跟随使用处的颜色，尺寸在项目中调整；来源与许可保留在复制的代码和导出的资源中。
+图标页面支持网格/列表切换，点击图标打开独立详情面板，顶部代码按钮可收起详情。搜索框右侧提供独立的以图搜图与刷新按钮，网格/列表切换按设计使用 32px 分段控件；详情可复制名称、切换导出格式和导出文件，单色图标默认跟随使用处的颜色，尺寸在项目中调整；来源与许可保留在复制的代码和导出的资源中。
 
 1. **查找图标**：在首页或侧栏选择图库，或使用「全局搜索」。点击「添加图标库」打开 640px 弹窗连接团队仓库，名称最多 20 个字符；侧栏底部设置按钮进入带分类导航的独立设置页面，包含通用信息、外观、MCP 连接器、模型配置与图标库管理。侧栏「返回」回到进入设置前的页面；外观模式切换后立即保存；模型及仓库使用各自的保存操作。MCP 标签仍可直接打开连接设置。填写 HTTPS URL，离开链接输入框后自动读取仓库信息，也可手动重试，然后下拉选择分支，通过多选树形目录选择器选择 SVG 目录或整个仓库。
 2. **凭据配置**：可填写用户名与访问令牌连接私有仓库，令牌默认隐藏并在添加后保存至 Keychain；留空时自动复用本机 Git 凭据或已登录的 `gh` / `glab`。编辑时令牌留空保留已有凭据，视觉检索由弹窗底部开关控制，默认关闭。
@@ -221,7 +221,7 @@ Restart the development server after modifying the main process or shared core; 
 
 ### Usage
 
-The icon workspace supports grid and list views. Select an icon to open its separate detail panel, and use the code button in the title bar to collapse it. Search options include image search and refresh. Details provide name copying, export format tabs, and file export. Monochrome icons inherit the color at their point of use, and size is adjusted in the project. Copied code and exported resources retain source and license information.
+The icon workspace supports grid and list views. Select an icon to open its separate detail panel, and use the code button in the title bar to collapse it. Separate image search and refresh buttons sit beside the search field, followed by a 32px segmented grid/list control matching the design. Details provide name copying, export format tabs, and file export. Monochrome icons inherit the color at their point of use, and size is adjusted in the project. Copied code and exported resources retain source and license information.
 
 1. **Discover Icons**: Choose a library on the home screen or sidebar, or use "Global Search". Use "Add Library" to open a 640px modal and connect a team repository; names allow up to 20 characters. The bottom settings button opens a dedicated page with section navigation for general information, appearance, MCP connectors, model configuration, and library management. The sidebar Back button returns to the previous workspace; appearance changes save immediately. Models and repositories retain their own save actions. The MCP badge also opens connection settings directly. Enter the HTTPS URL; repository information loads when the link field loses focus and can be retried manually. Then choose a branch from the dropdown and SVG directories (or the entire repository) using the multiselect tree selector.
 2. **Configure Credentials**: Enter a username and access token for private repositories; tokens are masked by default and saved in Keychain after adding the library. Empty fields reuse local Git credentials or an authenticated `gh` / `glab` session. Leaving the token blank while editing preserves existing credentials. The footer controls vision search, which is disabled by default.

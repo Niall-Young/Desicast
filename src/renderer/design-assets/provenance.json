@@ -222,6 +222,20 @@
       "sha256": "a766cc683d5691d822651a912c67499703e8f1be109da9923dbd2aec04507c6c",
       "width": "16",
       "height": "16"
+    },
+    "image-search": {
+      "figmaAsset": "0b75d.svg",
+      "nodeId": "2023:19146",
+      "sha256": "8d6972fcf66b8ba1c2fa70598a5e19ab4a69e653ddd7fea99829092fc1e28091",
+      "width": "16",
+      "height": "16"
+    },
+    "refresh-library": {
+      "figmaAsset": "7f6ba.svg",
+      "nodeId": "2023:19167",
+      "sha256": "505db6e30e0d86d69e2b398100321c6ac3177a346c781b8c627929803bc08fcf",
+      "width": "16",
+      "height": "16"
     }
   },
   "screens": [
@@ -233,5 +247,9 @@
     "nodeId": "2018:12314",
     "retrievedAt": "2026-10-03",
     "notes": "Repository type, status and sort menu. All options start unselected; repository types and statuses allow multiple selection."
+  },
+  "toolbar": {
+    "nodeId": "2001:10239",
+    "retrievedAt": "2026-10-03"
   }
 }

@@ -1,4 +1,5 @@
 import { AddLibraryDialog } from "./AddLibraryDialog";
+import { IconViewSwitch } from "./IconViewSwitch";
 import { SettingsPage } from "./SettingsPage";
 import { MCPSettings } from "./MCPSettings";
 import { LibraryFilterMenu } from "./LibraryFilterMenu";
@@ -949,56 +950,25 @@ export function App() {
                       }}
                     />
                     <div className="grid-toolbar-actions">
-                      <Popover>
-                        <PopoverTrigger
-                          render={
-                            <IconButton
-                              kind="plain"
-                              size="sm"
-                              aria-label="搜索选项"
-                            />
-                          }
+                      <div className="grid-search-actions">
+                        <IconButton
+                          kind="plain"
+                          size="md"
+                          aria-label="以图搜图"
+                          onClick={() => fileInput.current?.click()}
                         >
-                          <DesignIcon name="library-options" />
-                        </PopoverTrigger>
-                        <PopoverContent
-                          className="navigation-popup"
-                          align="end"
+                          <DesignIcon name="image-search" />
+                        </IconButton>
+                        <IconButton
+                          kind="plain"
+                          size="md"
+                          aria-label="刷新图库"
+                          onClick={refreshLibrary}
                         >
-                          <Button
-                            kind="plain"
-                            leftIcon={<PicRegular size={16} />}
-                            onClick={() => fileInput.current?.click()}
-                          >
-                            以图搜图
-                          </Button>
-                          <Button
-                            kind="plain"
-                            leftIcon={<Refresh1Regular size={16} />}
-                            onClick={refreshLibrary}
-                          >
-                            刷新图库
-                          </Button>
-                        </PopoverContent>
-                      </Popover>
-                      <Tabs
-                        value={view}
-                        onValueChange={(value) =>
-                          setView(value as "grid" | "list")
-                        }
-                      >
-                        <TabsList
-                          className="view-tabs"
-                          aria-label="图标显示方式"
-                        >
-                          <TabsTrigger value="grid" aria-label="网格视图">
-                            <DesignIcon name="grid" />
-                          </TabsTrigger>
-                          <TabsTrigger value="list" aria-label="列表视图">
-                            <DesignIcon name="list" />
-                          </TabsTrigger>
-                        </TabsList>
-                      </Tabs>
+                          <DesignIcon name="refresh-library" />
+                        </IconButton>
+                      </div>
+                      <IconViewSwitch value={view} onValueChange={setView} />
                     </div>
                     <input
                       ref={fileInput}

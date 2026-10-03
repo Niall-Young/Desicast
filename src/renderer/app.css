@@ -1354,6 +1354,12 @@ pre {
 .grid-toolbar-actions {
   display: flex;
   align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.grid-search-actions {
+  display: flex;
+  align-items: center;
   gap: 4px;
 }
 .filter-toolbar[hidden],

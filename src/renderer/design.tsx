@@ -1,3 +1,5 @@
+import imageSearch from "./design-assets/image-search.svg?url";
+import refreshLibrary from "./design-assets/refresh-library.svg?url";
 import code from "./design-assets/code.svg?url";
 import grid from "./design-assets/grid.svg?url";
 import list from "./design-assets/list.svg?url";
@@ -26,6 +28,8 @@ import materialCard from "./design-assets/material-card.svg?url";
 import evaCard from "./design-assets/eva-card.svg?url";
 
 const controls = {
+  "image-search": imageSearch,
+  "refresh-library": refreshLibrary,
   code: code,
   grid: grid,
   list: list,
