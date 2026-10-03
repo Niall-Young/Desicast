@@ -83,6 +83,8 @@ npm ci
 npm run dev
 ```
 
+开发服务默认使用 5173 端口；端口被占用时自动选择可用端口，并将实际地址传给 Electron 与热更新连接。
+
 开发模式下修改主进程或共享核心后需重启；界面通过 Vite 热更新。
 
 ### 使用方法
@@ -224,6 +226,8 @@ Development requires macOS, Node 24+, npm, Git, and OpenSSL for HTTPS Git integr
 npm ci
 npm run dev
 ```
+
+The development server prefers port 5173. If it is occupied, it selects an available port and passes the actual address to Electron and the hot-reload connection.
 
 Restart the development server after modifying the main process or shared core; the renderer UI updates via Vite hot module replacement (HMR).
 

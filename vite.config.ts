@@ -11,12 +11,18 @@ export default defineConfig({
     {
       name: "development-csp",
       transformIndexHtml(html, context) {
-        return context.server
-          ? html.replace(
-              "script-src 'self'",
-              "script-src 'self' 'unsafe-inline'",
-            )
-          : html;
+        if (!context.server) return html;
+        const devUrl = context.server.resolvedUrls?.local[0];
+        const origin = devUrl ? new URL(devUrl).origin : undefined;
+        const developmentHtml = html.replace(
+          "script-src 'self'",
+          "script-src 'self' 'unsafe-inline'",
+        );
+        return origin
+          ? developmentHtml
+              .replaceAll("http://127.0.0.1:5173", origin)
+              .replaceAll("ws://127.0.0.1:5173", origin.replace(/^http/, "ws"))
+          : developmentHtml;
       },
     },
   ],

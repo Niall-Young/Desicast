@@ -31,9 +31,15 @@ await build({
     js: 'import { createRequire } from "node:module"; const require = createRequire(import.meta.url);',
   },
 });
-const server = await createServer();
+const server = await createServer({ server: { strictPort: false } });
 await server.listen();
-const env = { ...process.env, DESICAST_DEV_URL: "http://127.0.0.1:5173" };
+const devUrl = server.resolvedUrls?.local[0];
+if (!devUrl) {
+  await server.close();
+  throw new Error("无法确定开发服务地址");
+}
+console.log(`DesiCast 开发服务：${devUrl}`);
+const env = { ...process.env, DESICAST_DEV_URL: devUrl };
 delete env.ELECTRON_RUN_AS_NODE;
 const child = spawn(electron, ["."], { stdio: "inherit", env });
 child.on("exit", async () => {
