@@ -131,14 +131,11 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.repository-access-segmented > button:not(:disabled):hover {
+.repository-access-segmented > button:not(:disabled):not([data-checked]):hover {
   background: var(--nico-color-interaction-hover);
 }
 .repository-access-segmented > button[data-checked] {
-  border-color: var(--nico-color-border);
-  background: var(--nico-color-surface);
   color: var(--nico-color-text);
-  box-shadow: var(--nico-effect-shadow-small);
 }
 .repository-access-segmented > button:focus-visible {
   outline: 2px solid var(--nico-color-border-brand);

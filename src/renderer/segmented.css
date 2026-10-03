@@ -34,10 +34,7 @@
 }
 
 .segmented > button[data-active] {
-  border-color: var(--nico-color-border);
-  background: var(--nico-color-surface);
   color: var(--nico-color-text);
-  box-shadow: var(--nico-effect-shadow-small);
 }
 
 .segmented > button:focus-visible {

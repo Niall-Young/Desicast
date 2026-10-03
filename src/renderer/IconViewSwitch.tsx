@@ -1,5 +1,6 @@
 import { Tabs } from "@base-ui/react/tabs";
 import { DesignIcon } from "./design";
+import { SegmentedIndicator } from "./SegmentedIndicator";
 import "./icon-view-switch.css";
 
 type IconView = "grid" | "list";
@@ -19,7 +20,11 @@ export function IconViewSwitch({
         if (next === "grid" || next === "list") onValueChange(next);
       }}
     >
-      <Tabs.List className="icon-view-switch" aria-label="图标显示方式">
+      <Tabs.List
+        className="icon-view-switch segmented-motion"
+        aria-label="图标显示方式"
+      >
+        <SegmentedIndicator />
         <Tabs.Tab value="grid" aria-label="网格视图">
           <DesignIcon name="grid" />
         </Tabs.Tab>

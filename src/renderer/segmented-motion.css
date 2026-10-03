@@ -1,0 +1,46 @@
+.segmented-motion {
+  position: relative;
+  isolation: isolate;
+}
+
+.segmented-motion > button {
+  position: relative;
+  z-index: 1;
+  transition: color 180ms ease;
+}
+
+.segmented-indicator {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: var(--active-tab-width);
+  height: var(--active-tab-height);
+  transform: translate(var(--active-tab-left), var(--active-tab-top));
+  border: var(--nico-border-weight-base) solid var(--nico-color-border);
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-surface);
+  box-shadow: var(--nico-effect-shadow-small);
+  pointer-events: none;
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    width 260ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    height 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Both repository access labels have the same width. Keep radio semantics. */
+.repository-access-segmented > .segmented-indicator {
+  width: 50%;
+  height: 100%;
+  transform: translateX(0);
+}
+
+.repository-access-segmented[data-access="private"] > .segmented-indicator {
+  transform: translateX(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .segmented-indicator,
+  .segmented-motion > button {
+    transition: none;
+  }
+}

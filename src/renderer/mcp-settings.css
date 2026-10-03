@@ -59,14 +59,11 @@
   white-space: nowrap;
   cursor: pointer;
 }
-.mcp-client-segmented > button:hover {
+.mcp-client-segmented > button:not([data-active]):hover {
   background: var(--nico-color-interaction-hover);
 }
 .mcp-client-segmented > button[data-active] {
-  border-color: var(--nico-color-border);
-  background: var(--nico-color-surface);
   color: var(--nico-color-text);
-  box-shadow: var(--nico-effect-shadow-small);
 }
 .mcp-client-segmented > button:focus-visible {
   outline: 2px solid var(--nico-color-border-brand);

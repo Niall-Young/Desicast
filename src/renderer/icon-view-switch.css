@@ -21,14 +21,8 @@
   cursor: pointer;
 }
 
-.icon-view-switch > button:hover {
+.icon-view-switch > button:not([data-active]):hover {
   background: var(--nico-color-interaction-hover);
-}
-
-.icon-view-switch > button[data-active] {
-  border-color: var(--nico-color-border);
-  background: var(--nico-color-surface);
-  box-shadow: var(--nico-effect-shadow-small);
 }
 
 .icon-view-switch > button:focus-visible {

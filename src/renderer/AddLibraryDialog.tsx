@@ -7,6 +7,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Select } from "./Select";
 import { Radio as RadioPrimitive } from "@base-ui/react/radio";
 import { RadioGroup } from "@base-ui/react/radio-group";
+import "./segmented-motion.css";
 import { Switch } from "@/components/ui/switch";
 import {
   Modal,
@@ -204,7 +205,8 @@ export function AddLibraryDialog({
               <div className="add-library-access">
                 <span id="repository-access-label">仓库类型</span>
                 <RadioGroup
-                  className="repository-access-segmented"
+                  className="repository-access-segmented segmented-motion"
+                  data-access={access}
                   aria-labelledby="repository-access-label"
                   value={access}
                   disabled={busy}
@@ -219,6 +221,7 @@ export function AddLibraryDialog({
                     setVisible(false);
                   }}
                 >
+                  <span className="segmented-indicator" aria-hidden="true" />
                   <RadioPrimitive.Root
                     value="public"
                     render={<button type="button" />}

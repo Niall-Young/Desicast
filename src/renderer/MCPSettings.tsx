@@ -12,6 +12,7 @@ import {
   ModalFooter,
 } from "@/components/ui/modal";
 import { api, type MCPInfo } from "./api";
+import { SegmentedIndicator } from "./SegmentedIndicator";
 import close from "./design-assets/mcp-close.svg?url";
 import chatgpt from "./design-assets/mcp-chatgpt.svg?url";
 import claude from "./design-assets/mcp-claude.svg?url";
@@ -172,8 +173,11 @@ export function MCPClientPanel({
   const clientTabs = (
     <List
       aria-label="MCP 客户端"
-      className={inSettings ? "mcp-client-segmented" : undefined}
+      className={
+        inSettings ? "mcp-client-segmented segmented-motion" : undefined
+      }
     >
+      {inSettings && <SegmentedIndicator />}
       {clients.map((client) => (
         <Trigger key={client.id} value={client.id}>
           <img src={client.icon} className="mcp-icon" alt="" />
