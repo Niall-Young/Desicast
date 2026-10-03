@@ -359,17 +359,15 @@ export function AddLibraryDialog({
             </section>
           </form>
           {children}
-          {(url.trim() || error) && (
+          {!loading && (url.trim() || error) && (
             <div className="add-library-status">
               <span role={error ? "alert" : "status"}>
                 {error ||
-                  (loading
-                    ? "正在读取仓库…"
-                    : metadata
-                      ? `已连接 · ${metadata.authorization}`
-                      : access === "private"
-                        ? "配置凭据后读取仓库信息"
-                        : "公开仓库无需配置凭据")}
+                  (metadata
+                    ? `已连接 · ${metadata.authorization}`
+                    : access === "private"
+                      ? "配置凭据后读取仓库信息"
+                      : "公开仓库无需配置凭据")}
               </span>
             </div>
           )}
