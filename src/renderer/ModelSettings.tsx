@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/modal";
 import type { Settings } from "../core/types";
 import { api } from "./api";
+import { RemoveModelProviderDialog } from "./RemoveModelProviderDialog";
 import emptyIcon from "./design-assets/model-empty.svg?url";
 import closeIcon from "./design-assets/model-close.svg?url";
 import deleteIcon from "./design-assets/model-delete.svg?url";
@@ -34,7 +35,11 @@ export function ModelSettings({
   const [open, setOpen] = useState(false);
   const [selecting, setSelecting] = useState(false);
   const [deleting, setDeleting] = useState<string>();
-  const pending = selecting || Boolean(deleting);
+  const [removeProvider, setRemoveProvider] = useState<{
+    id: string;
+    model: string;
+  }>();
+  const pending = selecting || Boolean(deleting) || Boolean(removeProvider);
   const providers = settings.modelProviders ?? [];
   const addButton = (
     <Button kind="ghost" disabled={pending} onClick={() => setOpen(true)}>
@@ -77,20 +82,7 @@ export function ModelSettings({
                 title={`删除供应商 ${provider.model}`}
                 disabled={pending}
                 loading={deleting === provider.id}
-                onClick={async () => {
-                  if (pending) return;
-                  setDeleting(provider.id);
-                  try {
-                    onSettings(
-                      await api<Settings>("removeModelProvider", provider.id),
-                    );
-                    onNotice("模型供应商已删除");
-                  } catch (error) {
-                    onError(error);
-                  } finally {
-                    setDeleting(undefined);
-                  }
-                }}
+                onClick={() => setRemoveProvider(provider)}
               >
                 <img className="model-delete-icon" src={deleteIcon} alt="" />
               </IconButton>
@@ -108,6 +100,24 @@ export function ModelSettings({
           </div>
           {addButton}
         </div>
+      )}
+      {removeProvider && (
+        <RemoveModelProviderDialog
+          name={removeProvider.model}
+          onClose={() => setRemoveProvider(undefined)}
+          onError={onError}
+          onRemove={async () => {
+            setDeleting(removeProvider.id);
+            try {
+              onSettings(
+                await api<Settings>("removeModelProvider", removeProvider.id),
+              );
+              onNotice("模型供应商已删除");
+            } finally {
+              setDeleting(undefined);
+            }
+          }}
+        />
       )}
       {open && (
         <AddModelProviderDialog
