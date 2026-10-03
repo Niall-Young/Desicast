@@ -588,6 +588,18 @@ test("Figma home opens existing libraries and preserves global search, settings 
           ),
       )
       .toBe(true);
+    const markBoxes = await page
+      .locator(".home-library-card .library-mark-card")
+      .evaluateAll((marks) =>
+        marks.map((mark) => {
+          const bounds = mark.getBoundingClientRect();
+          return { width: bounds.width, height: bounds.height };
+        }),
+      );
+    expect(markBoxes).toHaveLength(6);
+    expect(
+      markBoxes.every((bounds) => bounds.width === 64 && bounds.height === 64),
+    ).toBe(true);
     const geometry = await page
       .locator(".home-library-card .library-mark img:visible")
       .evaluateAll((images) =>
@@ -596,8 +608,13 @@ test("Figma home opens existing libraries and preserves global search, settings 
           height: image.getBoundingClientRect().height,
         })),
       );
+    expect(geometry.length).toBeGreaterThan(0);
     expect(
-      geometry.every((bounds) => bounds.width === 64 && bounds.height === 64),
+      geometry.every(
+        (bounds) =>
+          bounds.width === geometry[0].width &&
+          bounds.height === geometry[0].height,
+      ),
     ).toBe(true);
     await page.screenshot({
       path: `.work/screenshots/home-${theme}.png`,

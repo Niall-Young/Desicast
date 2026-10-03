@@ -1259,10 +1259,14 @@ pre {
   width: 64px;
   height: 64px;
   flex: 0 0 64px;
+  align-items: center;
+  justify-content: center;
+  background: var(--nico-color-surface);
+  border-radius: var(--nico-border-radius-sm);
 }
 .library-mark-card img {
-  width: 64px;
-  height: 64px;
+  width: 40px;
+  height: 40px;
 }
 .home-team-mark {
   width: 64px;
