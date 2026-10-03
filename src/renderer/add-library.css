@@ -25,6 +25,12 @@
 .add-library-hint {
   color: var(--nico-color-text-subtlest);
 }
+.add-library-auth-hint {
+  margin: -12px 0 0;
+  font-size: var(--nico-font-size-xs);
+  line-height: 20px;
+  color: var(--nico-color-text-subtlest);
+}
 .add-library-icon {
   width: 16px;
   height: 16px;

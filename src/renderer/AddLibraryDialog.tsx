@@ -179,6 +179,57 @@ export function AddLibraryDialog({
               />
             </label>
             <label className="add-library-field">
+              <span>
+                用户名 <span className="add-library-hint">(可选)</span>
+              </span>
+              <Input
+                aria-label="用户名"
+                placeholder="仓库要求指定账号时填写"
+                value={username}
+                clearAll={false}
+                disabled={busy}
+                onValueChange={(value) => {
+                  invalidate();
+                  setUsername(value);
+                }}
+              />
+            </label>
+            <label className="add-library-field">
+              <span>
+                访问令牌 <span className="add-library-hint">(按需填写)</span>
+              </span>
+              <div
+                className={`add-library-password ${visible ? "is-visible" : ""}`}
+              >
+                <PasswordInput
+                  aria-label="访问令牌"
+                  placeholder={
+                    source?.hasCredential
+                      ? "已保存，留空保留原令牌"
+                      : "未登录的私有仓库需填写令牌"
+                  }
+                  value={token}
+                  disabled={busy}
+                  visible={visible}
+                  onBlur={() => {
+                    if (url.trim() && !metadata && !loading)
+                      void loadRepository(branch || undefined);
+                  }}
+                  onVisibleChange={setVisible}
+                  showPasswordLabel="显示令牌"
+                  hidePasswordLabel="隐藏令牌"
+                  onValueChange={(value) => {
+                    invalidate();
+                    setToken(value);
+                  }}
+                />
+              </div>
+            </label>
+            <p className="add-library-auth-hint add-library-full">
+              公开仓库无需令牌，私有仓库优先复用本机 Git / gh / glab
+              凭据，未登录时请先填写令牌再输入仓库链接
+            </p>
+            <label className="add-library-field">
               <span>仓库链接</span>
               <Input
                 aria-label="仓库链接"
@@ -230,48 +281,6 @@ export function AddLibraryDialog({
                 placeholder="请选择仓库内文件目录"
               />
             </div>
-            <label className="add-library-field">
-              <span>用户名</span>
-              <Input
-                aria-label="用户名"
-                placeholder="请输入用户名"
-                value={username}
-                clearAll={false}
-                disabled={busy}
-                onValueChange={(value) => {
-                  invalidate();
-                  setUsername(value);
-                }}
-              />
-            </label>
-            <label className="add-library-field">
-              <span>
-                访问令牌{" "}
-                <span className="add-library-hint">(私有仓库必填)</span>
-              </span>
-              <div
-                className={`add-library-password ${visible ? "is-visible" : ""}`}
-              >
-                <PasswordInput
-                  aria-label="访问令牌"
-                  placeholder={
-                    source?.hasCredential
-                      ? "已保存，留空保留原令牌"
-                      : "请输入令牌"
-                  }
-                  value={token}
-                  disabled={busy}
-                  visible={visible}
-                  onVisibleChange={setVisible}
-                  showPasswordLabel="显示令牌"
-                  hidePasswordLabel="隐藏令牌"
-                  onValueChange={(value) => {
-                    invalidate();
-                    setToken(value);
-                  }}
-                />
-              </div>
-            </label>
           </form>
           {children}
           {(url.trim() || error) && (
