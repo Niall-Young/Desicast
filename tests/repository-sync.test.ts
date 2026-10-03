@@ -14,7 +14,7 @@ const svg =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>';
 
 test("Authenticated HTTPS Git sync works without interactive prompts and atomically applies add/change/delete", async () => {
-  const directory = await mkdtemp(join(tmpdir(), "iconcast-https-"));
+  const directory = await mkdtemp(join(tmpdir(), "desicast-https-"));
   const seed = join(directory, "seed"),
     repositories = join(directory, "repositories"),
     bare = join(repositories, "icons.git"),
@@ -54,9 +54,9 @@ test("Authenticated HTTPS Git sync works without interactive prompts and atomica
         "-C",
         seed,
         "-c",
-        "user.name=Iconcast fixture",
+        "user.name=DesiCast fixture",
         "-c",
-        "user.email=fixture@iconcast.invalid",
+        "user.email=fixture@desicast.invalid",
         "commit",
         "-m",
         message,

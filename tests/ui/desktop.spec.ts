@@ -3,6 +3,7 @@ import {
   expect,
   _electron as electron,
   type ElectronApplication,
+  type Page,
 } from "@playwright/test";
 import { mkdtemp, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
@@ -13,10 +14,14 @@ import sharp from "sharp";
 import type { Icon, Source } from "../../src/core/types";
 
 let app: ElectronApplication, directory: string;
+async function openSettings(page: Page, name: string) {
+  await page.getByRole("button", { name: "设置", exact: true }).click();
+  await page.getByRole("button", { name, exact: true }).click();
+}
 const svg =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m15 15 6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
 test.beforeEach(async () => {
-  directory = await mkdtemp(join(tmpdir(), "iconcast-ui-"));
+  directory = await mkdtemp(join(tmpdir(), "desicast-ui-"));
   const store = new Store(directory);
   const source: Source = {
     id: "repo-team",
@@ -71,8 +76,8 @@ test.beforeEach(async () => {
   store.close();
   const env: NodeJS.ProcessEnv = {
     ...process.env,
-    ICONCAST_DATA_DIR: directory,
-    ICONCAST_TEST_MODE: "1",
+    DESICAST_DATA_DIR: directory,
+    DESICAST_TEST_MODE: "1",
   };
   delete env.ELECTRON_RUN_AS_NODE;
   app = await electron.launch({
@@ -92,10 +97,14 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
   const page = await app.firstWindow();
   const errors: string[] = [];
   page.on("pageerror", (err) => errors.push(err.message));
-  await page.getByRole("button", { name: "Design team", exact: false }).click();
+  await page
+    .locator(".sidebar")
+    .getByRole("button", { name: "Design team", exact: false })
+    .click();
   await expect(page.getByTestId("icon-card")).toHaveCount(48);
   await page.getByRole("searchbox", { name: "搜索图标" }).fill("搜索");
   await expect(page.getByTestId("icon-card")).toHaveCount(1);
+  await page.getByTestId("icon-card").first().click();
   await expect(
     page.getByRole("heading", { name: "search", exact: true }),
   ).toBeVisible();
@@ -127,7 +136,7 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
     page.getByRole("heading", { name: "其他 MCP 客户端", exact: true }),
   ).toBeVisible();
   for (const [label, prefix] of [
-    ["复制 Codex 命令", "codex mcp add iconcast"],
+    ["复制 Codex 命令", "codex mcp add desicast"],
     ["复制 Claude Code 命令", "claude mcp add"],
   ]) {
     const button = page.getByRole("button", { name: label, exact: true });
@@ -143,7 +152,7 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
     expect(copied).toContain("--env ELECTRON_RUN_AS_NODE=1");
     expect(copied).toContain(`'${directory}'`);
     if (label.includes("Claude")) {
-      expect(copied).toContain("--transport stdio --scope user iconcast -- ");
+      expect(copied).toContain("--transport stdio --scope user desicast -- ");
     }
   }
   await page
@@ -155,8 +164,8 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
   const configuration = JSON.parse(
     await app.evaluate(({ clipboard }) => clipboard.readText()),
   );
-  expect(configuration.mcpServers.iconcast.args).toContain(directory);
-  expect(configuration.mcpServers.iconcast.env).toEqual({
+  expect(configuration.mcpServers.desicast.args).toContain(directory);
+  expect(configuration.mcpServers.desicast.env).toEqual({
     ELECTRON_RUN_AS_NODE: "1",
   });
   await page.getByRole("button", { name: "检查 MCP 连接" }).click();
@@ -168,20 +177,23 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
 });
 test("Themes, settings forms and 960px layout remain usable", async () => {
   const page = await app.firstWindow();
-  await page.getByRole("button", { name: "外观设置" }).click();
+  await openSettings(page, "外观设置");
   await page.getByLabel("外观主题").selectOption("dark");
   await expect(page.locator("html")).toHaveClass("dark");
-  await page.getByRole("button", { name: "Design team", exact: false }).click();
+  await page
+    .locator(".sidebar")
+    .getByRole("button", { name: "Design team", exact: false })
+    .click();
   await expect(page.getByTestId("icon-card")).toHaveCount(48);
   await page.screenshot({ path: ".work/screenshots/team-dark.png" });
   const window = await app.browserWindow(page);
   await window.evaluate((window) => window.setSize(960, 640));
-  await page.getByRole("button", { name: "仓库管理" }).click();
+  await openSettings(page, "仓库管理");
   await page.getByRole("button", { name: "添加仓库", exact: true }).click();
   await expect(page.getByLabel("仓库地址")).toBeVisible();
   await expect(page.getByRole("button", { name: "连接并同步" })).toBeVisible();
   await page.screenshot({ path: ".work/screenshots/repositories-dark.png" });
-  await page.getByRole("button", { name: "视觉模型", exact: true }).click();
+  await openSettings(page, "视觉模型");
   await page.getByLabel("模型名称", { exact: true }).fill("vision-model");
   await page.getByLabel("允许发送图片到模型").click();
   await page.getByRole("button", { name: "保存设置" }).click();
@@ -219,11 +231,11 @@ test("Image search uses the configured local vision endpoint and Gendesign crop 
   await new Promise<void>((resolve) => server.listen(0, "127.0.0.1", resolve));
   try {
     const page = await app.firstWindow();
-    await page.getByRole("button", { name: "仓库管理" }).click();
+    await openSettings(page, "仓库管理");
     await page.getByRole("button", { name: "编辑", exact: true }).click();
     await page.getByLabel("允许团队图标发送给模型").click();
     await page.getByRole("button", { name: "保存配置" }).click();
-    await page.getByRole("button", { name: "视觉模型", exact: true }).click();
+    await openSettings(page, "视觉模型");
     const address = server.address() as { port: number };
     await page
       .getByLabel("模型 API 地址")
@@ -259,7 +271,7 @@ test("Image search uses the configured local vision endpoint and Gendesign crop 
   }
 });
 
-test("Default libraries show official SVG assets, totals, theme variants and persistent change acknowledgements", async () => {
+test("Default libraries show bundled design SVG assets, totals, theme variants and persistent change acknowledgements", async () => {
   const page = await app.firstWindow();
   for (const id of ["lucide", "tabler", "ri", "uil", "mingcute", "ic", "eva"]) {
     const row = page.getByTestId(`library-${id}`);
@@ -287,7 +299,7 @@ test("Default libraries show official SVG assets, totals, theme variants and per
   ).toBeVisible();
   await page.screenshot({ path: ".work/screenshots/libraries-light.png" });
   for (const theme of ["dark", "light"]) {
-    await page.getByRole("button", { name: "外观设置" }).click();
+    await openSettings(page, "外观设置");
     await page.getByLabel("外观主题").selectOption(theme);
     await remix.click();
     await expect(page.getByTestId("icon-card")).toHaveAttribute(
@@ -349,7 +361,7 @@ test("Default libraries show official SVG assets, totals, theme variants and per
 
 test("Repository form loads branches and cascaded directory selections without credential inputs", async () => {
   const page = await app.firstWindow();
-  await page.getByRole("button", { name: "仓库管理", exact: true }).click();
+  await openSettings(page, "仓库管理");
   await page.getByRole("button", { name: "添加仓库", exact: true }).click();
   await expect(page.getByLabel("Git 用户名")).toHaveCount(0);
   await expect(page.getByLabel("仓库访问令牌")).toHaveCount(0);
@@ -392,4 +404,154 @@ test("Repository form loads branches and cascaded directory selections without c
   ).toBeDisabled();
   await page.getByLabel("仓库地址").fill("https://github.com/team/other.git");
   await expect(page.getByLabel("仓库分支")).toBeDisabled();
+});
+
+test("Figma home opens existing libraries and preserves global search, settings and responsive themes", async () => {
+  const page = await app.firstWindow();
+  const window = await app.browserWindow(page);
+  await window.evaluate((window) => window.setSize(1440, 900));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await expect(
+    page.getByRole("heading", { name: "Hello，今天想用什么图标库？" }),
+  ).toBeVisible();
+  await expect(page.locator(".home-library-card")).toHaveCount(7);
+  for (const theme of ["light", "dark"]) {
+    await openSettings(page, "外观设置");
+    await page.getByLabel("外观主题").selectOption(theme);
+    await openSettings(page, "首页");
+    await expect(page.locator(".home-library-card")).toHaveCount(7);
+    await expect
+      .poll(() =>
+        page
+          .locator(
+            ".home-content img, .sidebar img:visible, .window-actions img",
+          )
+          .evaluateAll((images) =>
+            images.every(
+              (image) =>
+                (image as HTMLImageElement).complete &&
+                (image as HTMLImageElement).naturalWidth > 0,
+            ),
+          ),
+      )
+      .toBe(true);
+    const geometry = await page
+      .locator(".home-library-card .library-mark img:visible")
+      .evaluateAll((images) =>
+        images.map((image) => ({
+          width: image.getBoundingClientRect().width,
+          height: image.getBoundingClientRect().height,
+        })),
+      );
+    expect(
+      geometry.every((bounds) => bounds.width === 64 && bounds.height === 64),
+    ).toBe(true);
+    await page.screenshot({
+      path: `.work/screenshots/home-${theme}.png`,
+      scale: "css",
+    });
+  }
+  await page.getByTestId("home-library-uil").click();
+  await expect(page.locator(".filter-toolbar select")).toHaveValue("uil");
+  await expect(page.getByTestId("icon-card")).toHaveCount(1);
+  await page.getByRole("button", { name: "返回", exact: true }).click();
+  await expect(
+    page.getByRole("heading", { name: "Hello，今天想用什么图标库？" }),
+  ).toBeVisible();
+  await page.getByRole("button", { name: "前进", exact: true }).click();
+  await expect(page.locator(".filter-toolbar select")).toHaveValue("uil");
+  await openSettings(page, "首页");
+  await window.evaluate((window) => window.setSize(960, 640));
+  await page.setViewportSize({ width: 960, height: 640 });
+  await expect(page.locator(".home-library-card").first()).toBeVisible();
+  const fits = await page
+    .locator(".home-library-grid")
+    .evaluate((grid) => grid.getBoundingClientRect().right <= innerWidth);
+  expect(fits).toBe(true);
+  await page.screenshot({
+    path: ".work/screenshots/home-narrow.png",
+    scale: "css",
+  });
+  await page.keyboard.press("Meta+k");
+  await expect(page.getByRole("searchbox", { name: "搜索图标" })).toBeFocused();
+  await page.getByRole("button", { name: "切换侧栏" }).click();
+  await expect(page.locator(".sidebar")).toBeHidden();
+  await page.getByRole("button", { name: "切换侧栏" }).click();
+  await expect(page.locator(".sidebar")).toBeVisible();
+});
+
+test("Icon workspace reflows between grid, list and export details while retaining selection", async () => {
+  const page = await app.firstWindow();
+  const window = await app.browserWindow(page);
+  await window.evaluate((window) => window.setSize(1440, 900));
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page
+    .locator(".sidebar")
+    .getByRole("button", { name: "Design team", exact: false })
+    .click();
+  await expect(page.getByTestId("icon-card")).toHaveCount(48);
+  await expect(
+    page.getByRole("complementary", { name: "图标详情" }),
+  ).toHaveCount(0);
+  const full = await page.locator(".library-main").boundingBox();
+  await page.screenshot({
+    path: ".work/screenshots/icon-grid-light.png",
+    scale: "css",
+  });
+  await page.getByTestId("icon-card").first().click();
+  await expect(
+    page.getByRole("heading", { name: "icon-1", exact: true }),
+  ).toBeVisible();
+  const split = await page.locator(".library-main").boundingBox();
+  expect(split!.width).toBeLessThan(full!.width);
+  await page.getByRole("button", { name: "复制图标名称" }).click();
+  expect(await app.evaluate(({ clipboard }) => clipboard.readText())).toBe(
+    "icon-1",
+  );
+  await page.getByRole("button", { name: "复制代码", exact: true }).click();
+  expect(await app.evaluate(({ clipboard }) => clipboard.readText())).toContain(
+    "<svg",
+  );
+  await page.screenshot({
+    path: ".work/screenshots/icon-detail-light.png",
+    scale: "css",
+  });
+  await page.getByRole("tab", { name: "列表视图" }).click();
+  await expect(page.locator(".icon-grid")).toHaveClass(/icon-list/);
+  await expect(page.getByTestId("icon-card").first()).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
+  await page.getByRole("button", { name: "切换详情面板" }).click();
+  await expect(
+    page.getByRole("complementary", { name: "图标详情" }),
+  ).toHaveCount(0);
+  await page.getByRole("tab", { name: "网格视图" }).click();
+  await openSettings(page, "外观设置");
+  await page.getByLabel("外观主题").selectOption("dark");
+  await page
+    .locator(".sidebar")
+    .getByRole("button", { name: "Design team", exact: false })
+    .click();
+  await page.getByTestId("icon-card").first().click();
+  await page.screenshot({
+    path: ".work/screenshots/icon-detail-dark.png",
+    scale: "css",
+  });
+  await window.evaluate((window) => window.setSize(960, 640));
+  await page.setViewportSize({ width: 960, height: 640 });
+  const fits = await page
+    .locator(".detail")
+    .evaluate(
+      (panel) =>
+        panel.getBoundingClientRect().right <= innerWidth &&
+        panel.scrollWidth <= panel.clientWidth,
+    );
+  expect(fits).toBe(true);
+  await page.getByRole("button", { name: "复制代码", exact: true }).scrollIntoViewIfNeeded();
+  await expect(page.getByRole("button", { name: "复制代码", exact: true })).toBeVisible();
+  await page.screenshot({
+    path: ".work/screenshots/icon-detail-narrow.png",
+    scale: "css",
+  });
 });

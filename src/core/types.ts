@@ -18,6 +18,7 @@ export interface LibraryChanges {
   removed: number;
 }
 export interface Source {
+  createdAt?: string;
   id: string;
   kind: "public" | "repository";
   name: string;

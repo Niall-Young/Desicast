@@ -32,7 +32,7 @@ const icon: Icon = {
   commit: "abc123",
 };
 async function temporary<T>(fn: (path: string) => Promise<T>) {
-  const path = await mkdtemp(join(tmpdir(), "iconcast-test-"));
+  const path = await mkdtemp(join(tmpdir(), "desicast-test-"));
   try {
     return await fn(path);
   } finally {

@@ -1,3 +1,19 @@
+import { LibraryFilterMenu } from "./LibraryFilterMenu";
+import { filterLibraries, type LibraryFilter } from "./library-filter";
+import { LibraryContextMenu } from "./LibraryContextMenu";
+import { RemoveLibraryDialog } from "./RemoveLibraryDialog";
+import type {
+  LibraryPreferences,
+  LibraryPreference,
+} from "../core/library-management";
+import type { ReactElement } from "react";
+import brandLogo from "../../assets/icon.svg";
+import { DesignIcon, LibraryMark, homeLibraries, designNames } from "./design";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+} from "@/components/ui/popover";
 import { DirectoryCascader } from "./DirectoryCascader";
 import { defaultLibraries, changeDescription } from "./libraries";
 import { useEffect, useRef, useState, type ReactNode } from "react";
@@ -39,15 +55,7 @@ import {
   ModalDescription,
   ModalFooter,
 } from "@/components/ui/modal";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+
 import type {
   Collection,
   LibraryChanges,
@@ -67,7 +75,17 @@ import {
   type MCPInfo,
 } from "./api";
 
-type Page = "library" | "repositories" | "model" | "mcp" | "appearance";
+type Page =
+  "home" | "library" | "repositories" | "model" | "mcp" | "appearance";
+const publicLibraryOrigins: Record<string, string> = {
+  lucide: "https://lucide.dev",
+  tabler: "https://tabler.io/icons",
+  ri: "https://remixicon.com",
+  uil: "https://iconscout.com/unicons",
+  mingcute: "https://www.mingcute.com",
+  ic: "https://fonts.google.com/icons",
+  eva: "https://akveo.github.io/eva-icons",
+};
 const targets: Target[] = ["svg", "html", "react", "vue", "swiftui"];
 const labels: Record<Target, string> = {
   svg: "SVG",
@@ -87,23 +105,9 @@ function ChangeBadge({ changes }: { changes?: LibraryChanges }) {
       role="img"
       aria-label={`未读变更：${changeDescription(changes)}`}
       title={changeDescription(changes)}
-    />
-  );
-}
-function Logo() {
-  return (
-    <svg
-      width="25"
-      height="25"
-      viewBox="0 0 25 25"
-      fill="none"
-      aria-hidden="true"
     >
-      <rect x="1" y="1" width="9" height="9" rx="2" fill="currentColor" />
-      <rect x="14" y="1" width="9" height="9" rx="4.5" fill="currentColor" />
-      <rect x="1" y="14" width="9" height="9" rx="2" fill="currentColor" />
-      <path d="M18.5 13L24 18.5L18.5 24L13 18.5L18.5 13Z" fill="currentColor" />
-    </svg>
+      Update
+    </span>
   );
 }
 function Field({
@@ -125,10 +129,89 @@ function Field({
 }
 
 export function App() {
-  const [page, setPage] = useState<Page>("library"),
+  const [page, setPage] = useState<Page>("home"),
     [sources, setSources] = useState<Source[]>([]),
     [collections, setCollections] = useState<Collection[]>([]),
     [settings, setSettings] = useState<Settings>(initialSettings);
+  const [libraryPreferences, setLibraryPreferences] =
+    useState<LibraryPreferences>({});
+  const [removeLibrary, setRemoveLibrary] = useState<{
+    id: string;
+    name: string;
+    public: boolean;
+  }>();
+  const [configureLibrary, setConfigureLibrary] = useState<string>();
+  const [configurationName, setConfigurationName] = useState("");
+  const [savingLibrary, setSavingLibrary] = useState(false);
+  const [editRepository, setEditRepository] = useState<string>();
+  const [repositoryEditRevision, setRepositoryEditRevision] = useState(0);
+  async function saveLibrary(id: string, patch: LibraryPreference) {
+    const value = await api<LibraryPreferences>("saveLibraryPreference", {
+      id,
+      ...patch,
+    });
+    setLibraryPreferences(value);
+  }
+  function libraryMenu(
+    id: string,
+    name: string,
+    isPublic: boolean,
+    button: ReactElement,
+  ) {
+    const preference = libraryPreferences[id];
+    const open = () => {
+      chooseSource(isPublic ? "public" : id);
+      if (isPublic) setCollection(id);
+    };
+    return (
+      <LibraryContextMenu
+        key={id}
+        pinned={preference?.pinned}
+        onOpen={open}
+        onPin={() => {
+          saveLibrary(id, { pinned: !preference?.pinned }).catch(report);
+        }}
+        onConfigure={() => {
+          if (isPublic) {
+            setConfigurationName(preference?.name ?? name);
+            setConfigureLibrary(id);
+          } else {
+            setEditRepository(id);
+            setRepositoryEditRevision((value) => value + 1);
+            navigate("repositories");
+          }
+        }}
+        onSource={() => {
+          const url = isPublic
+            ? (collections.find((item) => item.id === id)?.authorUrl ??
+              publicLibraryOrigins[id])
+            : sources.find((item) => item.id === id)?.url;
+          if (url) api("openUrl", url).catch(report);
+          else report(new Error("图库来源暂不可用"));
+        }}
+        onRemove={() => setRemoveLibrary({ id, name, public: isPublic })}
+      >
+        {button}
+      </LibraryContextMenu>
+    );
+  }
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [libraryFilter, setLibraryFilter] = useState("");
+  const [filterOpen, setFilterOpen] = useState(false);
+  const [libraryOptions, setLibraryOptions] = useState<LibraryFilter>({
+    types: [],
+    statuses: [],
+    sorts: [],
+  });
+  const [previousPage, setPreviousPage] = useState<Page>();
+  const [nextPage, setNextPage] = useState<Page>();
+  function navigate(next: Page) {
+    setPreviousPage(page);
+    setNextPage(undefined);
+    setPage(next);
+    setSettingsOpen(false);
+  }
   const [sourceId, setSourceId] = useState(""),
     [collection, setCollection] = useState(""),
     [query, setQuery] = useState(""),
@@ -144,7 +227,8 @@ export function App() {
     [color, setColor] = useState("currentColor"),
     [exported, setExported] = useState<ExportResult>(),
     [copyState, setCopyState] = useState(false),
-    [detailOpen, setDetailOpen] = useState(true);
+    [detailOpen, setDetailOpen] = useState(false);
+  const [view, setView] = useState<"grid" | "list">("grid");
   const [reference, setReference] = useState<string>(),
     [visionResult, setVisionResult] = useState(false),
     [cropOpen, setCropOpen] = useState(false);
@@ -186,6 +270,9 @@ export function App() {
   const report = (err: unknown) =>
     setError(err instanceof Error ? err.message : "操作失败");
   useEffect(() => {
+    api<LibraryPreferences>("libraryPreferences")
+      .then(setLibraryPreferences)
+      .catch(report);
     refreshSources().catch(report);
     api<Settings>("settings").then(setSettings).catch(report);
     refreshCollections().catch(() => {});
@@ -295,7 +382,7 @@ export function App() {
     setCollection("");
     setOffset(0);
     setQuery("");
-    setPage("library");
+    navigate("library");
   }
   async function acknowledgeChanges() {
     if (!activeChanges) return;
@@ -346,6 +433,7 @@ export function App() {
     }
     const reader = new FileReader();
     reader.onload = () => {
+      if (page === "home") chooseSource("");
       setReference(String(reader.result));
       setCropOpen(true);
     };
@@ -371,6 +459,7 @@ export function App() {
       if (current !== generation.current) return;
       setResult(value);
       setSelected(value.icons[0]);
+      setDetailOpen(Boolean(value.icons.length));
       setVisionResult(true);
     } catch (err) {
       if (current === generation.current) report(err);
@@ -404,6 +493,8 @@ export function App() {
   }
   const activeSource = sources.find((source) => source.id === sourceId),
     heading =
+      libraryPreferences[collection]?.name ??
+      designNames[collection] ??
       defaultLibraries.find((item) => item.id === collection)?.name ??
       collections.find((item) => item.id === collection)?.name ??
       activeSource?.name ??
@@ -412,7 +503,45 @@ export function App() {
     ? collections.find((item) => item.id === collection)?.changes
     : activeSource?.changes;
   const teams = sources.filter((source) => source.kind === "repository");
+  const visibleLibraries = filterLibraries(
+    defaultLibraries.map((library) => ({
+      ...library,
+      name: libraryPreferences[library.id]?.name ?? library.name,
+    })),
+    teams,
+    collections,
+    libraryOptions,
+    libraryFilter,
+  )
+    .filter(
+      (entry) =>
+        !libraryPreferences[entry.library?.id ?? entry.source!.id]?.hidden,
+    )
+    .sort(
+      (a, b) =>
+        Number(
+          Boolean(libraryPreferences[b.library?.id ?? b.source!.id]?.pinned),
+        ) -
+        Number(
+          Boolean(libraryPreferences[a.library?.id ?? a.source!.id]?.pinned),
+        ),
+    );
+  const homeEntries: {
+    id: string;
+    library?: (typeof homeLibraries)[number];
+    source?: Source;
+  }[] = [
+    ...homeLibraries.map((library) => ({ id: library.id, library })),
+    ...teams.map((source) => ({ id: source.id, source })),
+  ]
+    .filter((entry) => !libraryPreferences[entry.id]?.hidden)
+    .sort(
+      (a, b) =>
+        Number(Boolean(libraryPreferences[b.id]?.pinned)) -
+        Number(Boolean(libraryPreferences[a.id]?.pinned)),
+    );
   const titles: Record<Page, string> = {
+    home: "首页",
     library: heading,
     repositories: "团队仓库",
     model: "视觉模型",
@@ -421,7 +550,7 @@ export function App() {
   };
   return (
     <div
-      className="app"
+      className={`app ${sidebarOpen ? "" : "sidebar-collapsed"} ${page === "home" ? "home-view" : page === "library" ? "library-view" : ""}`}
       onDragOver={(event) => event.preventDefault()}
       onDrop={(event) => {
         event.preventDefault();
@@ -438,170 +567,249 @@ export function App() {
       }}
     >
       <header className="titlebar">
-        <span className="window-title">Iconcast</span>
-        <span className="titlebar-end">你的图标，随处可用</span>
-      </header>
-      <div className="shell">
-        <aside className="sidebar">
-          <div className="brand">
-            <Logo />
-            <span>Iconcast</span>
-            <span className="version">0.1</span>
-          </div>
-          <div className="nav-caption">工作空间</div>
-          <button
-            className={`nav-item ${page === "library" && !sourceId ? "active" : ""}`}
-            onClick={() => chooseSource("")}
-          >
-            <Glyph>
-              <GridRegular />
-            </Glyph>
-            <span>全部图标</span>
-          </button>
-          <button
-            className={`nav-item ${page === "library" && sourceId === "public" && !collection ? "active" : ""}`}
-            onClick={() => chooseSource("public")}
-          >
-            <Glyph>
-              <SearchRegular />
-            </Glyph>
-            <span>开源图库</span>
-            <span className="nav-count">
-              {collections.length
-                ? collections
-                    .reduce((sum, item) => sum + item.total, 0)
-                    .toLocaleString()
-                : "—"}
-            </span>
-          </button>
-          <div className="nav-caption public-heading">默认图库</div>
-          {defaultLibraries.map((library) => {
-            const metadata = collections.find((item) => item.id === library.id);
-            return (
-              <button
-                key={library.id}
-                data-testid={`library-${library.id}`}
-                className={`nav-item ${page === "library" && sourceId === "public" && collection === library.id ? "active" : ""}`}
-                title={`${library.name} · ${metadata ? metadata.total.toLocaleString() + " 个图标" : "数量暂不可用"}${metadata?.changes ? " · " + changeDescription(metadata.changes) : ""}`}
-                onClick={() => {
-                  chooseSource("public");
-                  setCollection(library.id);
-                }}
-              >
-                <span className="library-mark" aria-hidden="true">
-                  {library.monochrome ? (
-                    <span
-                      className="library-mark-mask"
-                      style={{ maskImage: `url("${library.mark}")` }}
-                    />
-                  ) : (
-                    <>
-                      <img
-                        className={library.darkMark ? "mark-light" : ""}
-                        src={library.mark}
-                        alt=""
-                      />
-                      {library.darkMark && (
-                        <img
-                          className="mark-dark"
-                          src={library.darkMark}
-                          alt=""
-                        />
-                      )}
-                    </>
-                  )}
-                </span>
-                <span>{library.name}</span>
-                <ChangeBadge changes={metadata?.changes} />
-                <span className="nav-count">
-                  {metadata ? metadata.total.toLocaleString() : "—"}
-                </span>
-              </button>
-            );
-          })}
-          <div className="nav-caption team-heading">
-            <span>团队图库</span>
+        <div className="window-navigation">
+          <div className="native-controls-space" aria-hidden="true" />
+          <div className="window-actions">
             <IconButton
-              size="sm"
               kind="plain"
-              aria-label="添加团队仓库"
-              onClick={() => setPage("repositories")}
+              size="sm"
+              aria-label="返回"
+              disabled={!previousPage}
+              onClick={() => {
+                if (previousPage) {
+                  setNextPage(page);
+                  setPage(previousPage);
+                  setPreviousPage(undefined);
+                }
+              }}
             >
-              <AddRegular size={16} />
+              <DesignIcon name="back" />
+            </IconButton>
+            <IconButton
+              kind="plain"
+              size="sm"
+              aria-label="前进"
+              disabled={!nextPage}
+              onClick={() => {
+                if (nextPage) {
+                  setPreviousPage(page);
+                  setPage(nextPage);
+                  setNextPage(undefined);
+                }
+              }}
+            >
+              <DesignIcon name="forward" />
+            </IconButton>
+            <IconButton
+              kind="plain"
+              size="sm"
+              aria-label="切换侧栏"
+              aria-expanded={sidebarOpen}
+              onClick={() => setSidebarOpen((value) => !value)}
+            >
+              <DesignIcon name="sidebar" />
             </IconButton>
           </div>
-          {teams.length ? (
-            teams.map((source) => (
-              <button
-                key={source.id}
-                className={`nav-item ${page === "library" && sourceId === source.id ? "active" : ""}`}
-                onClick={() => chooseSource(source.id)}
-                title={source.name}
-              >
-                <Glyph>
-                  <FolderRegular />
-                </Glyph>
-                <span>{source.name}</span>
-                <ChangeBadge changes={source.changes} />
-                <span className="nav-count">
-                  {source.iconCount.toLocaleString()}
-                </span>
-              </button>
-            ))
-          ) : (
-            <div className="sidebar-empty">
-              <p>把团队的 SVG 带进来</p>
-              <Button
+        </div>
+        {page === "library" ? (
+          <div className="library-window-heading">
+            <span className="window-library-title">
+              {collection === "lucide" ? (
+                <DesignIcon name="lucide-heading" />
+              ) : defaultLibraries.find(
+                  (library) => library.id === collection,
+                ) ? (
+                <LibraryMark
+                  library={defaultLibraries.find(
+                    (library) => library.id === collection,
+                  )!}
+                />
+              ) : (
+                <DesignIcon
+                  name={
+                    activeSource?.kind === "repository" ? "book-row" : "search"
+                  }
+                />
+              )}
+              <span>{heading}</span>
+            </span>
+            <IconButton
+              kind="plain"
+              size="sm"
+              selected={detailOpen}
+              aria-label="切换详情面板"
+              aria-expanded={detailOpen}
+              onClick={() => setDetailOpen((value) => !value)}
+            >
+              <DesignIcon name="code" />
+            </IconButton>
+          </div>
+        ) : (
+          <span
+            className="window-title"
+            style={{ display: "flex", alignItems: "center", gap: 8 }}
+          >
+            <img src={brandLogo} width="28" height="28" alt="DesiCast Logo" />
+            DesiCast
+          </span>
+        )}
+      </header>
+      <div className="shell">
+        <aside className="sidebar" aria-label="图库导航" hidden={!sidebarOpen}>
+          <div className="sidebar-menu">
+            <Button
+              className="nav-item"
+              kind="plain"
+              onClick={() => {
+                setEditRepository(undefined);
+                setRepositoryEditRevision((value) => value + 1);
+                navigate("repositories");
+              }}
+            >
+              <DesignIcon name="add" />
+              <span>添加图标库</span>
+            </Button>
+            <Button
+              className={`nav-item ${page === "library" && !sourceId ? "active" : ""}`}
+              kind="plain"
+              onClick={() => {
+                chooseSource("");
+                requestAnimationFrame(() => searchInput.current?.focus());
+              }}
+            >
+              <DesignIcon name="search" />
+              <span>全局搜索</span>
+            </Button>
+          </div>
+          <div className="library-heading">
+            <span>图标库</span>
+            <div className="library-heading-actions">
+              <IconButton
                 kind="plain"
                 size="sm"
-                onClick={() => setPage("repositories")}
+                aria-label="筛选图标库"
+                aria-expanded={filterOpen}
+                onClick={() => setFilterOpen((value) => !value)}
               >
-                连接 Git 仓库 <ArrowRightRegular size={14} />
-              </Button>
+                <DesignIcon name="library-search" />
+              </IconButton>
+              <LibraryFilterMenu
+                value={libraryOptions}
+                onChange={setLibraryOptions}
+              />
+              <IconButton
+                kind="plain"
+                size="sm"
+                aria-label="添加团队仓库"
+                onClick={() => {
+                  setEditRepository(undefined);
+                  setRepositoryEditRevision((value) => value + 1);
+                  navigate("repositories");
+                }}
+              >
+                <DesignIcon name="library-add" />
+              </IconButton>
+            </div>
+          </div>
+          {filterOpen && (
+            <div className="sidebar-filter">
+              <SearchBox
+                aria-label="筛选图标库"
+                placeholder="搜索图标库"
+                value={libraryFilter}
+                onValueChange={setLibraryFilter}
+              />
             </div>
           )}
-          <div className="sidebar-bottom">
-            <button
-              className={`nav-item ${page === "mcp" ? "active" : ""}`}
-              onClick={() => setPage("mcp")}
+          <div className="library-navigation">
+            {visibleLibraries.map((entry) => {
+              const library = entry.library;
+              const source = entry.source;
+              const metadata = library
+                ? collections.find((item) => item.id === library.id)
+                : undefined;
+              const id = library?.id ?? source!.id;
+              const name = library
+                ? (libraryPreferences[id]?.name ?? designNames[library.id])
+                : source!.name;
+              const changes = metadata?.changes ?? source?.changes;
+              return libraryMenu(
+                id,
+                name,
+                Boolean(library),
+                <button
+                  key={id}
+                  data-testid={`library-${id}`}
+                  className={`nav-item ${page === "library" && (library ? sourceId === "public" && collection === id : sourceId === id) ? "active" : ""}`}
+                  title={`${library?.name ?? name} · ${library ? (metadata ? metadata.total.toLocaleString() + " 个图标" : "数量暂不可用") : source!.iconCount.toLocaleString() + " 个图标"}${changes ? " · " + changeDescription(changes) : ""}`}
+                  onClick={() => {
+                    chooseSource(library ? "public" : id);
+                    if (library) setCollection(id);
+                  }}
+                >
+                  {library ? (
+                    <LibraryMark library={library} />
+                  ) : (
+                    <DesignIcon name="book-row" />
+                  )}
+                  <span>{name}</span>
+                  <ChangeBadge changes={changes} />
+                  <span className="nav-count">
+                    {library
+                      ? metadata
+                        ? metadata.total.toLocaleString()
+                        : "—"
+                      : source!.iconCount.toLocaleString()}
+                  </span>
+                </button>,
+              );
+            })}
+            {visibleLibraries.length === 0 && (
+              <p className="library-filter-empty">没有符合条件的图标库</p>
+            )}
+          </div>
+          <div className="sidebar-foot">
+            <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
+              <PopoverTrigger
+                render={<IconButton kind="plain" aria-label="设置" />}
+              >
+                <DesignIcon name="settings" />
+              </PopoverTrigger>
+              <PopoverContent
+                className="navigation-popup"
+                side="top"
+                align="start"
+              >
+                <Button kind="plain" onClick={() => navigate("home")}>
+                  首页
+                </Button>
+                <Button
+                  kind="plain"
+                  onClick={() => {
+                    setEditRepository(undefined);
+                    setRepositoryEditRevision((value) => value + 1);
+                    navigate("repositories");
+                  }}
+                >
+                  仓库管理
+                </Button>
+                <Button kind="plain" onClick={() => navigate("model")}>
+                  视觉模型
+                </Button>
+                <Button kind="plain" onClick={() => navigate("appearance")}>
+                  外观设置
+                </Button>
+              </PopoverContent>
+            </Popover>
+            <Button
+              kind="plain"
+              className="mcp-badge"
+              aria-label="MCP 连接"
+              onClick={() => navigate("mcp")}
             >
-              <Glyph>
-                <LinkRegular />
-              </Glyph>
-              <span>MCP 连接</span>
-              <span className="tiny-badge">AI</span>
-            </button>
-            <button
-              className={`nav-item ${page === "repositories" ? "active" : ""}`}
-              onClick={() => setPage("repositories")}
-            >
-              <Glyph>
-                <FolderRegular />
-              </Glyph>
-              <span>仓库管理</span>
-            </button>
-            <button
-              className={`nav-item ${page === "model" ? "active" : ""}`}
-              onClick={() => setPage("model")}
-            >
-              <Glyph>
-                <PicRegular />
-              </Glyph>
-              <span>视觉模型</span>
-            </button>
-            <button
-              className={`nav-item ${page === "appearance" ? "active" : ""}`}
-              onClick={() => setPage("appearance")}
-            >
-              <Glyph>
-                <Settings1Regular />
-              </Glyph>
-              <span>外观设置</span>
-            </button>
-            <div className="sidebar-foot">
-              <span className="local-dot" />
-              本地优先<span>⌘ K 搜索</span>
-            </div>
+              <DesignIcon name="check" />
+              <span>MCP</span>
+            </Button>
           </div>
         </aside>
         <main className="workspace">
@@ -616,39 +824,11 @@ export function App() {
               </Button>
             </div>
           )}
-          <div className="page-heading">
-            <div className="heading-title">
-              {titles[page]}
-              {page === "library" && (
-                <span className="heading-meta">
-                  {activeSource?.kind === "repository"
-                    ? "团队 SVG"
-                    : "公共与团队 SVG"}
-                </span>
-              )}
+          {page !== "home" && page !== "library" && (
+            <div className="page-heading">
+              <div className="heading-title">{titles[page]}</div>
             </div>
-            <div className="heading-actions">
-              {page === "library" && (
-                <>
-                  <IconButton
-                    kind="plain"
-                    aria-label="刷新图库"
-                    onClick={refreshLibrary}
-                  >
-                    <Refresh1Regular size={16} />
-                  </IconButton>
-                  <IconButton
-                    kind="plain"
-                    selected={detailOpen}
-                    aria-label="切换详情面板"
-                    onClick={() => setDetailOpen((value) => !value)}
-                  >
-                    <CodeRegular size={16} />
-                  </IconButton>
-                </>
-              )}
-            </div>
-          </div>
+          )}
           {error && (
             <div className="banner error" role="alert">
               <span>{error}</span>
@@ -668,30 +848,106 @@ export function App() {
               {notice}
             </div>
           )}
-          {page === "library" ? (
+          {page === "home" ? (
+            <section className="home-content" aria-label="选择图标库">
+              <div className="home-center">
+                <h1>Hello，今天想用什么图标库？</h1>
+                <div className="home-library-grid">
+                  {homeEntries.map(({ id, library, source }) => {
+                    const name = library
+                      ? (libraryPreferences[id]?.name ?? library.designName)
+                      : source!.name;
+                    return libraryMenu(
+                      id,
+                      name,
+                      Boolean(library),
+                      <Button
+                        key={id}
+                        kind="plain"
+                        className="home-library-card"
+                        data-testid={`home-library-${id}`}
+                        title={name}
+                        onClick={() => {
+                          chooseSource(library ? "public" : id);
+                          if (library) setCollection(id);
+                        }}
+                      >
+                        {library ? (
+                          <LibraryMark library={library} card />
+                        ) : (
+                          <span className="home-team-mark">
+                            <DesignIcon name="book-card" />
+                          </span>
+                        )}
+                        <span>{name}</span>
+                      </Button>,
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+          ) : page === "library" ? (
             <div className="library-layout">
               <section className="library-main">
                 <div className="search-toolbar">
                   <SearchBox
                     ref={searchInput}
                     wrapperClassName="main-search"
-                    size="lg"
+                    size="md"
                     aria-label="搜索图标"
-                    placeholder="搜索图标，比如 search、设置、箭头…"
+                    placeholder="搜索图标名称"
                     value={query}
                     onValueChange={(value) => {
                       setQuery(value);
                       setOffset(0);
                     }}
                   />
-                  <Button
-                    kind="ghost"
-                    size="lg"
-                    leftIcon={<PicRegular size={16} />}
-                    onClick={() => fileInput.current?.click()}
-                  >
-                    以图搜图
-                  </Button>
+                  <div className="grid-toolbar-actions">
+                    <Popover>
+                      <PopoverTrigger
+                        render={
+                          <IconButton
+                            kind="plain"
+                            size="sm"
+                            aria-label="搜索选项"
+                          />
+                        }
+                      >
+                        <DesignIcon name="library-options" />
+                      </PopoverTrigger>
+                      <PopoverContent className="navigation-popup" align="end">
+                        <Button
+                          kind="plain"
+                          leftIcon={<PicRegular size={16} />}
+                          onClick={() => fileInput.current?.click()}
+                        >
+                          以图搜图
+                        </Button>
+                        <Button
+                          kind="plain"
+                          leftIcon={<Refresh1Regular size={16} />}
+                          onClick={refreshLibrary}
+                        >
+                          刷新图库
+                        </Button>
+                      </PopoverContent>
+                    </Popover>
+                    <Tabs
+                      value={view}
+                      onValueChange={(value) =>
+                        setView(value as "grid" | "list")
+                      }
+                    >
+                      <TabsList className="view-tabs" aria-label="图标显示方式">
+                        <TabsTrigger value="grid" aria-label="网格视图">
+                          <DesignIcon name="grid" />
+                        </TabsTrigger>
+                        <TabsTrigger value="list" aria-label="列表视图">
+                          <DesignIcon name="list" />
+                        </TabsTrigger>
+                      </TabsList>
+                    </Tabs>
+                  </div>
                   <input
                     ref={fileInput}
                     type="file"
@@ -704,7 +960,10 @@ export function App() {
                     }}
                   />
                 </div>
-                <div className="filter-toolbar">
+                <div
+                  className="filter-toolbar"
+                  hidden={Boolean(sourceId) && !visionResult}
+                >
                   <div className="filter-left">
                     <NativeSelect
                       size="sm"
@@ -784,12 +1043,15 @@ export function App() {
                   aria-busy={busy}
                 >
                   {result.icons.length ? (
-                    <div className="icon-grid">
+                    <div
+                      className={`icon-grid ${view === "list" ? "icon-list" : ""}`}
+                    >
                       {result.icons.map((icon) => (
                         <button
                           key={icon.id}
                           data-testid="icon-card"
                           className={`icon-card ${selected?.id === icon.id ? "selected" : ""}`}
+                          aria-pressed={selected?.id === icon.id && detailOpen}
                           onClick={() => {
                             setSelected(icon);
                             setDetailOpen(true);
@@ -803,12 +1065,16 @@ export function App() {
                               }
                               src={svgUrl(icon.svg)}
                               alt=""
-                              width="28"
-                              height="28"
+                              width="48"
+                              height="48"
                             />
                           </div>
                           <span className="card-name">{icon.name}</span>
-                          <span className="card-source">{icon.collection}</span>
+                          {view === "list" && (
+                            <span className="card-source">
+                              {designNames[icon.collection] ?? icon.collection}
+                            </span>
+                          )}
                           {icon.sourceId !== "public" && (
                             <span className="team-mark" title="团队图标" />
                           )}
@@ -844,11 +1110,14 @@ export function App() {
                     </div>
                   )}
                 </div>
-                <footer className="grid-footer">
+                <footer
+                  className="grid-footer"
+                  hidden={result.total <= 48 && !visionResult}
+                >
                   <span>
                     {visionResult
                       ? "视觉匹配结果"
-                      : "统一 SVG · 原始风格 · 按需缓存"}
+                      : `${result.total.toLocaleString()} 个图标`}
                   </span>
                   <div className="pager">
                     <IconButton
@@ -881,17 +1150,6 @@ export function App() {
                 <aside className="detail" aria-label="图标详情">
                   {selected ? (
                     <>
-                      <div className="detail-top">
-                        <span>图标详情</span>
-                        <IconButton
-                          size="sm"
-                          kind="plain"
-                          aria-label="收起详情"
-                          onClick={() => setDetailOpen(false)}
-                        >
-                          <CloseRegular size={16} />
-                        </IconButton>
-                      </div>
                       <div className="detail-preview">
                         <img
                           className={
@@ -905,51 +1163,51 @@ export function App() {
                           width="80"
                           height="80"
                         />
-                        <span className="preview-dimension">
-                          SVG · 矢量图标
-                        </span>
                       </div>
                       <div className="detail-identity">
-                        <h2>{selected.name}</h2>
-                        <span>{selected.collection}</span>
+                        <div className="identity-row">
+                          <span>名称</span>
+                          <h2>{selected.name}</h2>
+                          <IconButton
+                            kind="plain"
+                            size="sm"
+                            aria-label="复制图标名称"
+                            onClick={() =>
+                              api("copy", selected.name)
+                                .then(() => flash("图标名称已复制"))
+                                .catch(report)
+                            }
+                          >
+                            <DesignIcon name="copy-name" />
+                          </IconButton>
+                        </div>
+                        <div className="identity-row">
+                          <span>来源</span>
+                          <Button
+                            className="source-link"
+                            kind="plain"
+                            size="sm"
+                            onClick={() =>
+                              api("openUrl", selected.sourceUrl).catch(report)
+                            }
+                            leftIcon={
+                              selected.sourceUrl.includes("github.com") ? (
+                                <DesignIcon name="github" />
+                              ) : (
+                                <LinkRegular size={16} />
+                              )
+                            }
+                          >
+                            {selected.sourceUrl.includes("github.com")
+                              ? "Github"
+                              : "查看来源"}
+                          </Button>
+                        </div>
                       </div>
                       {selected.reason && (
                         <p className="match-reason">{selected.reason}</p>
                       )}
-                      <div className="detail-properties">
-                        <Field label="尺寸">
-                          <NativeSelect
-                            size="sm"
-                            aria-label="图标尺寸"
-                            value={size}
-                            onChange={(event) =>
-                              setSize(Number(event.target.value))
-                            }
-                          >
-                            {[16, 20, 24, 32, 48, 64].map((value) => (
-                              <option key={value} value={value}>
-                                {value} px
-                              </option>
-                            ))}
-                          </NativeSelect>
-                        </Field>
-                        <Field label="颜色">
-                          <NativeSelect
-                            size="sm"
-                            aria-label="图标颜色"
-                            value={color}
-                            onChange={(event) => setColor(event.target.value)}
-                          >
-                            <option value="currentColor">跟随主题</option>
-                            <option value="original">原始颜色</option>
-                            <option value="#000000">黑色</option>
-                            <option value="#ffffff">白色</option>
-                            <option value="#3568d4">蓝色</option>
-                          </NativeSelect>
-                        </Field>
-                      </div>
                       <div className="export-section">
-                        <span className="section-label">使用方式</span>
                         <Tabs
                           value={target}
                           onValueChange={(value) => setTarget(value as Target)}
@@ -963,33 +1221,13 @@ export function App() {
                           </TabsList>
                         </Tabs>
                         <div className="code-preview">
-                          <div className="code-label">
-                            <CodeRegular size={13} />
-                            {target === "swiftui"
-                              ? "Image + SVG Asset"
-                              : target === "react"
-                                ? "TSX"
-                                : target === "vue"
-                                  ? "Vue SFC"
-                                  : "SVG"}
-                          </div>
                           <pre>{exported?.code ?? "正在生成…"}</pre>
                         </div>
                         <p className="export-instruction">
                           {exported?.instructions}
                         </p>
                         <div className="export-actions">
-                          <Button
-                            disabled={!exported}
-                            leftIcon={
-                              copyState ? (
-                                <CheckRegular size={16} />
-                              ) : (
-                                <CopyRegular size={16} />
-                              )
-                            }
-                            onClick={copy}
-                          >
+                          <Button disabled={!exported} onClick={copy}>
                             {copyState ? "已复制" : "复制代码"}
                           </Button>
                           <IconButton
@@ -998,7 +1236,7 @@ export function App() {
                             disabled={!exported}
                             onClick={download}
                           >
-                            <DownloadRegular size={16} />
+                            <DesignIcon name="download" />
                           </IconButton>
                         </div>
                         {target === "swiftui" && (
@@ -1007,37 +1245,86 @@ export function App() {
                           </span>
                         )}
                       </div>
-                      <div className="source-info">
-                        <span className="section-label">来源信息</span>
-                        <dl>
-                          <dt>来源</dt>
-                          <dd>
-                            {selected.sourceId === "public"
-                              ? "开源图库"
-                              : "团队仓库"}
-                          </dd>
-                          <dt>{selected.commit ? "版本" : "许可"}</dt>
-                          <dd>
-                            {selected.commit?.slice(0, 10) ??
-                              selected.license ??
-                              "见原始来源"}
-                          </dd>
-                        </dl>
-                        {selected.path && (
-                          <p className="source-path" title={selected.path}>
-                            {selected.path}
-                          </p>
-                        )}
-                        <Button
-                          kind="plain"
-                          size="sm"
-                          onClick={() =>
-                            api("openUrl", selected.sourceUrl).catch(report)
+                      <Popover>
+                        <PopoverTrigger
+                          render={
+                            <Button
+                              className="detail-options-trigger"
+                              kind="plain"
+                              size="sm"
+                            />
                           }
                         >
-                          查看来源 <ArrowRightRegular size={14} />
-                        </Button>
-                      </div>
+                          尺寸、颜色与来源信息
+                        </PopoverTrigger>
+                        <PopoverContent className="detail-options" align="end">
+                          <div className="detail-properties">
+                            <Field label="尺寸">
+                              <NativeSelect
+                                size="sm"
+                                aria-label="图标尺寸"
+                                value={size}
+                                onChange={(event) =>
+                                  setSize(Number(event.target.value))
+                                }
+                              >
+                                {[16, 20, 24, 32, 48, 64].map((value) => (
+                                  <option key={value} value={value}>
+                                    {value} px
+                                  </option>
+                                ))}
+                              </NativeSelect>
+                            </Field>
+                            <Field label="颜色">
+                              <NativeSelect
+                                size="sm"
+                                aria-label="图标颜色"
+                                value={color}
+                                onChange={(event) =>
+                                  setColor(event.target.value)
+                                }
+                              >
+                                <option value="currentColor">跟随主题</option>
+                                <option value="original">原始颜色</option>
+                                <option value="#000000">黑色</option>
+                                <option value="#ffffff">白色</option>
+                                <option value="#3568d4">蓝色</option>
+                              </NativeSelect>
+                            </Field>
+                          </div>
+                          <div className="source-info">
+                            <span className="section-label">来源信息</span>
+                            <dl>
+                              <dt>来源</dt>
+                              <dd>
+                                {selected.sourceId === "public"
+                                  ? "开源图库"
+                                  : "团队仓库"}
+                              </dd>
+                              <dt>{selected.commit ? "版本" : "许可"}</dt>
+                              <dd>
+                                {selected.commit?.slice(0, 10) ??
+                                  selected.license ??
+                                  "见原始来源"}
+                              </dd>
+                            </dl>
+                            {selected.path && (
+                              <p className="source-path" title={selected.path}>
+                                {selected.path}
+                              </p>
+                            )}
+                            <Button
+                              kind="plain"
+                              size="sm"
+                              onClick={() =>
+                                api("openUrl", selected.sourceUrl).catch(report)
+                              }
+                            >
+                              查看来源 <ArrowRightRegular size={14} />
+                            </Button>
+                          </div>{" "}
+                        </PopoverContent>
+                      </Popover>
                     </>
                   ) : (
                     <div className="detail-empty">
@@ -1055,16 +1342,53 @@ export function App() {
           ) : (
             <div className="settings-scroll">
               {page === "repositories" ? (
-                <RepositorySettings
-                  sources={teams}
-                  onRefresh={() => {
-                    refreshSources();
-                    setRevision((value) => value + 1);
-                  }}
-                  onSync={sync}
-                  onError={report}
-                  onNotice={flash}
-                />
+                <>
+                  {defaultLibraries.some(
+                    (library) => libraryPreferences[library.id]?.hidden,
+                  ) && (
+                    <div className="removed-public-libraries">
+                      <h2>已移除的公共图标库</h2>
+                      {defaultLibraries
+                        .filter(
+                          (library) => libraryPreferences[library.id]?.hidden,
+                        )
+                        .map((library) => (
+                          <Button
+                            key={library.id}
+                            kind="ghost"
+                            onClick={() =>
+                              saveLibrary(library.id, { hidden: false }).catch(
+                                report,
+                              )
+                            }
+                          >
+                            重新添加{" "}
+                            {libraryPreferences[library.id]?.name ??
+                              library.name}
+                          </Button>
+                        ))}
+                    </div>
+                  )}
+                  <RepositorySettings
+                    key={repositoryEditRevision}
+                    initialEditing={editRepository}
+                    onRemove={(source) =>
+                      setRemoveLibrary({
+                        id: source.id,
+                        name: source.name,
+                        public: false,
+                      })
+                    }
+                    sources={teams}
+                    onRefresh={() => {
+                      refreshSources();
+                      setRevision((value) => value + 1);
+                    }}
+                    onSync={sync}
+                    onError={report}
+                    onNotice={flash}
+                  />
+                </>
               ) : page === "model" ? (
                 <ModelSettings
                   settings={settings}
@@ -1100,7 +1424,7 @@ export function App() {
                     </NativeSelect>
                   </Field>
                   <div className="settings-note">
-                    Iconcast 0.1.0 · 本地图库与独立 MCP 服务
+                    DesiCast 0.1.0 · 本地图库与独立 MCP 服务
                     <br />
                     图标本身保留来源的视觉风格。
                   </div>
@@ -1110,6 +1434,91 @@ export function App() {
           )}
         </main>
       </div>
+      {removeLibrary && (
+        <RemoveLibraryDialog
+          name={removeLibrary.name}
+          onClose={() => setRemoveLibrary(undefined)}
+          onError={report}
+          onRemove={async () => {
+            if (removeLibrary.public)
+              await saveLibrary(removeLibrary.id, {
+                hidden: true,
+                pinned: false,
+              });
+            else {
+              await api("removeRepository", removeLibrary.id);
+              await refreshSources();
+            }
+            if (
+              (removeLibrary.public && collection === removeLibrary.id) ||
+              (!removeLibrary.public && sourceId === removeLibrary.id)
+            ) {
+              generation.current++;
+              setSourceId("");
+              setCollection("");
+              setSelected(undefined);
+              setResult({ icons: [], total: 0 });
+              navigate("home");
+            }
+            flash("图标库已移除");
+          }}
+        />
+      )}
+      {configureLibrary && (
+        <Modal
+          open
+          onOpenChange={(open) => {
+            if (!open && !savingLibrary) setConfigureLibrary(undefined);
+          }}
+        >
+          <ModalContent>
+            <ModalHeader>
+              <ModalTitle>配置图标库</ModalTitle>
+            </ModalHeader>
+            <ModalBody>
+              <Field label="显示名称">
+                <Input
+                  aria-label="图标库显示名称"
+                  maxLength={100}
+                  value={configurationName}
+                  onValueChange={setConfigurationName}
+                />
+              </Field>
+              <p className="hint">
+                公共图库的图标内容与来源由上游维护，显示名称仅用于本机导航。
+              </p>
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                kind="plain"
+                disabled={savingLibrary}
+                onClick={() => setConfigureLibrary(undefined)}
+              >
+                取消
+              </Button>
+              <Button
+                loading={savingLibrary}
+                disabled={!configurationName.trim() || savingLibrary}
+                onClick={async () => {
+                  setSavingLibrary(true);
+                  try {
+                    await saveLibrary(configureLibrary, {
+                      name: configurationName.trim(),
+                    });
+                    setConfigureLibrary(undefined);
+                  } catch (err) {
+                    report(err);
+                  } finally {
+                    setSavingLibrary(false);
+                  }
+                }}
+              >
+                保存配置
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      )}
       {cropOpen && reference && (
         <CropDialog
           image={reference}
@@ -1122,12 +1531,16 @@ export function App() {
 }
 
 function RepositorySettings({
+  initialEditing,
+  onRemove,
   sources,
   onRefresh,
   onSync,
   onError,
   onNotice,
 }: {
+  initialEditing?: string;
+  onRemove: (source: Source) => void;
   sources: Source[];
   onRefresh: () => void;
   onSync: (source: Source) => void;
@@ -1148,8 +1561,7 @@ function RepositorySettings({
     }>(),
     [loading, setLoading] = useState(false),
     [loadError, setLoadError] = useState(""),
-    [allowVision, setAllowVision] = useState(false),
-    [confirmRemove, setConfirmRemove] = useState<string>();
+    [allowVision, setAllowVision] = useState(false);
   function edit(source?: Source) {
     requestVersion.current++;
     setLoading(false);
@@ -1164,6 +1576,12 @@ function RepositorySettings({
     setShowForm(true);
   }
   const requestVersion = useRef(0);
+  useEffect(() => {
+    if (initialEditing) {
+      const source = sources.find((source) => source.id === initialEditing);
+      if (source) edit(source);
+    }
+  }, [initialEditing]);
   async function loadRepository(selectedBranch?: string) {
     const version = ++requestVersion.current;
     setLoading(true);
@@ -1412,7 +1830,7 @@ function RepositorySettings({
                     size="sm"
                     kind="plain"
                     color="negative"
-                    onClick={() => setConfirmRemove(source.id)}
+                    onClick={() => onRemove(source)}
                   >
                     移除
                   </Button>
@@ -1423,7 +1841,7 @@ function RepositorySettings({
               <div className="repository-empty">
                 <FolderRegular size={32} />
                 <h2>团队的图标，在这里集合</h2>
-                <p>选择仓库和目录，Iconcast 会同步 SVG 并提供给 MCP。</p>
+                <p>选择仓库和目录，DesiCast 会同步 SVG 并提供给 MCP。</p>
                 <Button kind="ghost" onClick={() => edit()}>
                   连接第一个仓库
                 </Button>
@@ -1436,44 +1854,6 @@ function RepositorySettings({
         私有仓库请先在本机授权 Git、gh 或 glab 后读取仓库；不支持 SSH 地址或 Git
         子模块。
       </div>
-      {confirmRemove && (
-        <Dialog
-          open
-          onOpenChange={(open) => {
-            if (!open) setConfirmRemove(undefined);
-          }}
-        >
-          <DialogContent negative>
-            <DialogHeader>
-              <DialogTitle>移除这个图库？</DialogTitle>
-            </DialogHeader>
-            <DialogBody>
-              <DialogDescription>
-                将删除本地索引和凭证，远端仓库不受影响。
-              </DialogDescription>
-            </DialogBody>
-            <DialogFooter>
-              <Button kind="plain" onClick={() => setConfirmRemove(undefined)}>
-                取消
-              </Button>
-              <Button
-                color="negative"
-                onClick={async () => {
-                  try {
-                    await api("removeRepository", confirmRemove);
-                    setConfirmRemove(undefined);
-                    onRefresh();
-                  } catch (err) {
-                    onError(err);
-                  }
-                }}
-              >
-                移除
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
     </div>
   );
 }
@@ -1665,7 +2045,7 @@ function MCPSettings({
       </div>
       <h2 className="settings-subheading">连接 Codex</h2>
       <p className="hint">
-        复制命令到终端执行，随后在新的 Codex 会话中使用 Iconcast。
+        复制命令到终端执行，随后在新的 Codex 会话中使用 DesiCast。
       </p>
       <div className="config-code">
         <pre>{info?.codexCommand ?? "正在读取…"}</pre>
@@ -1681,7 +2061,7 @@ function MCPSettings({
       </div>
       <h2 className="settings-subheading">连接 Claude Code</h2>
       <p className="hint">
-        复制命令到终端执行，为当前用户的所有项目添加 Iconcast。随后在新的 Claude
+        复制命令到终端执行，为当前用户的所有项目添加 DesiCast。随后在新的 Claude
         Code 会话中输入 /mcp 查看连接状态。
       </p>
       <div className="config-code">
@@ -1725,7 +2105,7 @@ function MCPSettings({
         ))}
       </div>
       <p className="hint">
-        视觉搜索可能耗时较长。Codex 可在现有 [mcp_servers.iconcast] 配置中设置
+        视觉搜索可能耗时较长。Codex 可在现有 [mcp_servers.desicast] 配置中设置
         tool_timeout_sec = 240；其他客户端请调整工具超时。
       </p>
       <div className="form-actions">
@@ -1754,7 +2134,7 @@ function MCPSettings({
       </div>
       {status && <p className="positive-message">{status}</p>}
       <div className="settings-note">
-        Agent 获取独立代码或资源包，放进项目后无需 Iconcast 常驻。
+        Agent 获取独立代码或资源包，放进项目后无需 DesiCast 常驻。
         <br />
         示例：“用团队图库的搜索图标完成这个 Vue 页面。”
       </div>

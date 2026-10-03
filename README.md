@@ -4,9 +4,9 @@
 
 <div align="center">
 
-  <img src="./assets/icon.png" width="112" height="112" alt="Desicast Logo" />
+  <img src="./assets/icon.png" width="112" height="112" alt="DesiCast Logo" />
 
-  <h1>Desicast</h1>
+  <h1>DesiCast</h1>
 
   <p>
     <strong>公共及团队 SVG 图库，为人和 AI Agent 提供统一的图标使用入口</strong>
@@ -51,7 +51,9 @@
 
 ### 项目简介
 
-Iconcast 是 macOS Electron 应用，使用 [Gendesign Design System](https://github.com/Niall-Young/Gendesign-Design-system) 的真实组件、Base UI 和 Nico 主题。桌面应用和独立 stdio MCP 共用图库、缓存、搜索与导出核心。
+DesiCast 是 macOS Electron 应用，使用 [Gendesign Design System](https://github.com/Niall-Young/Gendesign-Design-system) 的真实组件、Base UI 和 Nico 主题。桌面应用和独立 stdio MCP 共用图库、缓存、搜索与导出核心。
+
+品牌标识为浅色玻璃底板上的紫色小恶魔。`assets/Desicast.icon` 保存 Icon Composer 分层源文件，主体与五官使用独立 SVG 图层；`assets/icon.svg` 保留矢量预览。运行 `npm run icon:generate` 使用 Xcode 内置的 Icon Composer 渲染工具生成 PNG 和 ICNS，并在 1024px 画布中添加每边 96px 的透明留边。该命令需要安装包含 Icon Composer 的 Xcode；可通过 `ICON_COMPOSER_TOOL` 指定 `ictool` 路径。Electron 当前使用静态玻璃渲染，不随系统光照动态变化。桌面名称为 DesiCast，包名和 MCP 注册名为 `desicast`。默认数据目录、SQLite 文件名与 Keychain 服务名也已更名；不会自动迁移旧 Iconcast 数据或凭据，已有 MCP 客户端需重新注册。
 
 ### 核心能力
 
@@ -62,9 +64,11 @@ Iconcast 是 macOS Electron 应用，使用 [Gendesign Design System](https://gi
 - **多技术导出**：一键复制 SVG、HTML、React TSX、Vue SFC 代码，导出 SwiftUI SVG image set 及配套调用代码。
 - **独立 MCP 服务**：随安装包内置运行入口，无需常驻 Electron 桌面，且无需终端用户配置独立 Node 环境。
 
-默认快捷入口包括 Lucide、Tabler Icons、Remix Icon、Unicons、MingCute、Google Material Icons 和 Eva Icons。侧栏显示公共目录的实际图标总数（不是下载缓存数量），团队库显示成功索引的 SVG 数量。公共目录每天缓存、每小时自动检查，并可使用「刷新图库」立即检查；团队库同步后记录新增、SVG 更新和删除。公共库徽标提示目录数量、可用版本及 API 最后修改时间变化；旧缓存会按需更新，网络失败时仍保留旧 SVG；徽标跨重启保留，可在图库内「标记已读」。默认库支持无关键词分页浏览。
+默认快捷入口包括 Lucide、Tabler Icons、Remix Icon、Unicons、MingCute、Google Material Icons 和 Eva Icons。侧栏显示公共目录的实际图标总数（不是下载缓存数量），团队库显示成功索引的 SVG 数量。公共目录每天缓存、每小时自动检查，并可使用「刷新图库」立即检查；团队库同步后记录新增、SVG 更新和删除。公共库徽标提示目录数量、可用版本及 API 最后修改时间变化；旧缓存会按需更新，网络失败时仍保留旧 SVG；徽标跨重启保留，可在图库内「标记已读」。默认库支持无关键词分页浏览。侧栏「图库选项」提供仓库类型、状态与排序，默认均不勾选；类型和状态支持多选，组内取并集、组间取交集。名称与添加时间排序按选择顺序组合，同一项正序与倒序互斥，再次点击可取消；未选择时保留原有顺序。旧仓库缺少添加时间时使用既有顺序，新增仓库记录添加时间。
 
-图库标识使用随应用打包的官方 SVG，并在 [来源记录](src/renderer/library-marks/provenance.json) 中保留地址；Lucide 使用官方亮暗版本，单色标识随主题文字颜色显示，其余保留原色。Unicons 尚未取得独立品牌 SVG，暂用其官方 cube 图标；Material 使用 Google Material 官方标识。品牌归各自所有者，图标许可不代表品牌使用授权。
+右键侧栏或首页中的任意图标库，可打开、置顶/取消置顶、配置、查看来源或移除。置顶状态和公共图库的显示名称保存在本机，置顶优先于侧栏排序。团队图库配置直接打开该仓库的编辑表单；公共图库配置可修改显示名称。移除须确认：公共图库从导航中隐藏，可在“添加图标库”页面重新添加，仍可通过全局搜索和 MCP 获取；团队仓库会删除本地索引和凭证，不修改远端仓库。
+
+首页、侧栏、图标网格和详情面板按用户的 Figma 设计还原，图库标识与控件 SVG 随应用打包；设计节点、尺寸与校验值见 [设计素材来源记录](src/renderer/design-assets/provenance.json)，原始品牌来源见 [来源记录](src/renderer/library-marks/provenance.json)。Lucide 保留官方深色版本，其余品牌保留设计原色。Unicons 使用用户提供图片的矢量重建版本，并非官方原始 SVG。品牌归各自所有者，图标许可不代表品牌使用授权。
 
 ### 快速开始
 
@@ -79,7 +83,9 @@ npm run dev
 
 ### 使用方法
 
-1. **查找图标**：在「开源图库」搜索关键词，或在「仓库管理」添加团队仓库。填写 HTTPS URL，读取仓库信息后下拉选择分支，通过多选级联目录选择器选择 SVG 目录或整个仓库。
+图标页面支持网格/列表切换，点击图标打开独立详情面板，顶部代码按钮可收起详情。搜索选项保留以图搜图与刷新入口；详情可复制名称、切换导出格式和导出文件，尺寸、颜色与完整来源信息放在详情底部选项中。
+
+1. **查找图标**：在首页或侧栏选择图库，或使用「全局搜索」。点击「添加图标库」连接团队仓库；侧栏底部设置菜单保留仓库管理、视觉模型与外观入口，MCP 标签打开连接设置。填写 HTTPS URL，读取仓库信息后下拉选择分支，通过多选级联目录选择器选择 SVG 目录或整个仓库。
 2. **凭据配置**：自动复用本机 Git 凭据或已登录的 `gh` / `glab`，无需填写用户名和令牌；私有仓库需先在本机完成读取授权。已有仓库保存的 Keychain 凭据仍可用于同步。
 3. **图库同步**：添加仓库后立即同步，应用启动时检查更新，也可手动同步。移除图库只删除本地索引和凭据。
 4. **复制代码与导出**：选择图标和目标技术，复制代码或导出文件。导出会创建新的子目录，不静默覆盖现有资源。
@@ -92,10 +98,10 @@ npm run dev
 
 参考图和允许的候选图标预览会发送到该服务；团队仓库默认禁止模型图片搜索，可按仓库单独开启。图片限 PNG、JPEG、WebP 格式（最大 8 MB），模型处理上限 1600 万像素。搜索基于关键词召回和视觉排序，不保证找到原图标。
 
-默认数据目录为 `~/Library/Application Support/Iconcast`。SQLite 启用 WAL 模式；已缓存图标可完全离线使用。凭据严格安全保存在 macOS Keychain 中。Git 使用临时、限定仓库主机的凭据助手，严禁将令牌写入 URL 或普通配置文件。
+默认数据目录为 `~/Library/Application Support/DesiCast`。SQLite 启用 WAL 模式；已缓存图标可完全离线使用。凭据严格安全保存在 macOS Keychain 中。Git 使用临时、限定仓库主机的凭据助手，严禁将令牌写入 URL 或普通配置文件。
 
-- `ICONCAST_DATA_DIR`：指定独立数据目录；独立 MCP 同样支持 `--data-dir`。
-- `ICONCAST_TEST_MODE=1`：仅在未打包桌面开发环境使用内存凭据，并关闭启动时仓库同步，供测试隔离使用。
+- `DESICAST_DATA_DIR`：指定独立数据目录；独立 MCP 同样支持 `--data-dir`。
+- `DESICAST_TEST_MODE=1`：仅在未打包桌面开发环境使用内存凭据，并关闭启动时仓库同步，供测试隔离使用。
 
 ### 项目结构
 
@@ -130,7 +136,7 @@ npm run package      # 生成 macOS DMG / ZIP 安装包
 
 ### MCP 服务与 CLI
 
-在桌面应用「MCP 连接」中可复制适用于当前安装位置的 Codex、Claude Code 注册命令或其他客户端的通用 JSON。Claude Code 命令使用 `--transport stdio --scope user`，让当前用户的所有项目都能使用 Iconcast；执行后在新的 Claude Code 会话中输入 `/mcp` 查看连接状态。命令会自动携带图库数据目录，开发模式也会包含所需的 Electron 环境变量。开发时可直接运行：
+在桌面应用「MCP 连接」中可复制适用于当前安装位置的 Codex、Claude Code 注册命令或其他客户端的通用 JSON。Claude Code 命令使用 `--transport stdio --scope user`，让当前用户的所有项目都能使用 DesiCast；执行后在新的 Claude Code 会话中输入 `/mcp` 查看连接状态。命令会自动携带图库数据目录，开发模式也会包含所需的 Electron 环境变量。开发时可直接运行：
 
 ```sh
 npm run mcp        # 运行构建产物
@@ -149,7 +155,7 @@ MCP stdout 仅用于标准 JSON-RPC 协议消息。可用工具列表：
 
 `target` 支持 `svg`、`html`、`react`、`vue`、`swiftui`。MCP 不直接写入用户项目目录，由 Agent 自行持久化返回的代码与资源。查询工具声明为只读（read-only），仓库同步标记为本地状态更新。
 
-视觉搜索可能超出部分客户端的默认超时阈值；Codex 建议在现有 `[mcp_servers.iconcast]` 节下增加 `tool_timeout_sec = 240`，其他客户端请相应调整工具调用超时。
+视觉搜索可能超出部分客户端的默认超时阈值；Codex 建议在现有 `[mcp_servers.desicast]` 节下增加 `tool_timeout_sec = 240`，其他客户端请相应调整工具调用超时。
 
 ### 常见问题
 
@@ -177,7 +183,9 @@ MCP stdout 仅用于标准 JSON-RPC 协议消息。可用工具列表：
 
 ### Overview
 
-Iconcast is a native macOS Electron application built with real components, Base UI primitives, and Nico themes from the [Gendesign Design System](https://github.com/Niall-Young/Gendesign-Design-system). The desktop application and the standalone stdio MCP server share the same library, cache, search, and export core.
+DesiCast is a native macOS Electron application built with real components, Base UI primitives, and Nico themes from the [Gendesign Design System](https://github.com/Niall-Young/Gendesign-Design-system). The desktop application and the standalone stdio MCP server share the same library, cache, search, and export core.
+
+The DesiCast mark is a purple little devil on a light glass tile. `assets/Desicast.icon` stores the layered Icon Composer source, with separate SVG layers for the body and face; `assets/icon.svg` retains a vector preview. Run `npm run icon:generate` to render PNG and ICNS using Xcode’s Icon Composer tool, adding 96px transparent margins on each side of a 1024px canvas. This command requires Xcode with Icon Composer; set `ICON_COMPOSER_TOOL` to override the `ictool` path. Electron currently uses a static glass render that does not respond dynamically to system lighting. The desktop name is DesiCast, and the package and MCP registration name is `desicast`. The default data directory, SQLite filename, and Keychain service name have also changed. Existing Iconcast data and credentials are not migrated automatically; existing MCP clients need to be registered again.
 
 ### Features
 
@@ -188,9 +196,11 @@ Iconcast is a native macOS Electron application built with real components, Base
 - **Multi-Framework Exports**: One-click code copying for SVG, HTML, React TSX, and Vue SFC; full asset set export with usage code for SwiftUI.
 - **Standalone MCP Server**: Bundled runtime executable requiring no desktop window presence and no user-installed Node environment.
 
-Default shortcuts include Lucide, Tabler Icons, Remix Icon, Unicons, MingCute, Google Material Icons, and Eva Icons. Public sidebar counts use catalog totals rather than downloaded cache counts; team counts reflect successfully indexed SVGs. The public catalog is cached daily, checked hourly, and can be checked immediately with “Refresh library”. Team synchronization records additions, SVG changes, and deletions. Public badges indicate catalog count, published version, and API modification-time changes where available. Cached SVGs refresh on demand while remaining available if the network fails. Unread badges persist across restarts and can be marked as read within the library. Default collections support paginated browsing without a keyword.
+Default shortcuts include Lucide, Tabler Icons, Remix Icon, Unicons, MingCute, Google Material Icons, and Eva Icons. Public sidebar counts use catalog totals rather than downloaded cache counts; team counts reflect successfully indexed SVGs. The public catalog is cached daily, checked hourly, and can be checked immediately with “Refresh library”. Team synchronization records additions, SVG changes, and deletions. Public badges indicate catalog count, published version, and API modification-time changes where available. Cached SVGs refresh on demand while remaining available if the network fails. Unread badges persist across restarts and can be marked as read within the library. Default collections support paginated browsing without a keyword. Sidebar “Library options” provides type, status, and sorting controls, all initially unchecked. Types and statuses support multiple selections: matches are combined within a group and intersected across groups. Name and creation-time sorting combine in selection order; opposite directions for the same criterion are mutually exclusive, and clicking again clears it. Without sorting, the original order is retained. Older repositories without creation timestamps fall back to their existing order; new repositories record creation time.
 
-Library marks are bundled official SVGs with [source URLs](src/renderer/library-marks/provenance.json). Lucide uses its official light/dark variants, monochrome artwork follows theme text colors, and other marks retain their original colors. A separate Unicons brand SVG has not been obtained, so its official cube icon is used provisionally; Material uses Google's official Material mark. Brands belong to their respective owners; icon licenses do not grant brand usage rights.
+Right-click any library in the sidebar or home screen to open it, pin/unpin it, configure it, view its source, or remove it. Pinning and public-library display names persist locally; pinned libraries precede sidebar sorting. Team configuration opens that repository’s edit form; public configuration changes its display name. Removal requires confirmation: public libraries are hidden from navigation and can be re-added from “Add Library”, while remaining available to global search and MCP; removing a team repository deletes its local index and credentials without changing the remote repository.
+
+The home screen, sidebar, icon grid, and detail panel follow the user's Figma design, with library marks and control SVGs bundled locally. [Design asset provenance](src/renderer/design-assets/provenance.json) records nodes, dimensions, and checksums; [original brand sources](src/renderer/library-marks/provenance.json) remain available. Lucide retains its official dark variant; other brands retain the design's colors. Unicons uses a vector reconstruction of the user-supplied image, not an official original SVG. Brands belong to their respective owners; icon licenses do not grant brand usage rights.
 
 ### Quick Start
 
@@ -205,7 +215,9 @@ Restart the development server after modifying the main process or shared core; 
 
 ### Usage
 
-1. **Discover Icons**: Search keywords in "Public Icons", or add a team repository under "Repository Management". Enter the HTTPS URL and load repository information, then choose a branch from the dropdown and SVG directories (or the entire repository) using the multiselect cascader.
+The icon workspace supports grid and list views. Select an icon to open its separate detail panel, and use the code button in the title bar to collapse it. Search options include image search and refresh. Details provide name copying, export format tabs, and file export; size, color, and full provenance are available from the options at the bottom.
+
+1. **Discover Icons**: Choose a library on the home screen or sidebar, or use "Global Search". Use "Add Library" to connect a team repository. The bottom settings menu retains repository management, vision model, and appearance options; the MCP badge opens connection settings. Enter the HTTPS URL and load repository information, then choose a branch from the dropdown and SVG directories (or the entire repository) using the multiselect cascader.
 2. **Configure Credentials**: Reuse local Git credentials or an authenticated `gh` / `glab` session without entering a username or token. Authorize read access locally first for private repositories. Existing repository credentials in Keychain remain available for synchronization.
 3. **Synchronize Libraries**: Repositories synchronize immediately upon addition and check for updates on desktop launch. Manual synchronization is always available. Removing a source deletes only local cache indexes and credentials.
 4. **Copy & Export**: Select an icon and target technology, then copy code or export files. File exports create dedicated subdirectories to avoid silent overwrites.
@@ -218,10 +230,10 @@ Vision similarity search connects to OpenAI-compatible Chat Completions endpoint
 
 Reference images and permitted candidate previews are transmitted to the configured endpoint. Team repositories disable vision data sharing by default and can be opted-in per repository. Reference images accept PNG, JPEG, and WebP (up to 8 MB), with model processing capped at 16 megapixels. Keyword retrieval followed by visual ranking does not guarantee finding exact original icons.
 
-Default data directory is `~/Library/Application Support/Iconcast`. SQLite operates in WAL mode; cached icons are fully accessible offline. Credentials are encrypted in macOS Keychain. Git uses an ephemeral, host-scoped credential helper without persisting tokens to URLs or ordinary configuration files.
+Default data directory is `~/Library/Application Support/DesiCast`. SQLite operates in WAL mode; cached icons are fully accessible offline. Credentials are encrypted in macOS Keychain. Git uses an ephemeral, host-scoped credential helper without persisting tokens to URLs or ordinary configuration files.
 
-- `ICONCAST_DATA_DIR`: Overrides the data directory path; standalone MCP also supports `--data-dir`.
-- `ICONCAST_TEST_MODE=1`: Uses in-memory credential storage and skips startup synchronization in unpackaged dev mode for testing isolation.
+- `DESICAST_DATA_DIR`: Overrides the data directory path; standalone MCP also supports `--data-dir`.
+- `DESICAST_TEST_MODE=1`: Uses in-memory credential storage and skips startup synchronization in unpackaged dev mode for testing isolation.
 
 ### Project Structure
 
@@ -256,7 +268,7 @@ Vision similarity tests use controlled mock responses; user-configured models ar
 
 ### MCP Server & CLI
 
-In the desktop app under "MCP Connection", copy the installation-specific registration command for Codex or Claude Code, or generic JSON for other clients. The Claude Code command uses `--transport stdio --scope user` to make Iconcast available across the current user's projects; after running it, enter `/mcp` in a new Claude Code session to check the connection. Commands include the library data directory and, in development, the required Electron environment variable. For development:
+In the desktop app under "MCP Connection", copy the installation-specific registration command for Codex or Claude Code, or generic JSON for other clients. The Claude Code command uses `--transport stdio --scope user` to make DesiCast available across the current user's projects; after running it, enter `/mcp` in a new Claude Code session to check the connection. Commands include the library data directory and, in development, the required Electron environment variable. For development:
 
 ```sh
 npm run mcp        # Run compiled MCP server
@@ -275,7 +287,7 @@ MCP stdout is strictly reserved for JSON-RPC protocol communications. Available 
 
 `target` supports `svg`, `html`, `react`, `vue`, and `swiftui`. The MCP server does not modify user projects directly; agents persist returned resources into their own workspaces. Query tools are declared read-only, and repository synchronization is declared as local state updates.
 
-Vision search can take longer than default client timeouts. In Codex, add `tool_timeout_sec = 240` under the `[mcp_servers.iconcast]` configuration section, or adjust the corresponding timeout setting in other clients.
+Vision search can take longer than default client timeouts. In Codex, add `tool_timeout_sec = 240` under the `[mcp_servers.desicast]` configuration section, or adjust the corresponding timeout setting in other clients.
 
 ### Troubleshooting
 
@@ -283,10 +295,10 @@ Vision search can take longer than default client timeouts. In Codex, add `tool_
 - **Synchronization Failure**: Verify Git installation, network connection, HTTPS repository URL, branch name, folder paths, and access tokens. SSH and Git Submodules are not supported in this version.
 - **Rejected SVGs**: Scripts, external references, CSS style blocks, SVG filters, and unsupported markup are rejected. Standard paths, gradients, clipping, masks, local definitions, inline styles, and Figma layer IDs are preserved; limits are 1 MB per SVG and 50,000 indexed icons per repository.
 - **High Result Counts**: Public search returns up to the top 999 matches; refine queries with specific keywords or collection names. Team repository pagination is not restricted by this limit.
-- **SwiftUI Icon Not Visible**: Both the code snippet and the exported `.imageset` directory must be imported into Xcode's `Assets.xcassets`; Iconcast uses native asset catalogs rather than runtime SVG string parsers.
+- **SwiftUI Icon Not Visible**: Both the code snippet and the exported `.imageset` directory must be imported into Xcode's `Assets.xcassets`; DesiCast uses native asset catalogs rather than runtime SVG string parsers.
 
 ### License
 
-No public distribution license has been declared for Iconcast. Gendesign source code is explicitly authorized by its repository owner for use in this application; upstream does not declare a license (see provenance records). Public icon sets and third-party dependencies retain their respective licenses; the Iconify framework license does not supersede individual collection licenses.
+No public distribution license has been declared for DesiCast. Gendesign source code is explicitly authorized by its repository owner for use in this application; upstream does not declare a license (see provenance records). Public icon sets and third-party dependencies retain their respective licenses; the Iconify framework license does not supersede individual collection licenses.
 
 <p align="right"><a href="#readme-top">↑ Back to Top</a></p>

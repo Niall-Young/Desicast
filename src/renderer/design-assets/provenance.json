@@ -1,0 +1,237 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "nodeId": "2001:7623",
+  "retrievedAt": "2026-10-03",
+  "notes": "SVGs exported from the user design. Nested instance nodes are used for overridden Eva and Remix artwork because parent exports returned the main component artwork. Unicons is reconstructed from the user-supplied image, not an official original SVG. Original brand source URLs remain in ../library-marks/provenance.json.",
+  "assets": {
+    "settings": {
+      "figmaAsset": "ece22.svg",
+      "sha256": "c7ced2f61e0f5f359b852848a74be63b2cecc154c390d226182ef34853969cef",
+      "width": "16",
+      "height": "16"
+    },
+    "check": {
+      "figmaAsset": "3b863.svg",
+      "sha256": "7d0b2247f77b1b0b7eb8edda8b835ed1f0de136c001726fbb2346dc080ef7d16",
+      "width": "16",
+      "height": "16"
+    },
+    "library-search": {
+      "figmaAsset": "ef400.svg",
+      "sha256": "33496e5e95ba1826823fbb6706c4223b8f8f89de59bce8cd8c393fbccff69fd6",
+      "width": "16",
+      "height": "16"
+    },
+    "library-options": {
+      "figmaAsset": "2b5d1.svg",
+      "sha256": "f513bf7faf1e3af9e16f0b16b3c5e2c51535c8463f0791e29abc363627575236",
+      "width": "16",
+      "height": "16"
+    },
+    "library-add": {
+      "figmaAsset": "5e647.svg",
+      "sha256": "369dbd9ed26a8c3c184d498eb47454e07be950ec2492875ba3eb38b7dadaf5c9",
+      "width": "16",
+      "height": "16"
+    },
+    "back": {
+      "figmaAsset": "097e4.svg",
+      "sha256": "8a6dad40d28842a16737fb075b30692d8f395a6951cd7fe6fe1ed8bbec0ade8c",
+      "width": "16",
+      "height": "16"
+    },
+    "forward": {
+      "figmaAsset": "afc68.svg",
+      "sha256": "45105894d7df3c7fb02913a9de0b6f8c035d26e4b89c3d2c3cd2ce9d1d6d7cfa",
+      "width": "16",
+      "height": "16"
+    },
+    "sidebar": {
+      "figmaAsset": "ef974.svg",
+      "sha256": "6aec017c7e2358345174b25fb321e0555c825bb0f9aa15712adf85aa5cf86b53",
+      "width": "16",
+      "height": "16"
+    },
+    "add": {
+      "figmaAsset": "9ebb5.svg",
+      "sha256": "4c98f2d21b974fc349faf5a49b387e5b25be915c10239929e0fa615e0c5f7c0c",
+      "width": "16",
+      "height": "16"
+    },
+    "search": {
+      "figmaAsset": "0e25f.svg",
+      "sha256": "f3385776e6fa2a89bbe7ee0c8b65d1d151143ae85ea6fcec0b9d6ba4699210da",
+      "width": "16",
+      "height": "16"
+    },
+    "lucide-row": {
+      "figmaAsset": "afc01.svg",
+      "sha256": "7a7cf1a174f8dfc46ded49933d7b9542b04fc73a41b37d6cfa49cfbf00c9d947",
+      "width": "16",
+      "height": "16",
+      "nodeId": "2001:7943"
+    },
+    "tabler-row": {
+      "figmaAsset": "5bbde.svg",
+      "sha256": "40e5b13096d1ae4f52c981bf4f3d4c394adae797a2a7c42e2eac308bd9b01ffe",
+      "width": "16",
+      "height": "16",
+      "nodeId": "2001:7944"
+    },
+    "remix-row": {
+      "figmaAsset": "908c5.svg",
+      "sha256": "daf81923764cd756dac0512d4b685af17f54b35f4ef44a50d4816c423f155806",
+      "width": "16",
+      "height": "16",
+      "nodeId": "I2001:7945;2001:7579"
+    },
+    "unicons-row": {
+      "figmaAsset": "4e6ad.svg",
+      "sha256": "5e0141be52e2950abf65ea05bd3daa2d3edec00a18116962304969dc28a1d1a9",
+      "width": "16",
+      "height": "16",
+      "nodeId": "2001:7946"
+    },
+    "mingcute-row": {
+      "figmaAsset": "b0fa2.svg",
+      "sha256": "3506cc0b8d063c53e59f47e9513739dd45f90a4e77c3d175943723381399dd58",
+      "width": "16",
+      "height": "16",
+      "nodeId": "2001:7995"
+    },
+    "material-row": {
+      "figmaAsset": "21cd6.svg",
+      "sha256": "8601884cf1df9ed7a66b3736a94e28d819b9937bff0a62f6050642b111037930",
+      "width": "16",
+      "height": "16",
+      "nodeId": "2001:8038"
+    },
+    "book-row": {
+      "figmaAsset": "a9397.svg",
+      "sha256": "967c0a37686efc0db2238a7dddc8b8f703e04f16b986e0eeb329bd3e10a311ec",
+      "width": "16",
+      "height": "16"
+    },
+    "lucide-card": {
+      "figmaAsset": "03285.svg",
+      "sha256": "5dcf5e30f0e0a492ecc6cda9cb526ee93dc2a21a1620dd3cdeaccdef70ba1fd0",
+      "width": "64",
+      "height": "64",
+      "nodeId": "2001:9741"
+    },
+    "tabler-card": {
+      "figmaAsset": "494d3.svg",
+      "sha256": "c0ba9e864ded02d36304349366b5790126374f51984a1f5752e9f248054bf6f4",
+      "width": "64",
+      "height": "64",
+      "nodeId": "2001:9746"
+    },
+    "unicons-card": {
+      "figmaAsset": "66efb.svg",
+      "sha256": "b8de4b6bb9017df6232321fcf11ce49cc10052d05d95e9a0c622e358d2fc952e",
+      "width": "64",
+      "height": "64",
+      "nodeId": "2001:9751"
+    },
+    "mingcute-card": {
+      "figmaAsset": "276c2.svg",
+      "sha256": "106ccd86caf299f87ba8b766c7febf7e9ce4ce0a679278562b99182351f8aa4c",
+      "width": "64",
+      "height": "64",
+      "nodeId": "2001:9757"
+    },
+    "material-card": {
+      "figmaAsset": "5fe41.svg",
+      "sha256": "483ddfa39f1135a22dcc63e1fbefadc48b868fa970b568f990fc1df170ca0554",
+      "width": "64",
+      "height": "64",
+      "nodeId": "2001:9762"
+    },
+    "book-card": {
+      "figmaAsset": "d0fed.svg",
+      "sha256": "5beedf70148fd51499f7f4209ad587d6234c2d261d4e16faa6ec02c69af06b56",
+      "width": "32",
+      "height": "32"
+    },
+    "eva-card": {
+      "nodeId": "I2001:9767;2001:9726",
+      "figmaAsset": "8ed5f.svg",
+      "sha256": "51a726fadef18adfadcd95f921993b61e6d606895a70d5b55ffcd7c5c2cf544b",
+      "width": "64",
+      "height": "64"
+    },
+    "eva-row": {
+      "nodeId": "I2001:8055;2001:7579",
+      "figmaAsset": "d0255.svg",
+      "sha256": "0fa3299c59d1e7d47521ca70f29245bc4c67b1795124b679ca5edd9458334662",
+      "width": "16",
+      "height": "16"
+    },
+    "code": {
+      "figmaAsset": "06117.svg",
+      "nodeId": "2001:10656",
+      "sha256": "e0654d5357d5362a7cd4bdd87b3e631e64bef8af3795bffb42f0bd43ce328563",
+      "width": "16",
+      "height": "16"
+    },
+    "grid": {
+      "figmaAsset": "b76d2.svg",
+      "nodeId": "2001:10656",
+      "sha256": "99c188967235e3b45e0fb2e0e16484ab1b3da13a196ca0776ab3e0f73318e79a",
+      "width": "16",
+      "height": "16"
+    },
+    "list": {
+      "figmaAsset": "07248.svg",
+      "nodeId": "2001:10656",
+      "sha256": "1a77bf39ccf36d9eeab6c5f836c18284867e7f1af30e87af63b32751db8ae5ad",
+      "width": "16",
+      "height": "16"
+    },
+    "copy-name": {
+      "figmaAsset": "7b467.svg",
+      "nodeId": "2001:10656",
+      "sha256": "f618eb3e6a590c2b11a29561d6b8b391865e7327e5e3e5e87a8a3c922eb3190f",
+      "width": "16",
+      "height": "16"
+    },
+    "github": {
+      "figmaAsset": "ba39f.svg",
+      "nodeId": "2001:10656",
+      "sha256": "c73bbc6b7c16626fd59282be44c4a5d77d5b05f0d8e9fd8e48538be4659ebddf",
+      "width": "16",
+      "height": "16"
+    },
+    "download": {
+      "figmaAsset": "224f8.svg",
+      "nodeId": "2001:10656",
+      "sha256": "a97c1eb5ff55a01e4ec7c523d3a93954333e73d11b39eda049682fdb9b1a07e9",
+      "width": "16",
+      "height": "16"
+    },
+    "lucide-heading": {
+      "figmaAsset": "e945a.svg",
+      "nodeId": "2001:10656",
+      "sha256": "71ab78d5ef7a5c55b7f3efee5038ab792bd691d92adf0c839845b0a72d3d2e21",
+      "width": "20",
+      "height": "20"
+    },
+    "filter-check": {
+      "nodeId": "I2018:12314;33:10457;2018:12316;32:10265",
+      "figmaAsset": "c1872.svg",
+      "sha256": "a766cc683d5691d822651a912c67499703e8f1be109da9923dbd2aec04507c6c",
+      "width": "16",
+      "height": "16"
+    }
+  },
+  "screens": [
+    "2001:7623",
+    "2001:9867",
+    "2001:10656"
+  ],
+  "filterMenu": {
+    "nodeId": "2018:12314",
+    "retrievedAt": "2026-10-03",
+    "notes": "Repository type, status and sort menu. All options start unselected; repository types and statuses allow multiple selection."
+  }
+}

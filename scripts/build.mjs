@@ -9,7 +9,7 @@ await build({
   format: "cjs",
   target: "node24",
   external: ["electron", "sharp"],
-  banner: { js: "// Iconcast desktop main process" },
+  banner: { js: "// DesiCast desktop main process" },
 });
 await build({
   entryPoints: ["src/electron/preload.ts"],

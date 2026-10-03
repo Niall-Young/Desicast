@@ -4,7 +4,7 @@ import type { SecretStore } from "./types";
 const exec = promisify(execFile);
 
 export class KeychainSecrets implements SecretStore {
-  constructor(private service = "com.niallyoung.iconcast") {}
+  constructor(private service = "com.niallyoung.desicast") {}
   async get(key: string) {
     try {
       return (

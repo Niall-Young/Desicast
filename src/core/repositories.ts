@@ -132,7 +132,7 @@ export async function syncRepository(
     const helper = join(temporary, "credentials.sh");
     await writeFile(
       helper,
-      '#!/bin/sh\n[ "$1" = get ] || exit 0\nprotocol=\nhost=\nwhile IFS="=" read -r key value; do\ncase "$key" in protocol) protocol="$value" ;; host) host="$value" ;; esac\ndone\n[ "$protocol" = https ] && [ "$host" = "$ICONCAST_GIT_HOST" ] || exit 0\n[ -n "$ICONCAST_GIT_TOKEN" ] || exit 0\nprintf "username=%s\\npassword=%s\\n" "$ICONCAST_GIT_USER" "$ICONCAST_GIT_TOKEN"\n',
+      '#!/bin/sh\n[ "$1" = get ] || exit 0\nprotocol=\nhost=\nwhile IFS="=" read -r key value; do\ncase "$key" in protocol) protocol="$value" ;; host) host="$value" ;; esac\ndone\n[ "$protocol" = https ] && [ "$host" = "$DESICAST_GIT_HOST" ] || exit 0\n[ -n "$DESICAST_GIT_TOKEN" ] || exit 0\nprintf "username=%s\\npassword=%s\\n" "$DESICAST_GIT_USER" "$DESICAST_GIT_TOKEN"\n',
       { mode: 0o700 },
     );
     const tree = join(temporary, "tree");
@@ -142,9 +142,9 @@ export async function syncRepository(
       GIT_ASKPASS: "/usr/bin/false",
       GIT_CONFIG_NOSYSTEM: "1",
       GIT_CONFIG_GLOBAL: "/dev/null",
-      ICONCAST_GIT_USER: local?.username || source.username || "oauth2",
-      ICONCAST_GIT_TOKEN: token ?? "",
-      ICONCAST_GIT_HOST: new URL(source.url!).host,
+      DESICAST_GIT_USER: local?.username || source.username || "oauth2",
+      DESICAST_GIT_TOKEN: token ?? "",
+      DESICAST_GIT_HOST: new URL(source.url!).host,
     };
     try {
       await exec(

@@ -1,9 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
-  <rect x="16" y="16" width="992" height="992" rx="218" fill="#111111"/>
-  <g fill="#ffffff">
-    <rect x="238" y="238" width="212" height="212" rx="44"/>
-    <circle cx="680" cy="344" r="106"/>
-    <rect x="238" y="574" width="212" height="212" rx="44"/>
-    <path d="M680 552 808 680 680 808 552 680Z"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024" fill="none">
+  <title>DesiCast — purple little devil</title>
+  <defs>
+    <radialGradient id="body" cx="0" cy="0" r="1" gradientTransform="translate(386 350) rotate(56) scale(548 528)" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#BC91FF"/><stop offset=".42" stop-color="#9657EE"/><stop offset=".8" stop-color="#7334CF"/><stop offset="1" stop-color="#50239C"/>
+    </radialGradient>
+    <linearGradient id="horn" x1="320" y1="195" x2="405" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D4B5FF"/><stop offset=".48" stop-color="#A369F2"/><stop offset="1" stop-color="#7735CE"/>
+    </linearGradient>
+    <radialGradient id="cheek"><stop stop-color="#D5A1FF" stop-opacity=".75"/><stop offset="1" stop-color="#C48AFF" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shine" x1="373" y1="318" x2="467" y2="454" gradientUnits="userSpaceOnUse"><stop stop-color="white" stop-opacity=".5"/><stop offset="1" stop-color="white" stop-opacity="0"/></linearGradient>
+    <filter id="shadow" x="140" y="175" width="744" height="714" filterUnits="userSpaceOnUse"><feDropShadow dx="0" dy="22" stdDeviation="20" flood-color="#4A2180" flood-opacity=".18"/></filter>
+  </defs>
+  <!-- Static macOS icon canvas: 832px artwork with 96px transparent margins. -->
+  <g transform="translate(96 96) scale(.8125)">
+  <rect width="1024" height="1024" rx="224" fill="#F7F5FC"/>
+  <g filter="url(#shadow)">
+    <path d="M274 397C259 339 265 269 288 221C294 208 308 211 313 225C335 278 378 300 406 327Z" fill="url(#horn)"/>
+    <path d="M750 397C765 339 759 269 736 221C730 208 716 211 711 225C689 278 646 300 618 327Z" fill="url(#horn)"/>
+    <circle cx="512" cy="532" r="288" fill="url(#body)"/>
+    <path d="M298 441C320 365 396 303 470 304C490 304 497 319 478 327C403 349 359 385 326 447C316 466 291 462 298 441Z" fill="url(#shine)"/>
+    <ellipse cx="333" cy="592" rx="67" ry="43" fill="url(#cheek)"/><ellipse cx="691" cy="592" rx="67" ry="43" fill="url(#cheek)"/>
+    <ellipse cx="405" cy="514" rx="47" ry="61" fill="#2B154E"/><ellipse cx="619" cy="514" rx="47" ry="61" fill="#2B154E"/>
+    <ellipse cx="391" cy="493" rx="13" ry="17" fill="white"/><ellipse cx="605" cy="493" rx="13" ry="17" fill="white"/>
+    <path d="M435 623C468 657 553 657 590 613" stroke="#351553" stroke-width="22" stroke-linecap="round"/>
+    <path d="M555 638L570 664C573 670 581 669 583 662L590 620C580 628 568 634 555 638Z" fill="#FFF9FF"/>
+  </g>
   </g>
 </svg>

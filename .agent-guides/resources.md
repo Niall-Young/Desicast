@@ -8,4 +8,4 @@ Synchronize only configured HTTPS repositories and selected branches/directories
 
 Treat SVG as untrusted input. Reject executable markup and external references before preview or export. Keep artwork geometry, colors, gradients and local references. Namespace internal IDs in repeated web components.
 
-HTML, React and Vue exports must work without an Iconcast runtime dependency. SwiftUI exports contain an SVG image set with Contents.json and Image usage; distinguish asset import from runtime SVG parsing.
+HTML, React and Vue exports must work without a DesiCast runtime dependency. SwiftUI exports contain an SVG image set with Contents.json and Image usage; distinguish asset import from runtime SVG parsing.

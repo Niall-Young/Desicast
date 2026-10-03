@@ -1,5 +1,5 @@
 import { contextBridge, ipcRenderer } from "electron";
-contextBridge.exposeInMainWorld("iconcast", {
+contextBridge.exposeInMainWorld("desicast", {
   call: (method: string, input?: unknown) =>
-    ipcRenderer.invoke("iconcast:call", method, input),
+    ipcRenderer.invoke("desicast:call", method, input),
 });

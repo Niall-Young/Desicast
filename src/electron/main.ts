@@ -12,6 +12,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { z } from "zod";
 import { browseRepository } from "../core/repository-access";
 import { IconService } from "../core/service";
+import { libraryPreferences, saveLibraryPreference } from "../core/library-management";
 import { KeychainSecrets, MemorySecrets } from "../core/secrets";
 import {
   searchSchema,
@@ -24,15 +25,15 @@ import type { ExportResult } from "../core/types";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
-app.setName("Iconcast");
+app.setName("DesiCast");
 const dataDirectory =
-  process.env.ICONCAST_DATA_DIR || join(app.getPath("appData"), "Iconcast");
+  process.env.DESICAST_DATA_DIR || join(app.getPath("appData"), "DesiCast");
 app.setPath("userData", dataDirectory);
 let service: IconService, window: BrowserWindow | undefined;
-const testMode = process.env.ICONCAST_TEST_MODE === "1" && !app.isPackaged;
+const testMode = process.env.DESICAST_TEST_MODE === "1" && !app.isPackaged;
 function mcpInfo() {
   const command = app.isPackaged
-    ? join(process.resourcesPath, "iconcast-mcp")
+    ? join(process.resourcesPath, "desicast-mcp")
     : process.execPath;
   const args = app.isPackaged
     ? []
@@ -47,7 +48,7 @@ function mcpInfo() {
     configuration: JSON.stringify(
       {
         mcpServers: {
-          iconcast: {
+          desicast: {
             command,
             args: allArgs,
             ...(app.isPackaged ? {} : { env }),
@@ -57,8 +58,8 @@ function mcpInfo() {
       null,
       2,
     ),
-    codexCommand: `codex mcp add iconcast ${app.isPackaged ? "" : "--env ELECTRON_RUN_AS_NODE=1 "}-- ${[command, ...allArgs].map(quote).join(" ")}`,
-    claudeCommand: `claude mcp add ${app.isPackaged ? "" : "--env ELECTRON_RUN_AS_NODE=1 "}--transport stdio --scope user iconcast -- ${[command, ...allArgs].map(quote).join(" ")}`,
+    codexCommand: `codex mcp add desicast ${app.isPackaged ? "" : "--env ELECTRON_RUN_AS_NODE=1 "}-- ${[command, ...allArgs].map(quote).join(" ")}`,
+    claudeCommand: `claude mcp add ${app.isPackaged ? "" : "--env ELECTRON_RUN_AS_NODE=1 "}--transport stdio --scope user desicast -- ${[command, ...allArgs].map(quote).join(" ")}`,
     dataDirectory,
     packaged: app.isPackaged,
   };
@@ -71,7 +72,7 @@ async function exportFiles(result: ExportResult) {
   if (selection.canceled) return { canceled: true };
   const root = join(
     selection.filePaths[0],
-    `Iconcast-${result.icon.name.replace(/[^a-zA-Z0-9_-]/g, "-")}`,
+    `DesiCast-${result.icon.name.replace(/[^a-zA-Z0-9_-]/g, "-")}`,
   );
   if (
     result.files.some(
@@ -98,6 +99,10 @@ async function exportFiles(result: ExportResult) {
 }
 async function call(method: string, input: unknown) {
   switch (method) {
+    case "libraryPreferences":
+      return libraryPreferences(service.store);
+    case "saveLibraryPreference":
+      return saveLibraryPreference(service.store, input);
     case "sources":
       return service.sources();
     case "collections":
@@ -156,7 +161,7 @@ async function call(method: string, input: unknown) {
     case "mcpCheck": {
       const info = mcpInfo(),
         client = new Client({
-          name: "iconcast-desktop-check",
+          name: "desicast-desktop-check",
           version: "0.1.0",
         });
       const env = Object.fromEntries(
@@ -214,9 +219,9 @@ function createWindow() {
     height: 800,
     minWidth: 960,
     minHeight: 640,
-    title: "Iconcast",
+    title: "DesiCast",
     titleBarStyle: "hiddenInset",
-    trafficLightPosition: { x: 18, y: 20 },
+    trafficLightPosition: { x: 20, y: 22 },
     backgroundColor: "#ffffff",
     webPreferences: {
       preload: join(__dirname, "preload.cjs"),
@@ -230,12 +235,14 @@ function createWindow() {
   window.on("closed", () => {
     window = undefined;
   });
-  if (process.env.ICONCAST_DEV_URL && !app.isPackaged)
-    window.loadURL(process.env.ICONCAST_DEV_URL);
+  if (process.env.DESICAST_DEV_URL && !app.isPackaged)
+    window.loadURL(process.env.DESICAST_DEV_URL);
   else window.loadFile(join(__dirname, "../renderer/index.html"));
 }
 async function bootstrap() {
   await app.whenReady();
+  if (!app.isPackaged && process.platform === "darwin")
+    app.dock?.setIcon(join(app.getAppPath(), "assets/icon.png"));
   if (!app.requestSingleInstanceLock()) {
     app.quit();
   } else {
@@ -243,7 +250,7 @@ async function bootstrap() {
       dataDirectory,
       testMode ? new MemorySecrets() : new KeychainSecrets(),
     );
-    ipcMain.handle("iconcast:call", async (event, method, input) => {
+    ipcMain.handle("desicast:call", async (event, method, input) => {
       if (
         event.sender !== window?.webContents ||
         event.senderFrame !== window.webContents.mainFrame

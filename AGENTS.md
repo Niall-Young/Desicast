@@ -1,6 +1,6 @@
-# Iconcast
+# DesiCast
 
-Iconcast is a macOS Electron application and independent MCP server for public and team-owned SVG icons. Both entrypoints must use the same source, search, synchronization, and export core.
+DesiCast is a macOS Electron application and independent MCP server for public and team-owned SVG icons. Both entrypoints must use the same source, search, synchronization, and export core.
 
 ## Project rules
 
@@ -16,6 +16,8 @@ Before changes, determine applicable root and nested AGENTS.md scopes, inspect a
 ## Development
 
 Use npm and the committed lockfile. `npm run dev` launches Electron with Vite. Run `npm run typecheck`, `npm test`, and `npm run test:ui` after relevant changes; UI checks need a current `npm run build`. `npm run package` creates local macOS artifacts. Packaging and desktop UI automation must run sequentially because native packaging utilities can interfere with window focus.
+
+The user checks the visual results themselves. Do not automatically package release artifacts or install the application locally after changes or verification. Run packaging or local installation only when the user explicitly requests that action; a request to implement, fix, build, or test does not authorize either action. This restriction does not disable gitwork: after implementation and required verification, follow gitwork to commit isolated task changes; if a safe commit cannot be created, report the specific reason.
 
 ## Personal bookmark knowledge
 

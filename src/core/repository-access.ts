@@ -95,21 +95,21 @@ export async function withRepositoryAccess<T>(
   ) => Promise<T>,
 ): Promise<T> {
   url = repositoryUrl(url);
-  const temporary = await mkdtemp(join(tmpdir(), "iconcast-browse-"));
+  const temporary = await mkdtemp(join(tmpdir(), "desicast-browse-"));
   try {
     const helper = join(temporary, "credentials.sh");
     await writeFile(
       helper,
-      '#!/bin/sh\n[ "$1" = get ] || exit 0\nwhile IFS="=" read -r key value; do\ncase "$key" in protocol) protocol="$value" ;; host) host="$value" ;; esac\ndone\n[ "$protocol" = https ] && [ "$host" = "$ICONCAST_GIT_HOST" ] || exit 0\n[ -n "$ICONCAST_GIT_TOKEN" ] || exit 0\nprintf "username=%s\\npassword=%s\\n" "$ICONCAST_GIT_USER" "$ICONCAST_GIT_TOKEN"\n',
+      '#!/bin/sh\n[ "$1" = get ] || exit 0\nwhile IFS="=" read -r key value; do\ncase "$key" in protocol) protocol="$value" ;; host) host="$value" ;; esac\ndone\n[ "$protocol" = https ] && [ "$host" = "$DESICAST_GIT_HOST" ] || exit 0\n[ -n "$DESICAST_GIT_TOKEN" ] || exit 0\nprintf "username=%s\\npassword=%s\\n" "$DESICAST_GIT_USER" "$DESICAST_GIT_TOKEN"\n',
       { mode: 0o700 },
     );
     const env = {
       ...quietEnv(),
       GIT_CONFIG_NOSYSTEM: "1",
       GIT_CONFIG_GLOBAL: "/dev/null",
-      ICONCAST_GIT_HOST: new URL(url).host,
-      ICONCAST_GIT_USER: credential?.username ?? "",
-      ICONCAST_GIT_TOKEN: credential?.password ?? "",
+      DESICAST_GIT_HOST: new URL(url).host,
+      DESICAST_GIT_USER: credential?.username ?? "",
+      DESICAST_GIT_TOKEN: credential?.password ?? "",
     };
     const git = async (args: string[]) =>
       (

@@ -14,7 +14,7 @@ export class Store {
   constructor(readonly directory: string) {
     this.directory = resolve(directory);
     mkdirSync(directory, { recursive: true, mode: 0o700 });
-    this.db = new DatabaseSync(join(directory, "iconcast.sqlite"));
+    this.db = new DatabaseSync(join(directory, "desicast.sqlite"));
     this.db.exec(`PRAGMA journal_mode=WAL; PRAGMA busy_timeout=10000;
       CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS sources (id TEXT PRIMARY KEY, value TEXT NOT NULL);
@@ -68,8 +68,17 @@ export class Store {
     return this.sources().find((source) => source.id === id);
   }
   saveSource(source: Source) {
+    const previous = this.source(source.id);
+    source = {
+      ...source,
+      createdAt: previous
+        ? previous.createdAt
+        : source.createdAt ?? new Date().toISOString(),
+    };
     this.db
-      .prepare("INSERT OR REPLACE INTO sources VALUES (?,?)")
+      .prepare(
+        "INSERT INTO sources VALUES (?,?) ON CONFLICT(id) DO UPDATE SET value=excluded.value",
+      )
       .run(source.id, JSON.stringify(source));
   }
   removeSource(id: string) {

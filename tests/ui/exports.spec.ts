@@ -59,12 +59,12 @@ test("HTML, React and Vue exports render gradients and independent repeated inst
     join(folder, "html.html"),
     `<!doctype html><html><body>${html.code}${second.code}</body></html>`,
   );
-  const directory = await mkdtemp(join(tmpdir(), "iconcast-export-ui-"));
+  const directory = await mkdtemp(join(tmpdir(), "desicast-export-ui-"));
   const env = Object.fromEntries(
     Object.entries({
       ...process.env,
-      ICONCAST_DATA_DIR: directory,
-      ICONCAST_TEST_MODE: "1",
+      DESICAST_DATA_DIR: directory,
+      DESICAST_TEST_MODE: "1",
     }).filter(
       (entry): entry is [string, string] => typeof entry[1] === "string",
     ),

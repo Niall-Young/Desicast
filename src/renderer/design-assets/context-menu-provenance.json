@@ -1,0 +1,14 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "menuNode": "2001:11807",
+  "confirmationNode": "2001:11882",
+  "assets": [
+    {
+      "path": "remove-library-warning.svg",
+      "nodeId": "I2001:11882;32:7009",
+      "width": 20,
+      "height": 20,
+      "sha256": "d2c9ec6a5fcc76c1728cab2112a4ccc8ce5cdd75d44974c4d7fb18220b2634eb"
+    }
+  ]
+}

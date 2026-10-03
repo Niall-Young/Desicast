@@ -11,7 +11,7 @@ export interface MCPInfo {
 }
 declare global {
   interface Window {
-    iconcast: {
+    desicast: {
       call: (
         method: string,
         input?: unknown,
@@ -20,8 +20,8 @@ declare global {
   }
 }
 export async function api<T>(method: string, input?: unknown): Promise<T> {
-  if (!window.iconcast) throw new Error("请通过 Electron 启动 Iconcast");
-  const result = await window.iconcast.call(method, input);
+  if (!window.desicast) throw new Error("请通过 Electron 启动 DesiCast");
+  const result = await window.desicast.call(method, input);
   if (!result.ok) throw new Error(result.error || "操作失败");
   return result.value as T;
 }
