@@ -159,10 +159,10 @@ export function MCPClientPanel({
   const [activeClient, setActiveClient] = useState<string>("codex");
   const description = (clientId: string) =>
     clientId === "other"
-      ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接。"
+      ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接"
       : clientId === "claude"
-        ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP。"
-        : "请复制下方内容在终端中执行，连接 Codex 的 MCP。";
+        ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP"
+        : "请复制下方内容在终端中执行，连接 Codex 的 MCP";
   return (
     <Tabs
       value={activeClient}

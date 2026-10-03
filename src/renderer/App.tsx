@@ -1552,7 +1552,7 @@ function RepositorySettings({
       <div className="settings-intro intro-row">
         <div>
           <h1>团队图标，一个来源</h1>
-          <p>连接 GitHub 或 GitLab，让团队维护的 SVG 随时可用。</p>
+          <p>连接 GitHub 或 GitLab，让团队维护的 SVG 随时可用</p>
         </div>
         <Button leftIcon={<AddRegular size={16} />} onClick={() => edit()}>
           添加仓库
@@ -1635,7 +1635,7 @@ function RepositorySettings({
               <div className="repository-empty">
                 <FolderRegular size={32} />
                 <h2>团队的图标，在这里集合</h2>
-                <p>选择仓库和目录，DesiCast 会同步 SVG 并提供给 MCP。</p>
+                <p>选择仓库和目录，DesiCast 会同步 SVG 并提供给 MCP</p>
                 <Button kind="ghost" onClick={() => edit()}>
                   连接第一个仓库
                 </Button>
@@ -1682,7 +1682,7 @@ function ModelSettings({
     <div className="settings-content">
       <div className="settings-intro">
         <h1>用形状找到图标</h1>
-        <p>连接你自己的视觉模型，按参考图的轮廓和风格寻找相似 SVG。</p>
+        <p>连接你自己的视觉模型，按参考图的轮廓和风格寻找相似 SVG</p>
       </div>
       <form
         onSubmit={async (event) => {
@@ -1754,7 +1754,7 @@ function ModelSettings({
         <div className="toggle-row consent-row">
           <div>
             <span className="field-title">允许发送图片进行视觉搜索</span>
-            <p>参考图和已授权图标将发送到模型服务。</p>
+            <p>参考图和已授权图标将发送到模型服务</p>
           </div>
           <Switch
             size="md"
@@ -1859,7 +1859,7 @@ function CropDialog({
         </ModalHeader>
         <ModalBody>
           <ModalDescription>
-            拖动选择图标区域，也可以直接使用整张图片。
+            拖动选择图标区域，也可以直接使用整张图片
           </ModalDescription>
           <div
             ref={surface}
