@@ -15,9 +15,9 @@ export function LibraryContextMenu({
   pinned?: boolean;
   onOpen: () => void;
   onPin: () => void;
-  onConfigure: () => void;
+  onConfigure?: () => void;
   onSource: () => void;
-  onRemove: () => void;
+  onRemove?: () => void;
 }) {
   return (
     <ContextMenu.Root>
@@ -34,17 +34,19 @@ export function LibraryContextMenu({
               ["配置", onConfigure],
               ["查看来源", onSource],
               ["移除图标库", onRemove],
-            ].map(([label, action]) => (
-              <ContextMenu.Item
-                key={String(label)}
-                render={
-                  <Button kind="plain" className="library-context-item" />
-                }
-                onClick={action as () => void}
-              >
-                {String(label)}
-              </ContextMenu.Item>
-            ))}
+            ]
+              .filter(([, action]) => action)
+              .map(([label, action]) => (
+                <ContextMenu.Item
+                  key={String(label)}
+                  render={
+                    <Button kind="plain" className="library-context-item" />
+                  }
+                  onClick={action as () => void}
+                >
+                  {String(label)}
+                </ContextMenu.Item>
+              ))}
           </ContextMenu.Popup>
         </ContextMenu.Positioner>
       </ContextMenu.Portal>

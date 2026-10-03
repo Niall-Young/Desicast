@@ -161,11 +161,11 @@ export function AddLibraryDialog({
     >
       <ModalContent className="add-library-dialog" initialFocus={false}>
         <ModalHeader showCloseButton={false}>
-          <ModalTitle>{source ? "编辑图标库" : "添加图标库"}</ModalTitle>
+          <ModalTitle>{source ? "配置图标库" : "添加图标库"}</ModalTitle>
           <IconButton
             kind="plain"
             size="sm"
-            aria-label="关闭添加图标库"
+            aria-label={source ? "关闭配置图标库" : "关闭添加图标库"}
             disabled={busy}
             onClick={onClose}
           >
@@ -330,7 +330,9 @@ export function AddLibraryDialog({
                   <div className="add-library-select">
                     <Select
                       aria-label="仓库分支"
-                      items={(metadata?.branches ?? []).map((item) => ({
+                      items={(
+                        metadata?.branches ?? (branch ? [branch] : [])
+                      ).map((item) => ({
                         value: item,
                         label: item,
                       }))}
@@ -349,7 +351,7 @@ export function AddLibraryDialog({
                 <div className="add-library-field add-library-full">
                   <span>SVG 目录</span>
                   <DirectoryCascader
-                    paths={metadata?.directories ?? []}
+                    paths={metadata?.directories ?? directories}
                     value={directories}
                     onChange={setDirectories}
                     disabled={!metadata || loading || busy}

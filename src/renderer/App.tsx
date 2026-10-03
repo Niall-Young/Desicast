@@ -49,7 +49,6 @@ import { GithubFilled } from "@mingcute/react/core-filled";
 import { IconButton } from "@/components/ui/icon-button";
 import { useMessage } from "@/components/ui/message";
 import { SearchBox } from "@/components/ui/search-box";
-import { CharacterLimitInput } from "./CharacterLimitInput";
 import { Select } from "./Select";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -142,13 +141,9 @@ export function App() {
     name: string;
     public: boolean;
   }>();
-  const [configureLibrary, setConfigureLibrary] = useState<string>();
-  const [configurationName, setConfigurationName] = useState("");
-  const [savingLibrary, setSavingLibrary] = useState(false);
+  const [configureLibrary, setConfigureLibrary] = useState<Source>();
   const [addLibraryOpen, setAddLibraryOpen] = useState(false);
   const openAddLibrary = () => setAddLibraryOpen(true);
-  const [editRepository, setEditRepository] = useState<string>();
-  const [repositoryEditRevision, setRepositoryEditRevision] = useState(0);
   async function saveLibrary(id: string, patch: LibraryPreference) {
     const value = await api<LibraryPreferences>("saveLibraryPreference", {
       id,
@@ -175,16 +170,14 @@ export function App() {
         onPin={() => {
           saveLibrary(id, { pinned: !preference?.pinned }).catch(report);
         }}
-        onConfigure={() => {
-          if (isPublic) {
-            setConfigurationName(preference?.name ?? name);
-            setConfigureLibrary(id);
-          } else {
-            setEditRepository(id);
-            setRepositoryEditRevision((value) => value + 1);
-            navigate("repositories");
-          }
-        }}
+        onConfigure={
+          isPublic
+            ? undefined
+            : () => {
+                const source = sources.find((item) => item.id === id);
+                if (source) setConfigureLibrary(source);
+              }
+        }
         onSource={() => {
           const url = isPublic
             ? (collections.find((item) => item.id === id)?.authorUrl ??
@@ -193,7 +186,11 @@ export function App() {
           if (url) api("openUrl", url).catch(report);
           else report(new Error("图库来源暂不可用"));
         }}
-        onRemove={() => setRemoveLibrary({ id, name, public: isPublic })}
+        onRemove={
+          isPublic
+            ? undefined
+            : () => setRemoveLibrary({ id, name, public: false })
+        }
       >
         {button}
       </LibraryContextMenu>
@@ -1352,8 +1349,6 @@ export function App() {
                       </div>
                     )}
                     <RepositorySettings
-                      key={repositoryEditRevision}
-                      initialEditing={editRepository}
                       onRemove={(source) =>
                         setRemoveLibrary({
                           id: source.id,
@@ -1455,64 +1450,16 @@ export function App() {
         />
       )}
       {configureLibrary && (
-        <Modal
-          open
-          onOpenChange={(open) => {
-            if (!open && !savingLibrary) setConfigureLibrary(undefined);
+        <AddLibraryDialog
+          key={configureLibrary.id}
+          source={configureLibrary}
+          onClose={() => setConfigureLibrary(undefined)}
+          onSaved={() => {
+            refreshSources();
+            setRevision((value) => value + 1);
           }}
-        >
-          <ModalContent>
-            <ModalHeader>
-              <ModalTitle>配置图标库</ModalTitle>
-            </ModalHeader>
-            <ModalBody>
-              <Field label="显示名称">
-                <CharacterLimitInput
-                  aria-label="图标库显示名称"
-                  limit={100}
-                  value={configurationName}
-                  onValueChange={setConfigurationName}
-                />
-              </Field>
-              <p className="hint">
-                公共图库的图标内容与来源由上游维护，显示名称仅用于本机导航。
-              </p>
-            </ModalBody>
-            <ModalFooter>
-              <Button
-                kind="plain"
-                disabled={savingLibrary}
-                onClick={() => setConfigureLibrary(undefined)}
-              >
-                取消
-              </Button>
-              <Button
-                loading={savingLibrary}
-                disabled={
-                  !configurationName.trim() ||
-                  configurationName.length > 100 ||
-                  savingLibrary
-                }
-                onClick={async () => {
-                  if (configurationName.length > 100) return;
-                  setSavingLibrary(true);
-                  try {
-                    await saveLibrary(configureLibrary, {
-                      name: configurationName.trim(),
-                    });
-                    setConfigureLibrary(undefined);
-                  } catch (err) {
-                    report(err);
-                  } finally {
-                    setSavingLibrary(false);
-                  }
-                }}
-              >
-                保存配置
-              </Button>
-            </ModalFooter>
-          </ModalContent>
-        </Modal>
+          onNotice={flash}
+        />
       )}
       {globalSearchOpen && (
         <GlobalSearchDialog
@@ -1583,7 +1530,6 @@ export function App() {
 }
 
 function RepositorySettings({
-  initialEditing,
   onRemove,
   sources,
   onRefresh,
@@ -1591,7 +1537,6 @@ function RepositorySettings({
   onError,
   onNotice,
 }: {
-  initialEditing?: string;
   onRemove: (source: Source) => void;
   sources: Source[];
   onRefresh: () => void;
@@ -1605,12 +1550,6 @@ function RepositorySettings({
     setEditing(source);
     setShowForm(true);
   }
-  useEffect(() => {
-    if (initialEditing) {
-      const source = sources.find((source) => source.id === initialEditing);
-      if (source) edit(source);
-    }
-  }, [initialEditing]);
   return (
     <div className="settings-content wide">
       <div className="settings-intro intro-row">
