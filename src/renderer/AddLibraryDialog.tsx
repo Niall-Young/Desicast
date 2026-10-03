@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
+import { CharacterLimitInput } from "./CharacterLimitInput";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Select } from "./Select";
 import { Radio as RadioPrimitive } from "@base-ui/react/radio";
@@ -116,6 +117,7 @@ export function AddLibraryDialog({
       busy ||
       loading ||
       !name.trim() ||
+      name.length > 20 ||
       !directories.length ||
       (!metadata && !unchangedRepository)
     )
@@ -187,15 +189,14 @@ export function AddLibraryDialog({
           >
             <label className="add-library-field add-library-full">
               <span>图标库名称</span>
-              <Input
+              <CharacterLimitInput
                 aria-label="图标库名称"
                 required
-                maxLength={20}
+                limit={20}
                 placeholder="请输入图标库名称"
                 value={name}
                 onValueChange={setName}
                 clearAll={false}
-                suffix={`${name.length}/20`}
                 disabled={busy}
               />
             </label>
@@ -390,6 +391,7 @@ export function AddLibraryDialog({
               busy ||
               loading ||
               !name.trim() ||
+              name.length > 20 ||
               !directories.length ||
               (!metadata && !unchangedRepository)
             }

@@ -47,7 +47,7 @@ import { GithubFilled } from "@mingcute/react/core-filled";
 import { IconButton } from "@/components/ui/icon-button";
 import { useMessage } from "@/components/ui/message";
 import { SearchBox } from "@/components/ui/search-box";
-import { Input } from "@/components/ui/input";
+import { CharacterLimitInput } from "./CharacterLimitInput";
 import { Select } from "./Select";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1434,9 +1434,9 @@ export function App() {
             </ModalHeader>
             <ModalBody>
               <Field label="显示名称">
-                <Input
+                <CharacterLimitInput
                   aria-label="图标库显示名称"
-                  maxLength={100}
+                  limit={100}
                   value={configurationName}
                   onValueChange={setConfigurationName}
                 />
@@ -1455,8 +1455,13 @@ export function App() {
               </Button>
               <Button
                 loading={savingLibrary}
-                disabled={!configurationName.trim() || savingLibrary}
+                disabled={
+                  !configurationName.trim() ||
+                  configurationName.length > 100 ||
+                  savingLibrary
+                }
                 onClick={async () => {
+                  if (configurationName.length > 100) return;
                   setSavingLibrary(true);
                   try {
                     await saveLibrary(configureLibrary, {
