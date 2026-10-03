@@ -1363,7 +1363,6 @@ export function App() {
                   <div className="settings-content">
                     <div className="settings-intro">
                       <h1>让工作空间适合你</h1>
-                      <p>界面使用 Gendesign 组件与 Nico 主题。</p>
                     </div>
                     <Field label="外观">
                       <Select
@@ -1386,11 +1385,6 @@ export function App() {
                         }}
                       />
                     </Field>
-                    <div className="settings-note">
-                      DesiCast 0.1.0 · 本地图库与独立 MCP 服务
-                      <br />
-                      图标本身保留来源的视觉风格。
-                    </div>
                   </div>
                 )}
               </div>
@@ -1455,9 +1449,6 @@ export function App() {
                   onValueChange={setConfigurationName}
                 />
               </Field>
-              <p className="hint">
-                公共图库的图标内容与来源由上游维护，显示名称仅用于本机导航。
-              </p>
             </ModalBody>
             <ModalFooter>
               <Button
@@ -1660,12 +1651,6 @@ function RepositorySettings({
               </div>
             )}
       </div>
-      <div className="settings-note">
-        仓库只读同步，不会提交或推送。更新失败时保留上一份缓存。
-        <br />
-        私有仓库请先在本机授权 Git、gh 或 glab 后读取仓库；不支持 SSH 地址或 Git
-        子模块。
-      </div>
     </div>
   );
 }
@@ -1771,14 +1756,11 @@ function ModelSettings({
         )}
         <div className="toggle-row consent-row">
           <div>
-            <strong>允许发送图片进行视觉搜索</strong>
-            <p>
-              参考图与允许的候选图标将发送到上述服务。
-              <br />
-              关键词搜索不使用模型，团队仓库可单独关闭图片发送。
-            </p>
+            <span className="field-title">允许发送图片进行视觉搜索</span>
+            <p>参考图和已授权图标将发送到模型服务。</p>
           </div>
           <Switch
+            size="md"
             aria-label="允许发送图片到模型"
             checked={consent}
             onCheckedChange={setConsent}
@@ -1809,11 +1791,6 @@ function ModelSettings({
           </Button>
         </div>
       </form>
-      <div className="settings-note">
-        搜索会先提取关键词，再比对候选图标。结果是相似匹配，不保证找到原图标。
-        <br />
-        支持 PNG、JPEG、WebP，单张不超过 8 MB。
-      </div>
     </div>
   );
 }
