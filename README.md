@@ -4,9 +4,9 @@
 
 <div align="center">
 
-  <img src="./assets/icon.svg" width="112" height="112" alt="Iconcast Logo" />
+  <img src="./assets/icon.png" width="112" height="112" alt="Desicast Logo" />
 
-  <h1>Iconcast</h1>
+  <h1>Desicast</h1>
 
   <p>
     <strong>公共及团队 SVG 图库，为人和 AI Agent 提供统一的图标使用入口</strong>
