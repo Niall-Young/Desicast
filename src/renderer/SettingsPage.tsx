@@ -43,6 +43,42 @@ export function SettingsPage({
   const [loadError, setLoadError] = useState("");
   const content = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    const container = content.current;
+    if (!container) return;
+    let frame = 0;
+    const updateActiveSection = () => {
+      const top = container.getBoundingClientRect().top + container.clientTop;
+      const inset = parseFloat(getComputedStyle(container).paddingTop) || 0;
+      let current = sections[0].id;
+      for (const section of sections) {
+        const element = container.querySelector(`#settings-${section.id}`);
+        if (element && element.getBoundingClientRect().top <= top + inset + 1)
+          current = section.id;
+      }
+      // The final section may be too short to reach the top of the viewport.
+      if (
+        container.scrollTop > 0 &&
+        container.scrollTop + container.clientHeight >= container.scrollHeight - 1
+      )
+        current = sections[sections.length - 1].id;
+      setActive(current);
+    };
+    const scheduleUpdate = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(updateActiveSection);
+    };
+    container.addEventListener("scroll", scheduleUpdate, { passive: true });
+    const observer = new ResizeObserver(scheduleUpdate);
+    observer.observe(container);
+    for (const element of container.children) observer.observe(element);
+    updateActiveSection();
+    return () => {
+      container.removeEventListener("scroll", scheduleUpdate);
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+  useEffect(() => {
     let mounted = true;
     api<MCPInfo>("mcpInfo")
       .then((value) => {

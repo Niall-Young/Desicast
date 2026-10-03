@@ -879,6 +879,42 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
   await expect(page.getByTestId("library-tabler")).toBeVisible();
 });
 
+test("Settings sidebar follows content scrolling in both directions and at the bottom", async () => {
+  const page = await app.firstWindow();
+  const window = await app.browserWindow(page);
+  await window.evaluate((window) => window.setSize(960, 640));
+  await page.getByRole("button", { name: "设置", exact: true }).click();
+  const dialog = page.locator(".settings-page");
+  const content = dialog.locator(".settings-sections");
+  const active = dialog.locator('.settings-menu-item[aria-current="location"]');
+  await expect(active).toHaveText("通用设置");
+  for (const [id, label] of [
+    ["appearance", "外观"],
+    ["connector", "连接器"],
+    ["model", "模型配置"],
+  ]) {
+    await dialog.getByRole("button", { name: label, exact: true }).click();
+    await expect(active).toHaveText(label);
+    await expect(dialog.locator(`#settings-${id}`)).toBeInViewport();
+  }
+  await content.hover();
+  await page.mouse.wheel(0, 3000);
+  await expect(active).toHaveText("图标库");
+  await page.mouse.wheel(0, -3000);
+  await expect(active).toHaveText("通用设置");
+  // Scroll the content directly without clicking its corresponding menu item.
+  await content.evaluate((container) => {
+    const heading = container.querySelector("#settings-connector")!;
+    container.scrollTop +=
+      heading.getBoundingClientRect().top -
+      container.getBoundingClientRect().top -
+      parseFloat(getComputedStyle(container).paddingTop);
+  });
+  await expect(active).toHaveText("连接器");
+  await window.evaluate((window) => window.setSize(1200, 800));
+  await expect(active).toHaveText("连接器");
+});
+
 test("Settings page navigation, persistent theme and connector copy stay usable", async () => {
   const page = await app.firstWindow();
   await page.getByRole("button", { name: "设置", exact: true }).click();
