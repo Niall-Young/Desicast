@@ -273,8 +273,8 @@ function createWindow() {
     minHeight: 640,
     title: "DesiCast",
     titleBarStyle: "hiddenInset",
-    // Center the 14px native controls within the 52px renderer titlebar
-    trafficLightPosition: { x: 20, y: 19 },
+    // Account for the native control inset so their visible centers align with navigation
+    trafficLightPosition: { x: 20, y: 16 },
     backgroundColor: "#ffffff",
     webPreferences: {
       preload: join(__dirname, "preload.cjs"),
