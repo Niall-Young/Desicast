@@ -79,7 +79,7 @@ test("Authenticated HTTPS Git sync works without interactive prompts and atomica
           `Basic ${Buffer.from("oauth2:fixture-token").toString("base64")}`
       ) {
         response.writeHead(401, {
-          "WWW-Authenticate": 'Basic realm="Iconcast fixture"',
+          "WWW-Authenticate": 'Basic realm="DesiCast fixture"',
         });
         response.end();
         return;
