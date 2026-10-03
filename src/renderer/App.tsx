@@ -1,3 +1,4 @@
+import { DirectoryCascader } from "./DirectoryCascader";
 import { defaultLibraries, changeDescription } from "./libraries";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
@@ -1138,24 +1139,55 @@ function RepositorySettings({
     [busy, setBusy] = useState(false),
     [name, setName] = useState(""),
     [url, setUrl] = useState(""),
-    [branch, setBranch] = useState("main"),
-    [directories, setDirectories] = useState("icons"),
-    [username, setUsername] = useState(""),
-    [token, setToken] = useState(""),
-    [clearToken, setClearToken] = useState(false),
+    [branch, setBranch] = useState(""),
+    [directories, setDirectories] = useState<string[]>([]),
+    [metadata, setMetadata] = useState<{
+      branches: string[];
+      directories: string[];
+      authorization: string;
+    }>(),
+    [loading, setLoading] = useState(false),
+    [loadError, setLoadError] = useState(""),
     [allowVision, setAllowVision] = useState(false),
     [confirmRemove, setConfirmRemove] = useState<string>();
   function edit(source?: Source) {
+    requestVersion.current++;
+    setLoading(false);
     setEditing(source?.id);
     setName(source?.name ?? "");
     setUrl(source?.url ?? "");
-    setBranch(source?.branch ?? "main");
-    setDirectories(source?.directories?.join(", ") ?? "icons");
-    setUsername(source?.username ?? "");
-    setToken("");
-    setClearToken(false);
+    setBranch(source?.branch ?? "");
+    setDirectories(source?.directories ?? []);
+    setMetadata(undefined);
+    setLoadError("");
     setAllowVision(source?.allowVision ?? false);
     setShowForm(true);
+  }
+  const requestVersion = useRef(0);
+  async function loadRepository(selectedBranch?: string) {
+    const version = ++requestVersion.current;
+    setLoading(true);
+    setMetadata(undefined);
+    setLoadError("");
+    try {
+      const result = await api<{
+        branches: string[];
+        directories: string[];
+        authorization: string;
+        branch: string;
+      }>("browseRepository", { url, branch: selectedBranch });
+      if (version !== requestVersion.current) return;
+      setMetadata(result);
+      setBranch(result.branch);
+      setDirectories((current) =>
+        current.filter((p) => p === "." || result.directories.includes(p)),
+      );
+    } catch (err) {
+      if (version === requestVersion.current)
+        setLoadError(err instanceof Error ? err.message : "读取失败");
+    } finally {
+      if (version === requestVersion.current) setLoading(false);
+    }
   }
   async function save() {
     setBusy(true);
@@ -1164,18 +1196,15 @@ function RepositorySettings({
         name,
         url,
         branch,
-        directories: directories
-          .split(",")
-          .map((value) => value.trim())
-          .filter(Boolean),
-        username: username || undefined,
-        token: token || (clearToken ? "" : undefined),
+        directories,
+        username: editing
+          ? sources.find((source) => source.id === editing)?.username
+          : undefined,
         allowVision,
       };
       if (editing) await api("updateRepository", { id: editing, repository });
       else await api("addRepository", repository);
       setShowForm(false);
-      setToken("");
       onRefresh();
       onNotice(
         editing
@@ -1219,12 +1248,25 @@ function RepositorySettings({
               />
             </Field>
             <Field label="分支">
-              <Input
+              <NativeSelect
                 aria-label="仓库分支"
-                required
                 value={branch}
-                onValueChange={setBranch}
-              />
+                disabled={!metadata || loading}
+                onChange={(event) => {
+                  setBranch(event.target.value);
+                  setDirectories([]);
+                  loadRepository(event.target.value);
+                }}
+              >
+                {!metadata && (
+                  <option value={branch}>{branch || "先读取仓库"}</option>
+                )}
+                {metadata?.branches.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </NativeSelect>
             </Field>
           </div>
           <Field label="仓库地址">
@@ -1233,54 +1275,48 @@ function RepositorySettings({
               required
               placeholder="https://github.com/your-team/icons.git"
               value={url}
-              onValueChange={setUrl}
+              onValueChange={(value) => {
+                requestVersion.current++;
+                setUrl(value);
+                setMetadata(undefined);
+                setBranch("");
+                setDirectories([]);
+                setLoading(false);
+                setLoadError("");
+              }}
             />
           </Field>
+          <div className="repository-access-row">
+            <Button
+              kind="ghost"
+              loading={loading}
+              disabled={!url || loading}
+              onClick={() => loadRepository(branch || undefined)}
+            >
+              读取仓库信息
+            </Button>
+            <span className="hint">
+              {metadata
+                ? `已连接 · ${metadata.authorization}`
+                : "自动使用本机 Git 凭据或 gh / glab 登录，无需填写用户名和令牌"}
+            </span>
+          </div>
+          {loadError && (
+            <p role="alert" className="repository-error">
+              {loadError}
+            </p>
+          )}
           <Field
             label="SVG 目录"
-            hint="仓库内的相对目录，多个目录用英文逗号分隔；填写 . 索引整个仓库"
+            hint="逐级浏览，可选择多个目录；选中父目录会包含其全部子目录"
           >
-            <Input
-              aria-label="SVG 目录"
-              required
+            <DirectoryCascader
+              paths={metadata?.directories ?? []}
               value={directories}
-              onValueChange={setDirectories}
+              onChange={setDirectories}
+              disabled={!metadata || loading}
             />
           </Field>
-          <div className="form-grid">
-            <Field
-              label="Git 用户名"
-              hint="GitLab 默认 oauth2；GitHub 可填写你的用户名"
-            >
-              <Input
-                aria-label="Git 用户名"
-                value={username}
-                onValueChange={setUsername}
-              />
-            </Field>
-            <Field label="访问令牌" hint="私有仓库使用；保存在 macOS Keychain">
-              <PasswordInput
-                aria-label="仓库访问令牌"
-                placeholder={editing ? "留空保留已有凭证" : "公开仓库可留空"}
-                value={token}
-                onValueChange={setToken}
-              />
-            </Field>
-          </div>
-          {editing &&
-            sources.find((source) => source.id === editing)?.hasCredential && (
-              <Button
-                kind="plain"
-                color="negative"
-                size="sm"
-                onClick={() => {
-                  setToken("");
-                  setClearToken((value) => !value);
-                }}
-              >
-                {clearToken ? "取消清除凭证" : "清除已保存凭证"}
-              </Button>
-            )}
           <div className="toggle-row">
             <div>
               <strong>允许模型图片搜索</strong>
@@ -1296,13 +1332,30 @@ function RepositorySettings({
             <Button
               kind="plain"
               onClick={() => {
+                requestVersion.current++;
                 setShowForm(false);
-                setToken("");
               }}
             >
               取消
             </Button>
-            <Button type="submit" loading={busy}>
+            <Button
+              type="submit"
+              loading={busy}
+              disabled={
+                loading ||
+                !directories.length ||
+                (!metadata &&
+                  !(
+                    editing &&
+                    sources.some(
+                      (source) =>
+                        source.id === editing &&
+                        source.url === url &&
+                        source.branch === branch,
+                    )
+                  ))
+              }
+            >
               {editing ? "保存配置" : "连接并同步"}
             </Button>
           </div>
@@ -1380,7 +1433,8 @@ function RepositorySettings({
       <div className="settings-note">
         仓库只读同步，不会提交或推送。更新失败时保留上一份缓存。
         <br />
-        访问令牌需要仓库读取权限；不支持 SSH 地址或 Git 子模块。
+        私有仓库请先在本机授权 Git、gh 或 glab 后读取仓库；不支持 SSH 地址或 Git
+        子模块。
       </div>
       {confirmRemove && (
         <Dialog

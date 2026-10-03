@@ -7,6 +7,7 @@ import { mkdtemp, mkdir, writeFile, readFile, rm } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { IconService } from "../src/core/service";
+import { browseRepository } from "../src/core/repository-access";
 import { MemorySecrets } from "../src/core/secrets";
 const exec = promisify(execFile);
 const svg =
@@ -20,6 +21,7 @@ test("Authenticated HTTPS Git sync works without interactive prompts and atomica
     cert = join(directory, "cert.pem"),
     key = join(directory, "key.pem");
   const previousCA = process.env.GIT_SSL_CAINFO;
+  const previousGlobal = process.env.GIT_CONFIG_GLOBAL;
   let rejectCredentials = false;
   const service = new IconService(join(directory, "data"), new MemorySecrets());
   const server = createServer({});
@@ -137,6 +139,22 @@ test("Authenticated HTTPS Git sync works without interactive prompts and atomica
       token: "fixture-token",
       allowVision: false,
     });
+    const metadata = await browseRepository(source.url!, undefined, {
+      username: "oauth2",
+      password: "fixture-token",
+      method: "fixture",
+    });
+    assert.deepEqual(metadata.branches, ["main"]);
+    assert.equal(metadata.branch, "main");
+    assert.deepEqual(metadata.directories, ["icons"]);
+    assert.equal(JSON.stringify(metadata).includes("fixture-token"), false);
+    await assert.rejects(
+      browseRepository(source.url!, "missing", {
+        username: "oauth2",
+        password: "fixture-token",
+        method: "fixture",
+      }),
+    );
     const first = await service.sync(source.id);
     assert.equal(first.iconCount, 2);
     assert.equal(first.changes, undefined);
@@ -166,12 +184,37 @@ test("Authenticated HTTPS Git sync works without interactive prompts and atomica
       /r="6"/,
     );
     assert.ok(service.store.icon(`${source.id}:icons/new.svg`));
+    const helper = join(directory, "local-credentials.sh");
+    await writeFile(
+      helper,
+      '#!/bin/sh\n[ "$1" = get ] || exit 0\nprintf "username=oauth2\\npassword=fixture-token\\n"\n',
+      { mode: 0o700 },
+    );
+    const config = join(directory, "gitconfig");
+    await writeFile(config, `[credential]\n\thelper = ${helper}\n`);
+    process.env.GIT_CONFIG_GLOBAL = config;
+    const localMetadata = await browseRepository(source.url!);
+    assert.equal(localMetadata.authorization, "本机 Git 凭据");
+    const localSource = await service.addRepository({
+      name: "Local authorization",
+      url: source.url!,
+      branch: "main",
+      directories: ["icons"],
+      allowVision: false,
+    });
+    assert.equal((await service.sync(localSource.id)).iconCount, 2);
+    assert.equal(
+      JSON.stringify(service.store.sources()).includes("fixture-token"),
+      false,
+    );
     rejectCredentials = true;
     await assert.rejects(service.sync(source.id));
     assert.equal(service.store.source(source.id)?.commit, second.commit);
     assert.equal(service.store.local("", source.id).length, 2);
   } finally {
     service.close();
+    if (previousGlobal === undefined) delete process.env.GIT_CONFIG_GLOBAL;
+    else process.env.GIT_CONFIG_GLOBAL = previousGlobal;
     if (previousCA === undefined) delete process.env.GIT_SSL_CAINFO;
     else process.env.GIT_SSL_CAINFO = previousCA;
     await new Promise<void>((resolve) => server.close(() => resolve()));

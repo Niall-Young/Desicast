@@ -10,6 +10,7 @@ import {
 import { join, resolve, sep } from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
 import { z } from "zod";
+import { browseRepository } from "../core/repository-access";
 import { IconService } from "../core/service";
 import { KeychainSecrets, MemorySecrets } from "../core/secrets";
 import {
@@ -121,6 +122,15 @@ async function call(method: string, input: unknown) {
       return service.search(searchSchema.parse(input));
     case "getIcon":
       return service.getIcon(exportSchema.parse(input));
+    case "browseRepository": {
+      const value = z
+        .object({
+          url: z.string().max(2000),
+          branch: z.string().max(200).optional(),
+        })
+        .parse(input);
+      return browseRepository(value.url, value.branch);
+    }
     case "addRepository": {
       const source = await service.addRepository(repositorySchema.parse(input));
       service.sync(source.id).catch(() => {});

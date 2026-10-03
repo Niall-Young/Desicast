@@ -79,8 +79,8 @@ npm run dev
 
 ### 使用方法
 
-1. **查找图标**：在「开源图库」搜索关键词，或在「仓库管理」添加团队仓库。填写 HTTPS URL、分支及仓库内的相对目录；多个目录用英文逗号分隔，`.` 表示整个仓库。
-2. **凭据配置**：私有仓库填写具有读取权限的访问令牌。GitLab 默认用户名为 `oauth2`，GitHub 可填写账户用户名。
+1. **查找图标**：在「开源图库」搜索关键词，或在「仓库管理」添加团队仓库。填写 HTTPS URL，读取仓库信息后下拉选择分支，通过多选级联目录选择器选择 SVG 目录或整个仓库。
+2. **凭据配置**：自动复用本机 Git 凭据或已登录的 `gh` / `glab`，无需填写用户名和令牌；私有仓库需先在本机完成读取授权。已有仓库保存的 Keychain 凭据仍可用于同步。
 3. **图库同步**：添加仓库后立即同步，应用启动时检查更新，也可手动同步。移除图库只删除本地索引和凭据。
 4. **复制代码与导出**：选择图标和目标技术，复制代码或导出文件。导出会创建新的子目录，不静默覆盖现有资源。
 5. **多端集成**：React 输出要求 React 18+；Vue 输出要求 Vue 3.5+。SwiftUI 将导出的 `.imageset` 拖入 `Assets.xcassets`，再使用返回的 `Image` 代码。
@@ -205,8 +205,8 @@ Restart the development server after modifying the main process or shared core; 
 
 ### Usage
 
-1. **Discover Icons**: Search keywords in "Public Icons", or add a team repository under "Repository Management". Enter the HTTPS URL, branch, and relative SVG directories (comma-separated, or `.` for the root).
-2. **Configure Credentials**: For private repositories, provide a personal access token with read permissions. GitLab default username is `oauth2`; GitHub accepts your account username.
+1. **Discover Icons**: Search keywords in "Public Icons", or add a team repository under "Repository Management". Enter the HTTPS URL and load repository information, then choose a branch from the dropdown and SVG directories (or the entire repository) using the multiselect cascader.
+2. **Configure Credentials**: Reuse local Git credentials or an authenticated `gh` / `glab` session without entering a username or token. Authorize read access locally first for private repositories. Existing repository credentials in Keychain remain available for synchronization.
 3. **Synchronize Libraries**: Repositories synchronize immediately upon addition and check for updates on desktop launch. Manual synchronization is always available. Removing a source deletes only local cache indexes and credentials.
 4. **Copy & Export**: Select an icon and target technology, then copy code or export files. File exports create dedicated subdirectories to avoid silent overwrites.
 5. **Multi-Target Integration**: React output targets React 18+; Vue output targets Vue 3.5+. For SwiftUI, drag the exported `.imageset` into `Assets.xcassets`, then use the generated `Image` code.

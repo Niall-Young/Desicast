@@ -15,6 +15,7 @@ import { randomUUID } from "node:crypto";
 import { Store } from "./store";
 import { sanitizeSvg } from "./svg";
 import type { Icon, Source, SecretStore } from "./types";
+import { localCredential } from "./repository-access";
 const exec = promisify(execFile);
 
 export function repositoryUrl(value: string): string {
@@ -125,7 +126,9 @@ export async function syncRepository(
   let temporary: string | undefined;
   try {
     temporary = await mkdtemp(join(staging, "sync-"));
-    const token = await secrets.get(`repository:${id}`);
+    const savedToken = await secrets.get(`repository:${id}`);
+    const local = savedToken ? undefined : await localCredential(source.url!);
+    const token = savedToken ?? local?.password;
     const helper = join(temporary, "credentials.sh");
     await writeFile(
       helper,
@@ -139,7 +142,7 @@ export async function syncRepository(
       GIT_ASKPASS: "/usr/bin/false",
       GIT_CONFIG_NOSYSTEM: "1",
       GIT_CONFIG_GLOBAL: "/dev/null",
-      ICONCAST_GIT_USER: source.username || "oauth2",
+      ICONCAST_GIT_USER: local?.username || source.username || "oauth2",
       ICONCAST_GIT_TOKEN: token ?? "",
       ICONCAST_GIT_HOST: new URL(source.url!).host,
     };

@@ -1039,3 +1039,50 @@ pre {
   color: var(--nico-color-text-subtle);
   font-size: 12px;
 }
+
+.repository-access-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.directory-picker,
+.directory-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.directory-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  background: var(--nico-color-surface-raised);
+  border: 1px solid var(--nico-color-border);
+  border-radius: var(--nico-border-radius-sm);
+}
+.directory-cascader {
+  width: min(720px, calc(100vw - 32px));
+}
+.directory-columns {
+  display: flex;
+  overflow-x: auto;
+  margin-top: 8px;
+}
+.directory-column {
+  min-width: 180px;
+  max-height: 260px;
+  overflow: auto;
+  border-right: 1px solid var(--nico-color-border);
+  padding: 8px;
+}
+.directory-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.directory-option input {
+  accent-color: var(--nico-color-text);
+}

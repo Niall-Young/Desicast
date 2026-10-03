@@ -304,3 +304,50 @@ test("Default libraries show official SVG assets, totals, theme variants and per
   await page.getByRole("button", { name: "标记已读" }).click();
   await expect(teamRow.locator(".library-change-dot")).toHaveCount(0);
 });
+
+test("Repository form loads branches and cascaded directory selections without credential inputs", async () => {
+  const page = await app.firstWindow();
+  await page.getByRole("button", { name: "仓库管理", exact: true }).click();
+  await page.getByRole("button", { name: "添加仓库", exact: true }).click();
+  await expect(page.getByLabel("Git 用户名")).toHaveCount(0);
+  await expect(page.getByLabel("仓库访问令牌")).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "连接并同步", exact: true }),
+  ).toBeDisabled();
+  await page
+    .getByLabel("仓库地址")
+    .fill("https://github.com/lucide-icons/lucide.git");
+  await page.getByRole("button", { name: "读取仓库信息" }).click();
+  await expect(page.getByText(/已连接 ·/)).toBeVisible({ timeout: 45000 });
+  await page.getByLabel("仓库分支").selectOption("main");
+  await expect(page.getByLabel("仓库分支")).toHaveValue("main");
+  await expect(
+    page.getByRole("button", { name: "SVG 目录", exact: true }),
+  ).toBeEnabled({ timeout: 45000 });
+  await page.getByRole("button", { name: "SVG 目录", exact: true }).click();
+  await page.getByRole("button", { name: "packages", exact: true }).click();
+  await page
+    .getByLabel("选择目录 packages/lucide-react", { exact: true })
+    .check();
+  await page
+    .getByLabel("选择目录 packages/lucide-static", { exact: true })
+    .check();
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "移除目录 packages/lucide-react" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "连接并同步", exact: true }),
+  ).toBeEnabled();
+  await page
+    .getByRole("button", { name: "移除目录 packages/lucide-react" })
+    .click();
+  await page
+    .getByRole("button", { name: "移除目录 packages/lucide-static" })
+    .click();
+  await expect(
+    page.getByRole("button", { name: "连接并同步", exact: true }),
+  ).toBeDisabled();
+  await page.getByLabel("仓库地址").fill("https://github.com/team/other.git");
+  await expect(page.getByLabel("仓库分支")).toBeDisabled();
+});
