@@ -1,7 +1,5 @@
 import { TreeSelect } from "@/components/ui/tree-select";
 import type { TreeNode } from "@/components/ui/tree";
-import { IconButton } from "@/components/ui/icon-button";
-import { CloseRegular } from "@mingcute/react/core-regular";
 
 export function DirectoryCascader({
   paths,
@@ -51,22 +49,6 @@ export function DirectoryCascader({
         clearLabel="清空目录选择"
         className="w-full"
       />
-      <div className="directory-tags">
-        {value.map((path) => (
-          <span key={path} className="inline-flex items-center gap-1">
-            {path === "." ? "整个仓库" : path}
-            <IconButton
-              kind="plain"
-              size="sm"
-              disabled={disabled}
-              aria-label={`移除目录 ${path}`}
-              onClick={() => onChange(value.filter((item) => item !== path))}
-            >
-              <CloseRegular size={16} />
-            </IconButton>
-          </span>
-        ))}
-      </div>
     </div>
   );
 }

@@ -1,19 +1,36 @@
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 import { CheckRegular, DownRegular } from "@mingcute/react/core-regular";
 
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  selectTriggerClass,
+  selectPopupClass,
+  selectItemClass,
+} from "@/lib/select-styles";
+
 type SelectProps = {
   items: { value: string; label: string }[];
-  value: string | null;
-  onValueChange: (value: string) => void;
   disabled?: boolean;
   placeholder?: string;
   "aria-label": string;
-};
+} & (
+  | {
+      multiple?: false;
+      value: string | null;
+      onValueChange: (value: string) => void;
+    }
+  | {
+      multiple: true;
+      value: string[];
+      onValueChange: (value: string[]) => void;
+    }
+);
 
 // Application composition: Base UI selection with the upstream Nico Input appearance.
 export function Select({
   items,
   value,
+  multiple = false,
   onValueChange,
   disabled,
   placeholder,
@@ -23,21 +40,35 @@ export function Select({
     <div data-slot="select-wrapper" className="w-full min-w-0">
       <SelectPrimitive.Root
         items={items}
+        multiple={multiple}
         value={value}
         disabled={disabled}
         onValueChange={(next) => {
-          if (next !== null) onValueChange(next);
+          if (multiple)
+            (onValueChange as (value: string[]) => void)(next as string[]);
+          else if (next !== null)
+            (onValueChange as (value: string) => void)(next as string);
         }}
       >
         <SelectPrimitive.Trigger
           aria-label={label}
           data-slot="select-trigger"
-          className="flex h-8 w-full min-w-0 items-center gap-2 rounded-(--nico-border-radius-sm) border-0 bg-(--nico-color-background-input) px-3 text-left text-sm font-normal text-(--nico-color-text) outline-none enabled:hover:bg-(--nico-color-background-input-hover) focus-visible:bg-(--nico-color-background-input) focus-visible:shadow-(--nico-effect-focused-input) data-popup-open:shadow-(--nico-effect-focused-input) disabled:cursor-not-allowed disabled:bg-(--nico-color-background-disabled) disabled:text-(--nico-color-text-disabled)"
+          className={`${selectTriggerClass} h-8`}
         >
           <SelectPrimitive.Value
             placeholder={placeholder}
             className="min-w-0 flex-1 truncate data-placeholder:text-(--nico-color-text-disabled)"
-          />
+          >
+            {multiple
+              ? () =>
+                  (value as string[])
+                    .map(
+                      (key) =>
+                        items.find((item) => item.value === key)?.label ?? key,
+                    )
+                    .join(", ") || placeholder
+              : undefined}
+          </SelectPrimitive.Value>
           <SelectPrimitive.Icon
             data-slot="select-icon"
             className="shrink-0 text-(--nico-color-icon-subtlest)"
@@ -55,21 +86,32 @@ export function Select({
           >
             <SelectPrimitive.Popup
               data-slot="select-popup"
-              className="nico-effect-shadow-medium w-(--anchor-width) max-w-[calc(100vw-16px)] max-h-(--available-height) overflow-y-auto rounded-(--nico-border-radius-md) border border-(--nico-color-border) bg-(--nico-color-surface-raised) p-1 text-sm text-(--nico-color-text) outline-none origin-[var(--transform-origin)] transition-[opacity,scale] duration-150 data-starting-style:scale-95 data-starting-style:opacity-0 data-ending-style:scale-95 data-ending-style:opacity-0 motion-reduce:transition-none"
+              className={selectPopupClass}
             >
               <SelectPrimitive.List>
                 {items.map((item) => (
                   <SelectPrimitive.Item
                     key={item.value}
                     value={item.value}
-                    className="flex min-h-8 cursor-default items-center gap-2 rounded-(--nico-border-radius-sm) px-3 outline-none data-highlighted:bg-(--nico-color-interaction-hover)"
+                    className={`${selectItemClass} min-h-8 px-3`}
                   >
+                    {multiple && (
+                      <Checkbox
+                        checked={(value as string[]).includes(item.value)}
+                        readOnly
+                        tabIndex={-1}
+                        aria-hidden="true"
+                        className="pointer-events-none"
+                      />
+                    )}
                     <SelectPrimitive.ItemText className="min-w-0 flex-1 truncate">
                       {item.label}
                     </SelectPrimitive.ItemText>
-                    <SelectPrimitive.ItemIndicator>
-                      <CheckRegular size={16} aria-hidden="true" />
-                    </SelectPrimitive.ItemIndicator>
+                    {!multiple && (
+                      <SelectPrimitive.ItemIndicator>
+                        <CheckRegular size={16} aria-hidden="true" />
+                      </SelectPrimitive.ItemIndicator>
+                    )}
                   </SelectPrimitive.Item>
                 ))}
               </SelectPrimitive.List>

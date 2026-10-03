@@ -20,7 +20,9 @@ test("Gendesign controls retain the recorded upstream source, including interact
       : source;
     assert.equal(
       createHash("sha256").update(normalized).digest("hex"),
-      entry.normalizedSha256,
+      "adaptedNormalizedSha256" in entry
+        ? entry.adaptedNormalizedSha256
+        : entry.normalizedSha256,
       `${path} differs from the recorded Gendesign revision; review and record upstream changes explicitly`,
     );
   }
