@@ -14,6 +14,8 @@ input {
 }
 .app {
   --sidebar-width: 300px;
+  --workspace-bottom-inset: 8px;
+  --workspace-footer-height: 48px;
   --panel-duration-in: 240ms;
   --panel-duration-out: 180ms;
   --panel-ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -63,14 +65,14 @@ input {
 .shell {
   height: calc(100% - 52px);
   display: flex;
-  padding: 0 8px 8px 0;
+  padding: 0 8px var(--workspace-bottom-inset) 0;
   transition: padding-left var(--panel-duration-in) var(--panel-ease);
 }
 .sidebar {
   width: var(--sidebar-width);
   flex-shrink: 0;
   min-height: 0;
-  margin-bottom: -8px;
+  margin-bottom: calc(-1 * var(--workspace-bottom-inset));
   overflow: hidden;
   transition: width var(--panel-duration-in) var(--panel-ease);
 }
@@ -173,9 +175,10 @@ input {
 }
 .sidebar-foot {
   flex-shrink: 0;
-  height: 57px;
+  /* Extend the background to the window edge without shifting the controls. */
+  height: calc(var(--workspace-footer-height) + var(--workspace-bottom-inset));
   margin-top: auto;
-  padding: 12px 14px 12px 12px;
+  padding: 0 14px var(--workspace-bottom-inset) 12px;
   border-top: 1px solid var(--nico-color-border);
   display: flex;
   align-items: center;
@@ -355,7 +358,8 @@ input {
   right: 9px;
 }
 .grid-footer {
-  height: 43px;
+  height: var(--workspace-footer-height);
+  flex-shrink: 0;
   border-top: 1px solid var(--nico-color-border);
   padding: 0 24px;
   display: flex;
