@@ -110,8 +110,18 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
   ).toBeVisible();
   for (const target of ["React", "Vue", "SwiftUI"]) {
     await page.getByRole("tab", { name: target, exact: true }).click();
+    const preview = page.locator(".detail .code-preview pre");
+    await expect(preview).not.toContainText("正在生成");
+    await expect(preview).not.toContainText("Source:");
+    await expect(
+      page.getByRole("button", { name: "尺寸、颜色与来源信息" }),
+    ).toHaveCount(0);
+    await expect(
+      page.locator(".detail .export-instruction, .detail .hint"),
+    ).toHaveCount(0);
     await page.getByRole("button", { name: "复制代码", exact: true }).click();
     const copied = await app.evaluate(({ clipboard }) => clipboard.readText());
+    expect(copied).toContain("Source: https://github.com/team/icons");
     expect(copied).toContain(
       target === "React"
         ? "SVGProps"

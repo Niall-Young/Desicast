@@ -30,7 +30,6 @@ import {
   LinkRegular,
   CodeRegular,
   TerminalRegular,
-  ArrowRightRegular,
   GridRegular,
   LeftRegular,
   RightRegular,
@@ -223,8 +222,6 @@ export function App() {
     [error, setError] = useState(""),
     [revision, setRevision] = useState(0);
   const [target, setTarget] = useState<Target>("svg"),
-    [size, setSize] = useState(24),
-    [color, setColor] = useState("currentColor"),
     [exported, setExported] = useState<ExportResult>(),
     [copyState, setCopyState] = useState(false),
     [detailOpen, setDetailOpen] = useState(false);
@@ -366,8 +363,7 @@ export function App() {
       api<ExportResult>("getIcon", {
         id: selected.id,
         target,
-        size,
-        color: color === "original" ? undefined : color,
+        color: "currentColor",
       })
         .then((value) => {
           if (alive) setExported(value);
@@ -376,7 +372,7 @@ export function App() {
     return () => {
       alive = false;
     };
-  }, [selected?.id, selected?.svg, target, size, color]);
+  }, [selected?.id, selected?.svg, target]);
   function chooseSource(id: string) {
     setSourceId(id);
     setCollection("");
@@ -483,8 +479,7 @@ export function App() {
       const value = await api<{ canceled: boolean; path?: string }>("export", {
         id: selected.id,
         target,
-        size,
-        color: color === "original" ? undefined : color,
+        color: "currentColor",
       });
       if (!value.canceled) flash(`已导出到 ${value.path}`);
     } catch (err) {
@@ -1153,10 +1148,7 @@ export function App() {
                       <div className="detail-preview">
                         <img
                           className={
-                            color === "currentColor" &&
-                            isMonochrome(selected.svg)
-                              ? "monochrome"
-                              : ""
+                            isMonochrome(selected.svg) ? "monochrome" : ""
                           }
                           src={svgUrl(exported?.previewSvg ?? selected.svg)}
                           alt={selected.name}
@@ -1221,11 +1213,13 @@ export function App() {
                           </TabsList>
                         </Tabs>
                         <div className="code-preview">
-                          <pre>{exported?.code ?? "正在生成…"}</pre>
+                          <pre>
+                            {exported?.code.replace(
+                              /^(?:\/\/ Source:[^\n]*\n|<!-- Source:[^\n]* -->\n)/,
+                              "",
+                            ) ?? "正在生成…"}
+                          </pre>
                         </div>
-                        <p className="export-instruction">
-                          {exported?.instructions}
-                        </p>
                         <div className="export-actions">
                           <Button disabled={!exported} onClick={copy}>
                             {copyState ? "已复制" : "复制代码"}
@@ -1233,98 +1227,18 @@ export function App() {
                           <IconButton
                             kind="ghost"
                             aria-label="导出资源文件"
+                            title={
+                              target === "swiftui"
+                                ? "导出后将 .imageset 拖入 Assets.xcassets"
+                                : "导出资源文件"
+                            }
                             disabled={!exported}
                             onClick={download}
                           >
                             <DesignIcon name="download" />
                           </IconButton>
                         </div>
-                        {target === "swiftui" && (
-                          <span className="hint">
-                            使用 SwiftUI 时，请同时导出资源文件
-                          </span>
-                        )}
                       </div>
-                      <Popover>
-                        <PopoverTrigger
-                          render={
-                            <Button
-                              className="detail-options-trigger"
-                              kind="plain"
-                              size="sm"
-                            />
-                          }
-                        >
-                          尺寸、颜色与来源信息
-                        </PopoverTrigger>
-                        <PopoverContent className="detail-options" align="end">
-                          <div className="detail-properties">
-                            <Field label="尺寸">
-                              <NativeSelect
-                                size="sm"
-                                aria-label="图标尺寸"
-                                value={size}
-                                onChange={(event) =>
-                                  setSize(Number(event.target.value))
-                                }
-                              >
-                                {[16, 20, 24, 32, 48, 64].map((value) => (
-                                  <option key={value} value={value}>
-                                    {value} px
-                                  </option>
-                                ))}
-                              </NativeSelect>
-                            </Field>
-                            <Field label="颜色">
-                              <NativeSelect
-                                size="sm"
-                                aria-label="图标颜色"
-                                value={color}
-                                onChange={(event) =>
-                                  setColor(event.target.value)
-                                }
-                              >
-                                <option value="currentColor">跟随主题</option>
-                                <option value="original">原始颜色</option>
-                                <option value="#000000">黑色</option>
-                                <option value="#ffffff">白色</option>
-                                <option value="#3568d4">蓝色</option>
-                              </NativeSelect>
-                            </Field>
-                          </div>
-                          <div className="source-info">
-                            <span className="section-label">来源信息</span>
-                            <dl>
-                              <dt>来源</dt>
-                              <dd>
-                                {selected.sourceId === "public"
-                                  ? "开源图库"
-                                  : "团队仓库"}
-                              </dd>
-                              <dt>{selected.commit ? "版本" : "许可"}</dt>
-                              <dd>
-                                {selected.commit?.slice(0, 10) ??
-                                  selected.license ??
-                                  "见原始来源"}
-                              </dd>
-                            </dl>
-                            {selected.path && (
-                              <p className="source-path" title={selected.path}>
-                                {selected.path}
-                              </p>
-                            )}
-                            <Button
-                              kind="plain"
-                              size="sm"
-                              onClick={() =>
-                                api("openUrl", selected.sourceUrl).catch(report)
-                              }
-                            >
-                              查看来源 <ArrowRightRegular size={14} />
-                            </Button>
-                          </div>{" "}
-                        </PopoverContent>
-                      </Popover>
                     </>
                   ) : (
                     <div className="detail-empty">

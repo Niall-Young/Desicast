@@ -1554,9 +1554,6 @@ pre {
   font-size: var(--nico-font-size-sm);
   line-height: var(--nico-line-height-sm);
 }
-.library-view .export-instruction {
-  margin: 8px 0;
-}
 .library-view .export-actions {
   margin-top: auto;
   margin-bottom: 0;
@@ -1569,19 +1566,6 @@ pre {
 }
 .library-view .export-actions > button:last-child {
   background: var(--nico-color-background-neutral-subtle);
-}
-.detail-options-trigger {
-  margin-top: 8px;
-  flex-shrink: 0;
-}
-.detail-options {
-  width: 320px;
-  padding: 16px;
-}
-.detail-options .source-info {
-  display: block;
-  padding: 0;
-  width: auto;
 }
 @media (max-width: 1100px) {
   .library-view .detail {
