@@ -47,8 +47,11 @@
       "height": "16"
     },
     "sidebar": {
-      "figmaAsset": "ef974.svg",
-      "sha256": "6aec017c7e2358345174b25fb321e0555c825bb0f9aa15712adf85aa5cf86b53",
+      "source": "@mingcute/icons/core-regular/layout-left",
+      "iconName": "layout_left_line",
+      "packageVersion": "3.0.2",
+      "notes": "Replaced at user request with MingCute layout_left_line; original geometry preserved with application control size and color",
+      "sha256": "6e22a8819dac4989d1b9d168c21c1aa8ec5da44352c6ca6bc59115ac0f20f990",
       "width": "16",
       "height": "16"
     },
