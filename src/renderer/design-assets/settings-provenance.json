@@ -60,6 +60,14 @@
       "sha256": "356242b20f30e31cf8b31f2a2fade7ede255a66e62b5f444736872d3860e7ca7",
       "width": "16",
       "height": "16"
+    },
+    "back": {
+      "asset": "98200.svg",
+      "localFile": "settings-back.svg",
+      "sha256": "93b99ee3a866d899eee2842a97c00581e4865155abc934cf1e109bdf1813ea67",
+      "width": "16",
+      "height": "16"
     }
-  }
+  },
+  "navigationNodeId": "2023:18824"
 }

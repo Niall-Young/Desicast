@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "./Select";
-import { ArrowLeftRegular } from "@mingcute/react/core-regular";
 import type { Settings } from "../core/types";
 import { api, type MCPInfo } from "./api";
 import { MCPClientPanel } from "./MCPSettings";
 import "./settings-page.css";
+import { SettingsMenuButton } from "./SettingsMenuButton";
+import back from "./design-assets/settings-back.svg?url";
 import general from "./design-assets/settings-general.svg?url";
 import appearance from "./design-assets/settings-appearance.svg?url";
 import connector from "./design-assets/settings-connector.svg?url";
@@ -110,22 +111,17 @@ export function SettingsPage({
   return (
     <div className="shell settings-page">
       <aside className="settings-sidebar" aria-label="设置导航">
-        <Button
-          kind="plain"
-          className="settings-back"
-          leftIcon={<ArrowLeftRegular size={16} />}
-          onClick={onClose}
-        >
+        <SettingsMenuButton className="settings-back" onClick={onClose}>
+          <img src={back} alt="" className="settings-icon" />
           返回
-        </Button>
+        </SettingsMenuButton>
         <nav className="settings-menu" aria-label="设置分类">
           {sections.map((section) => (
             <div key={section.id}>
               {section.group && (
                 <p className="settings-menu-group">{section.group}</p>
               )}
-              <Button
-                kind="plain"
+              <SettingsMenuButton
                 className="settings-menu-item"
                 selected={active === section.id}
                 aria-current={active === section.id ? "location" : undefined}
@@ -138,7 +134,7 @@ export function SettingsPage({
               >
                 <img src={section.icon} alt="" className="settings-icon" />
                 {section.label}
-              </Button>
+              </SettingsMenuButton>
             </div>
           ))}
         </nav>

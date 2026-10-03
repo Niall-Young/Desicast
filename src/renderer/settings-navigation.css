@@ -1,0 +1,50 @@
+/* Figma 2023:18824 side-menu composition; imported controls stay unchanged */
+.settings-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.settings-sidebar .settings-menu,
+.settings-menu > div {
+  display: contents;
+}
+.settings-sidebar .settings-menu-group {
+  margin: 0;
+  flex-shrink: 0;
+}
+.settings-sidebar .settings-navigation-button {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  width: 100%;
+  height: 32px;
+  margin: 0;
+  padding: 5px 12px;
+  border: 0;
+  border-radius: var(--nico-border-radius-sm);
+  background: transparent;
+  color: var(--nico-color-text-subtle);
+  font-family: var(--nico-font-family-sans);
+  font-size: var(--nico-font-size-sm);
+  font-weight: var(--nico-font-weight-regular);
+  line-height: var(--nico-line-height-sm);
+  text-align: left;
+  white-space: nowrap;
+  transition: background-color 150ms;
+}
+.settings-navigation-button[data-selected="true"] {
+  background: var(--nico-color-interaction-selected);
+  color: var(--nico-color-text);
+}
+.settings-navigation-button:not(:disabled):hover {
+  background: var(--nico-color-interaction-hover);
+}
+.settings-navigation-button:focus-visible {
+  outline: 2px solid var(--nico-color-border-brand);
+  outline-offset: -2px;
+}
+.settings-navigation-button:disabled {
+  opacity: var(--nico-opaque-disabled);
+}
