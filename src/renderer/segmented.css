@@ -1,0 +1,51 @@
+/* Gendesign Figma export Segmented: wgJXbHgcZbicP1mCiLbxND / 2001:11710 */
+.segmented {
+  display: flex;
+  width: 100%;
+  height: 32px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-background-neutral-subtle);
+}
+
+.segmented > button {
+  display: flex;
+  flex: 1 0 0;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 32px;
+  padding: 4px 11px;
+  border: var(--nico-border-weight-base) solid transparent;
+  border-radius: var(--nico-border-radius-sm);
+  background: transparent;
+  color: var(--nico-color-text-subtle);
+  font-family: var(--nico-font-family-sans);
+  font-size: var(--nico-font-size-sm);
+  font-weight: var(--nico-font-weight-regular);
+  line-height: var(--nico-line-height-sm);
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.segmented > button:not(:disabled):not([data-active]):hover {
+  background: var(--nico-color-interaction-hover);
+}
+
+.segmented > button[data-active] {
+  border-color: var(--nico-color-border);
+  background: var(--nico-color-surface);
+  color: var(--nico-color-text);
+  box-shadow: var(--nico-effect-shadow-small);
+}
+
+.segmented > button:focus-visible {
+  outline: 2px solid var(--nico-color-border-brand);
+  outline-offset: -2px;
+}
+
+.segmented > button:disabled {
+  cursor: default;
+  opacity: var(--nico-opaque-disabled);
+}

@@ -51,7 +51,7 @@ import { useMessage } from "@/components/ui/message";
 import { SearchBox } from "@/components/ui/search-box";
 import { Select } from "./Select";
 import { Pagination } from "@/components/ui/pagination";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Segmented, SegmentedList, SegmentedItem } from "./Segmented";
 import { Spinner } from "@/components/ui/spinner";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import {
@@ -1252,7 +1252,7 @@ export function App() {
                           </div>
                         </div>
                         <div className="export-section">
-                          <Tabs
+                          <Segmented
                             value={target}
                             onValueChange={(value) => {
                               const next = value as Target;
@@ -1263,14 +1263,14 @@ export function App() {
                               setTarget(next);
                             }}
                           >
-                            <TabsList className="target-tabs">
+                            <SegmentedList aria-label="导出格式">
                               {targets.map((value) => (
-                                <TabsTrigger key={value} value={value}>
+                                <SegmentedItem key={value} value={value}>
                                   {labels[value]}
-                                </TabsTrigger>
+                                </SegmentedItem>
                               ))}
-                            </TabsList>
-                          </Tabs>
+                            </SegmentedList>
+                          </Segmented>
                           <div className="code-preview">
                             <pre
                               key={codeAnimation.key}
