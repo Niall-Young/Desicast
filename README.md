@@ -66,6 +66,8 @@ DesiCast 是 macOS Electron 应用，使用 [Gendesign Design System](https://gi
 
 默认快捷入口包括 Lucide、Tabler Icons、Remix Icon、Unicons、MingCute、Google Material Icons 和 Eva Icons。侧栏显示公共目录的实际图标总数（不是下载缓存数量），团队库显示成功索引的 SVG 数量。公共目录每天缓存、每小时自动检查，并可使用「刷新图库」立即检查；团队库同步后记录新增、SVG 更新和删除。公共库徽标提示目录数量、可用版本及 API 最后修改时间变化；旧缓存会按需更新，网络失败时仍保留旧 SVG；徽标跨重启保留，可在图库内「标记已读」。默认库支持无关键词分页浏览。侧栏「图库选项」提供仓库类型、状态与排序；类型和状态默认不勾选并支持多选，组内取并集、组间取交集。排序为单选，默认「首字母正序」，选择其他项会替换当前排序。旧仓库缺少添加时间时使用既有顺序，新增仓库记录添加时间。
 
+首页每页最多显示 8 个图标库（4 列 × 2 行），超过 8 个时在下方居中显示上一页、下一页图标按钮和页码。下一页向左滑动，上一页向右滑动；系统开启减少动态效果时取消滑动过渡。
+
 右键侧栏或首页中的任意图标库，可打开、置顶/取消置顶、配置、查看来源或移除。置顶状态和公共图库的显示名称保存在本机，置顶优先于侧栏排序。团队图库配置直接打开该仓库的编辑表单；公共图库配置可修改显示名称。移除须确认：公共图库从导航中隐藏，可在“添加图标库”弹窗重新添加，仍可通过全局搜索和 MCP 获取；团队仓库会删除本地索引和凭证，不修改远端仓库。
 
 首页、侧栏、图标网格和详情面板按用户的 Figma 设计还原，图库标识与控件 SVG 随应用打包；设计节点、尺寸与校验值见 [设计素材来源记录](src/renderer/design-assets/provenance.json)，原始品牌来源见 [来源记录](src/renderer/library-marks/provenance.json)。Lucide 保留官方深色版本，其余品牌保留设计原色。Unicons 使用用户提供图片的矢量重建版本，并非官方原始 SVG。品牌归各自所有者，图标许可不代表品牌使用授权。
@@ -201,6 +203,8 @@ The DesiCast mark is a purple little devil on a light glass tile. `assets/Desica
 - **Standalone MCP Server**: Bundled runtime executable requiring no desktop window presence and no user-installed Node environment.
 
 Default shortcuts include Lucide, Tabler Icons, Remix Icon, Unicons, MingCute, Google Material Icons, and Eva Icons. Public sidebar counts use catalog totals rather than downloaded cache counts; team counts reflect successfully indexed SVGs. The public catalog is cached daily, checked hourly, and can be checked immediately with “Refresh library”. Team synchronization records additions, SVG changes, and deletions. Public badges indicate catalog count, published version, and API modification-time changes where available. Cached SVGs refresh on demand while remaining available if the network fails. Unread badges persist across restarts and can be marked as read within the library. Default collections support paginated browsing without a keyword. Sidebar “Library options” provides type, status, and sorting controls. Types and statuses start unchecked and support multiple selections: matches are combined within a group and intersected across groups. Sorting is single-select and defaults to name ascending; choosing another option replaces the current sort. Older repositories without creation timestamps fall back to their existing order; new repositories record creation time.
+
+The home screen shows up to 8 libraries per page (4 columns × 2 rows). With more than 8 libraries, centered previous/next icon buttons and a page counter appear below the grid. Next slides left and previous slides right; the system reduced-motion preference disables the sliding transition.
 
 Right-click any library in the sidebar or home screen to open it, pin/unpin it, configure it, view its source, or remove it. Pinning and public-library display names persist locally; pinned libraries precede sidebar sorting. Team configuration opens that repository’s edit form; public configuration changes its display name. Removal requires confirmation: public libraries are hidden from navigation and can be re-added from the “Add Library” modal, while remaining available to global search and MCP; removing a team repository deletes its local index and credentials without changing the remote repository.
 

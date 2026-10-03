@@ -1,6 +1,7 @@
 import { ModelSettings } from "./ModelSettings";
 import { AddLibraryDialog } from "./AddLibraryDialog";
 import { IconViewSwitch } from "./IconViewSwitch";
+import { HomeLibraryPager } from "./HomeLibraryPager";
 import { SettingsPage } from "./SettingsPage";
 import { MCPSettings } from "./MCPSettings";
 import { LibraryFilterMenu } from "./LibraryFilterMenu";
@@ -908,8 +909,8 @@ export function App() {
               <section className="home-content" aria-label="选择图标库">
                 <div className="home-center">
                   <h1>Hello，今天想用什么图标库？</h1>
-                  <div className="home-library-grid">
-                    {homeEntries.map(({ id, library, source }) => {
+                  <HomeLibraryPager
+                    items={homeEntries.map(({ id, library, source }) => {
                       const name = library
                         ? (libraryPreferences[id]?.name ?? library.designName)
                         : source!.name;
@@ -939,7 +940,7 @@ export function App() {
                         </Button>,
                       );
                     })}
-                  </div>
+                  />
                 </div>
               </section>
             ) : page === "library" ? (

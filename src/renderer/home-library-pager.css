@@ -1,0 +1,45 @@
+.home-library-pager {
+  width: min(612px, 100%);
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+.home-library-viewport {
+  width: calc(100% + 8px);
+  overflow: hidden;
+}
+.home-library-track {
+  display: flex;
+  width: 100%;
+  transition: transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.home-library-track > .home-library-page {
+  flex: 0 0 100%;
+  width: 100%;
+  /* Keep card focus outlines inside the clipped viewport */
+  padding: 4px;
+  box-sizing: border-box;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: start;
+}
+.home-library-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.home-library-page-number {
+  min-width: 44px;
+  text-align: center;
+  color: var(--nico-color-text-subtlest);
+  font-size: var(--nico-font-size-sm);
+  line-height: var(--nico-line-height-sm);
+  font-variant-numeric: tabular-nums;
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-library-track {
+    transition: none;
+  }
+}
