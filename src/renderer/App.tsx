@@ -220,6 +220,7 @@ export function App() {
     [exported, setExported] = useState<ExportResult>(),
     [copyState, setCopyState] = useState(false),
     [detailOpen, setDetailOpen] = useState(false);
+  const [detailMounted, setDetailMounted] = useState(false);
   const [view, setView] = useState<"grid" | "list">("grid");
   const [reference, setReference] = useState<string>(),
     [visionResult, setVisionResult] = useState(false),
@@ -318,6 +319,14 @@ export function App() {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
+  useEffect(() => {
+    if (detailOpen) {
+      setDetailMounted(true);
+      return;
+    }
+    const timer = setTimeout(() => setDetailMounted(false), 180);
+    return () => clearTimeout(timer);
+  }, [detailOpen]);
   useEffect(() => {
     if (page !== "library") return;
     const current = ++generation.current;
@@ -643,137 +652,149 @@ export function App() {
         )}
       </header>
       <div className="shell">
-        <aside className="sidebar" aria-label="图库导航" hidden={!sidebarOpen}>
-          <div className="sidebar-menu">
-            <Button
-              className="nav-item"
-              kind="plain"
-              onClick={() => {
-                setAddLibraryOpen(true);
-              }}
-            >
-              <DesignIcon name="add" />
-              <span>添加图标库</span>
-            </Button>
-            <Button
-              className="nav-item"
-              selected={page === "library" && !sourceId}
-              kind="plain"
-              onClick={() => {
-                chooseSource("");
-                requestAnimationFrame(() => searchInput.current?.focus());
-              }}
-            >
-              <DesignIcon name="search" />
-              <span>全局搜索</span>
-            </Button>
-          </div>
-          <div className="library-heading">
-            <span>图标库</span>
-            <div className="library-heading-actions">
-              <IconButton
+        <aside
+          className="sidebar"
+          aria-label="图库导航"
+          aria-hidden={!sidebarOpen}
+          inert={!sidebarOpen}
+        >
+          <div className="sidebar-inner">
+            <div className="sidebar-menu">
+              <Button
+                className="nav-item"
                 kind="plain"
-                size="sm"
-                aria-label="筛选图标库"
-                aria-expanded={filterOpen}
-                onClick={() => setFilterOpen((value) => !value)}
-              >
-                <DesignIcon name="library-search" />
-              </IconButton>
-              <LibraryFilterMenu
-                value={libraryOptions}
-                onChange={setLibraryOptions}
-              />
-              <IconButton
-                kind="plain"
-                size="sm"
-                aria-label="添加团队仓库"
                 onClick={() => {
-                  setEditRepository(undefined);
-                  setRepositoryEditRevision((value) => value + 1);
-                  navigate("repositories");
+                  setAddLibraryOpen(true);
                 }}
               >
-                <DesignIcon name="library-add" />
-              </IconButton>
+                <DesignIcon name="add" />
+                <span>添加图标库</span>
+              </Button>
+              <Button
+                className="nav-item"
+                selected={page === "library" && !sourceId}
+                kind="plain"
+                onClick={() => {
+                  chooseSource("");
+                  requestAnimationFrame(() => searchInput.current?.focus());
+                }}
+              >
+                <DesignIcon name="search" />
+                <span>全局搜索</span>
+              </Button>
             </div>
-          </div>
-          {filterOpen && (
-            <div className="sidebar-filter">
-              <SearchBox
-                aria-label="筛选图标库"
-                placeholder="搜索图标库"
-                value={libraryFilter}
-                onValueChange={setLibraryFilter}
-              />
-            </div>
-          )}
-          <div className="library-navigation">
-            {visibleLibraries.map((entry) => {
-              const library = entry.library;
-              const source = entry.source;
-              const metadata = library
-                ? collections.find((item) => item.id === library.id)
-                : undefined;
-              const id = library?.id ?? source!.id;
-              const name = library
-                ? (libraryPreferences[id]?.name ?? designNames[library.id])
-                : source!.name;
-              const changes = metadata?.changes ?? source?.changes;
-              return libraryMenu(
-                id,
-                name,
-                Boolean(library),
-                <Button
-                  key={id}
-                  data-testid={`library-${id}`}
-                  className="nav-item"
+            <div className="library-heading">
+              <span>图标库</span>
+              <div className="library-heading-actions">
+                <IconButton
                   kind="plain"
-                  selected={page === "library" && (library ? sourceId === "public" && collection === id : sourceId === id)}
-                  title={`${library?.name ?? name} · ${library ? (metadata ? metadata.total.toLocaleString() + " 个图标" : "数量暂不可用") : source!.iconCount.toLocaleString() + " 个图标"}${changes ? " · " + changeDescription(changes) : ""}`}
+                  size="sm"
+                  aria-label="筛选图标库"
+                  aria-expanded={filterOpen}
+                  onClick={() => setFilterOpen((value) => !value)}
+                >
+                  <DesignIcon name="library-search" />
+                </IconButton>
+                <LibraryFilterMenu
+                  value={libraryOptions}
+                  onChange={setLibraryOptions}
+                />
+                <IconButton
+                  kind="plain"
+                  size="sm"
+                  aria-label="添加团队仓库"
                   onClick={() => {
-                    chooseSource(library ? "public" : id);
-                    if (library) setCollection(id);
+                    setEditRepository(undefined);
+                    setRepositoryEditRevision((value) => value + 1);
+                    navigate("repositories");
                   }}
                 >
-                  {library ? (
-                    <LibraryMark library={library} />
-                  ) : (
-                    <DesignIcon name="book-row" />
-                  )}
-                  <span>{name}</span>
-                  <ChangeBadge changes={changes} />
-                  <span className="nav-count">
-                    {library
-                      ? metadata
-                        ? metadata.total.toLocaleString()
-                        : "—"
-                      : source!.iconCount.toLocaleString()}
-                  </span>
-                </Button>,
-              );
-            })}
-            {visibleLibraries.length === 0 && (
-              <p className="library-filter-empty">没有符合条件的图标库</p>
+                  <DesignIcon name="library-add" />
+                </IconButton>
+              </div>
+            </div>
+            {filterOpen && (
+              <div className="sidebar-filter">
+                <SearchBox
+                  aria-label="筛选图标库"
+                  placeholder="搜索图标库"
+                  value={libraryFilter}
+                  onValueChange={setLibraryFilter}
+                />
+              </div>
             )}
-          </div>
-          <div className="sidebar-foot">
-            <IconButton
-              kind="plain"
-              aria-label="设置"
-              onClick={() => setSettingsOpen(true)}
-            >
-              <DesignIcon name="settings" />
-            </IconButton>
-            <Button
-              kind="plain"
-              className="mcp-badge"
-              aria-label="MCP 连接"
-              onClick={() => setMcpOpen(true)}
-            >
-              <DesignIcon name="check" />
-              <span>MCP</span>
-            </Button>
+            <div className="library-navigation">
+              {visibleLibraries.map((entry) => {
+                const library = entry.library;
+                const source = entry.source;
+                const metadata = library
+                  ? collections.find((item) => item.id === library.id)
+                  : undefined;
+                const id = library?.id ?? source!.id;
+                const name = library
+                  ? (libraryPreferences[id]?.name ?? designNames[library.id])
+                  : source!.name;
+                const changes = metadata?.changes ?? source?.changes;
+                return libraryMenu(
+                  id,
+                  name,
+                  Boolean(library),
+                  <Button
+                    key={id}
+                    data-testid={`library-${id}`}
+                    className="nav-item"
+                    kind="plain"
+                    selected={
+                      page === "library" &&
+                      (library
+                        ? sourceId === "public" && collection === id
+                        : sourceId === id)
+                    }
+                    title={`${library?.name ?? name} · ${library ? (metadata ? metadata.total.toLocaleString() + " 个图标" : "数量暂不可用") : source!.iconCount.toLocaleString() + " 个图标"}${changes ? " · " + changeDescription(changes) : ""}`}
+                    onClick={() => {
+                      chooseSource(library ? "public" : id);
+                      if (library) setCollection(id);
+                    }}
+                  >
+                    {library ? (
+                      <LibraryMark library={library} />
+                    ) : (
+                      <DesignIcon name="book-row" />
+                    )}
+                    <span>{name}</span>
+                    <ChangeBadge changes={changes} />
+                    <span className="nav-count">
+                      {library
+                        ? metadata
+                          ? metadata.total.toLocaleString()
+                          : "—"
+                        : source!.iconCount.toLocaleString()}
+                    </span>
+                  </Button>,
+                );
+              })}
+              {visibleLibraries.length === 0 && (
+                <p className="library-filter-empty">没有符合条件的图标库</p>
+              )}
+            </div>
+            <div className="sidebar-foot">
+              <IconButton
+                kind="plain"
+                aria-label="设置"
+                onClick={() => setSettingsOpen(true)}
+              >
+                <DesignIcon name="settings" />
+              </IconButton>
+              <Button
+                kind="plain"
+                className="mcp-badge"
+                aria-label="MCP 连接"
+                onClick={() => setMcpOpen(true)}
+              >
+                <DesignIcon name="check" />
+                <span>MCP</span>
+              </Button>
+            </div>
           </div>
         </aside>
         <main className="workspace">
@@ -1073,8 +1094,13 @@ export function App() {
                   />
                 </footer>
               </section>
-              {detailOpen && (
-                <aside className="detail" aria-label="图标详情">
+              {detailMounted && (
+                <aside
+                  className={`detail ${detailOpen ? "" : "detail-exit"}`}
+                  aria-label="图标详情"
+                  aria-hidden={!detailOpen}
+                  inert={!detailOpen}
+                >
                   {selected ? (
                     <>
                       <div className="detail-preview">
