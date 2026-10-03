@@ -14,6 +14,9 @@
   gap: 4px;
   font-size: var(--nico-font-size-sm);
   line-height: 22px;
+  color: var(--nico-color-text);
+}
+.add-library-field > span {
   color: var(--nico-color-text-subtle);
 }
 .add-library-full {
