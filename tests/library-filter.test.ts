@@ -30,29 +30,27 @@ sources[1].changes = {
   updated: 0,
   removed: 0,
 };
-const empty: LibraryFilter = { types: [], statuses: [], sorts: [] };
-test("Library filters combine OR within a group and AND between groups, and clear back to original order", () => {
+const base: LibraryFilter = { types: [], statuses: [], sort: "name-asc" };
+test("Library filters combine OR within a group and AND between groups, and sort by the single selected order", () => {
   const names = (filter: LibraryFilter, query = "") =>
     filterLibraries([], sources, [], filter, query).map((entry) => entry.name);
-  assert.deepEqual(names(empty), ["Zulu", "Alpha"]);
+  assert.deepEqual(names(base), ["Alpha", "Zulu"]);
   assert.deepEqual(
-    names({ ...empty, types: ["github", "gitlab"], statuses: ["updated"] }),
+    names({ ...base, types: ["github", "gitlab"], statuses: ["updated"] }),
     ["Alpha"],
   );
-  assert.deepEqual(names({ ...empty, statuses: ["normal", "updated"] }), [
-    "Zulu",
+  assert.deepEqual(names({ ...base, statuses: ["normal", "updated"] }), [
     "Alpha",
+    "Zulu",
   ]);
   assert.deepEqual(
-    names({ ...empty, types: ["github"], statuses: ["updated"] }),
+    names({ ...base, types: ["github"], statuses: ["updated"] }),
     [],
   );
-  assert.deepEqual(names({ ...empty, sorts: ["name-asc"] }), ["Alpha", "Zulu"]);
-  assert.deepEqual(names({ ...empty, sorts: ["time-desc"] }), [
-    "Alpha",
-    "Zulu",
-  ]);
-  assert.deepEqual(names(empty, "ALP"), ["Alpha"]);
+  assert.deepEqual(names({ ...base, sort: "name-desc" }), ["Zulu", "Alpha"]);
+  assert.deepEqual(names({ ...base, sort: "time-asc" }), ["Zulu", "Alpha"]);
+  assert.deepEqual(names({ ...base, sort: "time-desc" }), ["Alpha", "Zulu"]);
+  assert.deepEqual(names(base, "ALP"), ["Alpha"]);
 });
 test("Source creation time and original order survive sync and edits", () => {
   const directory = mkdtempSync(join(tmpdir(), "desicast-sort-"));

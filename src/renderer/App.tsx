@@ -1,7 +1,11 @@
 import { AddLibraryDialog } from "./AddLibraryDialog";
 import { MCPSettings } from "./MCPSettings";
 import { LibraryFilterMenu } from "./LibraryFilterMenu";
-import { filterLibraries, type LibraryFilter } from "./library-filter";
+import {
+  defaultLibraryFilter,
+  filterLibraries,
+  type LibraryFilter,
+} from "./library-filter";
 import { LibraryContextMenu } from "./LibraryContextMenu";
 import { RemoveLibraryDialog } from "./RemoveLibraryDialog";
 import type {
@@ -66,15 +70,9 @@ import type {
   Source,
   Target,
 } from "../core/types";
-import {
-  api,
-  initialSettings,
-  svgUrl,
-  isMonochrome,
-} from "./api";
+import { api, initialSettings, svgUrl, isMonochrome } from "./api";
 
-type Page =
-  "home" | "library" | "repositories" | "model" | "appearance";
+type Page = "home" | "library" | "repositories" | "model" | "appearance";
 const publicLibraryOrigins: Record<string, string> = {
   lucide: "https://lucide.dev",
   tabler: "https://tabler.io/icons",
@@ -199,11 +197,8 @@ export function App() {
   const [mcpOpen, setMcpOpen] = useState(false);
   const [libraryFilter, setLibraryFilter] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
-  const [libraryOptions, setLibraryOptions] = useState<LibraryFilter>({
-    types: [],
-    statuses: [],
-    sorts: [],
-  });
+  const [libraryOptions, setLibraryOptions] =
+    useState<LibraryFilter>(defaultLibraryFilter);
   const [previousPage, setPreviousPage] = useState<Page>();
   const [nextPage, setNextPage] = useState<Page>();
   function navigate(next: Page) {
@@ -640,13 +635,10 @@ export function App() {
             </IconButton>
           </div>
         ) : (
-          <span
-            className="window-title"
-            style={{ display: "flex", alignItems: "center", gap: 8 }}
-          >
+          <div className="window-title">
             <img src={brandLogo} width="28" height="28" alt="DesiCast Logo" />
-            DesiCast
-          </span>
+            <span>DesiCast</span>
+          </div>
         )}
       </header>
       <div className="shell">

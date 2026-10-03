@@ -60,7 +60,10 @@ test("Figma library options start unchecked, filter multiple groups and retain s
     await trigger.click();
     const popup = page.getByRole("dialog", { name: "筛选配置" });
     await expect(popup).toBeVisible();
-    await expect(popup.locator('[aria-pressed="false"]')).toHaveCount(9);
+    await expect(popup.locator('[aria-pressed="false"]')).toHaveCount(8);
+    await expect(
+      popup.getByRole("button", { name: "首字母正序" }),
+    ).toHaveAttribute("aria-pressed", "true");
     await page.screenshot({
       path: ".work/screenshots/library-options-default.png",
     });
@@ -95,16 +98,13 @@ test("Figma library options start unchecked, filter multiple groups and retain s
     await expect(check).toHaveJSProperty("naturalWidth", 16);
     await expect.poll(async () => (await check.boundingBox())?.width).toBe(16);
     await expect.poll(async () => (await check.boundingBox())?.height).toBe(16);
-    for (const name of [
-      "Github 仓库",
-      "Gitlab 仓库",
-      "正常",
-      "有更新",
-      "首字母倒序",
-    ])
+    for (const name of ["Github 仓库", "Gitlab 仓库", "正常", "有更新"])
       await popup.getByRole("button", { name, exact: true }).click();
     await expect(rows).toHaveCount(9);
-    await expect(popup.locator('[aria-pressed="true"]')).toHaveCount(0);
+    await expect(popup.locator('[aria-pressed="true"]')).toHaveCount(1);
+    await expect(
+      popup.getByRole("button", { name: "首字母倒序" }),
+    ).toHaveAttribute("aria-pressed", "true");
     const window = await app.browserWindow(page);
     await window.evaluate((window) => window.setSize(960, 640));
     await expect

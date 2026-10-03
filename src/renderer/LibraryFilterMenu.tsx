@@ -7,7 +7,11 @@ import {
 } from "@/components/ui/popover";
 import { DesignIcon } from "./design";
 import check from "./design-assets/filter-check.svg?url";
-import type { LibraryFilter } from "./library-filter";
+import {
+  defaultLibraryFilter,
+  type LibraryFilter,
+  type LibrarySort,
+} from "./library-filter";
 
 const groups = [
   {
@@ -46,21 +50,19 @@ export function LibraryFilterMenu({
   value: LibraryFilter;
   onChange: (value: LibraryFilter) => void;
 }) {
-  function toggle(key: keyof LibraryFilter, option: string) {
-    const current: string[] = value[key];
+  function toggle(key: "types" | "statuses", option: string) {
+    const current = value[key] as string[];
     const next = current.includes(option)
       ? current.filter((item) => item !== option)
-      : [
-          ...current.filter(
-            (item) =>
-              key !== "sorts" || item.split("-")[0] !== option.split("-")[0],
-          ),
-          option,
-        ];
-    onChange({ ...value, [key]: next });
+      : [...current, option];
+    onChange({ ...value, [key]: next } as LibraryFilter);
+  }
+  function selectSort(option: LibrarySort) {
+    onChange({ ...value, sort: option });
   }
   const active =
-    value.types.length + value.statuses.length + value.sorts.length > 0;
+    value.types.length + value.statuses.length > 0 ||
+    value.sort !== defaultLibraryFilter.sort;
   return (
     <Popover>
       <PopoverTrigger
@@ -84,14 +86,21 @@ export function LibraryFilterMenu({
           <section key={group.key} aria-label={group.title}>
             <div className="library-options-title">{group.title}</div>
             {group.options.map(([option, label]) => {
-              const selected = (value[group.key] as string[]).includes(option);
+              const selected =
+                group.key === "sorts"
+                  ? value.sort === option
+                  : (value[group.key] as string[]).includes(option);
               return (
                 <Button
                   key={option}
                   kind="plain"
                   className="library-options-item"
                   aria-pressed={selected}
-                  onClick={() => toggle(group.key, option)}
+                  onClick={() =>
+                    group.key === "sorts"
+                      ? selectSort(option as LibrarySort)
+                      : toggle(group.key, option)
+                  }
                 >
                   <span>{label}</span>
                   {selected && (

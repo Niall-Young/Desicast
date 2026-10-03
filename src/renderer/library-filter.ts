@@ -7,9 +7,13 @@ export type LibrarySort = "name-asc" | "name-desc" | "time-asc" | "time-desc";
 export interface LibraryFilter {
   types: LibraryType[];
   statuses: LibraryStatus[];
-  /** Selected criteria are applied in selection order. */
-  sorts: LibrarySort[];
+  sort: LibrarySort;
 }
+export const defaultLibraryFilter: LibraryFilter = {
+  types: [],
+  statuses: [],
+  sort: "name-asc",
+};
 type Library = (typeof defaultLibraries)[number];
 interface Entry {
   library?: Library;
@@ -57,12 +61,11 @@ export function filterLibraries(
           (entry.status && filter.statuses.includes(entry.status))),
     )
     .sort((a, b) => {
-      for (const sort of filter.sorts) {
-        const difference = sort.startsWith("name")
-          ? a.name.localeCompare(b.name, "en", { sensitivity: "base" })
-          : a.time - b.time;
-        if (difference) return sort.endsWith("desc") ? -difference : difference;
-      }
+      const difference = filter.sort.startsWith("name")
+        ? a.name.localeCompare(b.name, "en", { sensitivity: "base" })
+        : a.time - b.time;
+      if (difference)
+        return filter.sort.endsWith("desc") ? -difference : difference;
       return a.index - b.index;
     });
 }

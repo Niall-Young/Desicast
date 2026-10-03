@@ -27,9 +27,30 @@ select {
   align-items: center;
 }
 .window-title {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  padding: 14px 14px 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
   font-size: 13px;
   font-weight: 500;
   color: var(--nico-color-text-subtle);
+  -webkit-app-region: drag;
+}
+.window-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 24px;
+  border-left: 1px solid var(--nico-color-border);
+}
+.window-title > span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .titlebar-end {
   position: absolute;
