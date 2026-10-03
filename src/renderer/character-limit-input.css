@@ -21,14 +21,24 @@
 .character-limit-excess {
   color: var(--nico-color-text-negative);
 }
+.character-limit-message-slot {
+  height: 26px;
+  padding-top: 4px;
+  box-sizing: border-box;
+}
 .character-limit-error {
   display: flex;
   align-items: flex-start;
   gap: 4px;
-  margin-top: 4px;
   font-size: var(--nico-font-size-sm);
   line-height: 22px;
   color: var(--nico-color-text-negative);
+}
+.character-limit-error > span {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .character-limit-error > svg {
   flex-shrink: 0;

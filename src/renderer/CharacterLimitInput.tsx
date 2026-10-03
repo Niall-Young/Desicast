@@ -107,16 +107,18 @@ export function CharacterLimitInput({
         }}
       />
       {overflow && (
-        <>
-          <div
-            ref={mirror}
-            className="character-limit-mirror"
-            aria-hidden="true"
-            style={geometry}
-          >
-            <span>{value.slice(0, limit)}</span>
-            <span className="character-limit-excess">{value.slice(limit)}</span>
-          </div>
+        <div
+          ref={mirror}
+          className="character-limit-mirror"
+          aria-hidden="true"
+          style={geometry}
+        >
+          <span>{value.slice(0, limit)}</span>
+          <span className="character-limit-excess">{value.slice(limit)}</span>
+        </div>
+      )}
+      <div className="character-limit-message-slot">
+        {overflow && (
           <div
             id={errorId}
             data-slot="valid-message"
@@ -128,8 +130,8 @@ export function CharacterLimitInput({
               最多 {limit} 个字符，已超出 {value.length - limit} 个
             </span>
           </div>
-        </>
-      )}
+        )}
+      </div>
     </div>
   );
 }
