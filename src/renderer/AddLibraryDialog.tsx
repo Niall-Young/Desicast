@@ -17,8 +17,6 @@ import { DirectoryCascader } from "./DirectoryCascader";
 import { api } from "./api";
 import type { Source, RepositoryInput } from "../core/types";
 import closeIcon from "./design-assets/add-library-close.svg?url";
-import expandIcon from "./design-assets/add-library-expand.svg?url";
-import hiddenIcon from "./design-assets/add-library-hidden.svg?url";
 import "./add-library.css";
 
 type Metadata = {
@@ -210,6 +208,7 @@ export function AddLibraryDialog({
                   value={branch}
                   disabled={!metadata || loading || busy}
                   onChange={(event) => {
+                    if (metadata?.branch === event.target.value) return;
                     setBranch(event.target.value);
                     setDirectories([]);
                     void loadRepository(event.target.value);
@@ -226,13 +225,6 @@ export function AddLibraryDialog({
                     </option>
                   ))}
                 </NativeSelect>
-                <img
-                  className="add-library-icon"
-                  src={expandIcon}
-                  width="16"
-                  height="16"
-                  alt=""
-                />
               </div>
             </label>
             <div className="add-library-field add-library-full">
@@ -285,15 +277,6 @@ export function AddLibraryDialog({
                     setToken(value);
                   }}
                 />
-                {!visible && (
-                  <img
-                    className="add-library-icon"
-                    src={hiddenIcon}
-                    width="16"
-                    height="16"
-                    alt=""
-                  />
-                )}
               </div>
             </label>
           </form>

@@ -1,0 +1,28 @@
+.nico-checkbox-glyph svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.nico-checkbox-glyph path {
+  stroke: currentColor;
+  stroke-opacity: 1;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [data-slot="checkbox"]:is([data-checked], [data-indeterminate]):not([data-disabled]) .nico-checkbox-glyph path {
+    animation: nico-checkbox-draw 280ms linear both;
+  }
+}
+
+/* Clear immediately, including when a draw is interrupted by another toggle. */
+[data-slot="checkbox"]:not([data-checked]):not([data-indeterminate]) .nico-checkbox-glyph {
+  visibility: hidden;
+}
+
+@keyframes nico-checkbox-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}

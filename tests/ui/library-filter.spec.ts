@@ -60,33 +60,41 @@ test("Figma library options start unchecked, filter multiple groups and retain s
     await trigger.click();
     const popup = page.getByRole("dialog", { name: "筛选配置" });
     await expect(popup).toBeVisible();
-    await expect(popup.locator('[aria-pressed="false"]')).toHaveCount(8);
     await expect(
-      popup.getByRole("button", { name: "首字母正序" }),
-    ).toHaveAttribute("aria-pressed", "true");
+      popup.locator(
+        '[role=checkbox][aria-checked="false"], [role=radio][aria-checked="false"]',
+      ),
+    ).toHaveCount(8);
+    await expect(
+      popup.getByRole("radio", { name: "首字母正序" }),
+    ).toHaveAttribute("aria-checked", "true");
     await page.screenshot({
       path: ".work/screenshots/library-options-default.png",
     });
-    await popup.getByRole("button", { name: "Github 仓库" }).click();
+    await popup.getByRole("checkbox", { name: "Github 仓库" }).click();
     await expect(rows).toHaveCount(1);
-    await popup.getByRole("button", { name: "Gitlab 仓库" }).click();
+    await popup.getByRole("checkbox", { name: "Gitlab 仓库" }).click();
     await expect(rows).toHaveCount(2);
-    await popup.getByRole("button", { name: "有更新", exact: true }).click();
+    await popup.getByRole("checkbox", { name: "有更新", exact: true }).click();
     await expect(rows).toHaveCount(1);
     await expect(rows).toHaveText(["Alpha GitlabUpdate0"]);
-    await popup.getByRole("button", { name: "正常", exact: true }).click();
+    await popup.getByRole("checkbox", { name: "正常", exact: true }).click();
     await expect(rows).toHaveCount(2);
-    await popup.getByRole("button", { name: "首字母正序" }).click();
+    await popup.getByRole("radio", { name: "首字母正序" }).click();
     await expect(rows.first()).toContainText("Alpha Gitlab");
-    await popup.getByRole("button", { name: "首字母倒序" }).click();
+    await popup.getByRole("radio", { name: "首字母倒序" }).click();
     await expect(
-      popup.getByRole("button", { name: "首字母正序" }),
-    ).toHaveAttribute("aria-pressed", "false");
+      popup.getByRole("radio", { name: "首字母正序" }),
+    ).toHaveAttribute("aria-checked", "false");
     await expect(rows.first()).toContainText("Zulu Github");
     await page.keyboard.press("Escape");
     await expect(popup).toBeHidden();
     await trigger.click();
-    await expect(popup.locator('[aria-pressed="true"]')).toHaveCount(5);
+    await expect(
+      popup.locator(
+        '[role=checkbox][aria-checked="true"], [role=radio][aria-checked="true"]',
+      ),
+    ).toHaveCount(5);
     await page.screenshot({
       path: ".work/screenshots/library-options-light.png",
     });
@@ -94,17 +102,17 @@ test("Figma library options start unchecked, filter multiple groups and retain s
     await page.screenshot({
       path: ".work/screenshots/library-options-dark.png",
     });
-    const check = popup.locator(".library-options-check").first();
-    await expect(check).toHaveJSProperty("naturalWidth", 16);
-    await expect.poll(async () => (await check.boundingBox())?.width).toBe(16);
-    await expect.poll(async () => (await check.boundingBox())?.height).toBe(16);
     for (const name of ["Github 仓库", "Gitlab 仓库", "正常", "有更新"])
-      await popup.getByRole("button", { name, exact: true }).click();
+      await popup.getByRole("checkbox", { name, exact: true }).click();
     await expect(rows).toHaveCount(9);
-    await expect(popup.locator('[aria-pressed="true"]')).toHaveCount(1);
     await expect(
-      popup.getByRole("button", { name: "首字母倒序" }),
-    ).toHaveAttribute("aria-pressed", "true");
+      popup.locator(
+        '[role=checkbox][aria-checked="true"], [role=radio][aria-checked="true"]',
+      ),
+    ).toHaveCount(1);
+    await expect(
+      popup.getByRole("radio", { name: "首字母倒序" }),
+    ).toHaveAttribute("aria-checked", "true");
     const window = await app.browserWindow(page);
     await window.evaluate((window) => window.setSize(960, 640));
     await expect

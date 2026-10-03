@@ -44,6 +44,10 @@ test("library context actions, confirmations, re-add and persistence work in Ele
     let page = await app.firstWindow();
     const errors: string[] = [];
     page.on("pageerror", (err) => errors.push(err.message));
+    const unpinnedFirst = await page
+      .locator(".library-navigation > button")
+      .first()
+      .getAttribute("data-testid");
     await page.getByTestId("library-tabler").click({ button: "right" });
     await expect(page.getByRole("menuitem")).toHaveText([
       "打开",
@@ -66,7 +70,7 @@ test("library context actions, confirmations, re-add and persistence work in Ele
     await page.getByRole("menuitem", { name: "取消置顶", exact: true }).click();
     await expect(
       page.locator(".library-navigation > button").first(),
-    ).toHaveAttribute("data-testid", "library-lucide");
+    ).toHaveAttribute("data-testid", unpinnedFirst!);
     await app.evaluate(({ shell }) => {
       shell.openExternal = async (url: string) => {
         (
@@ -139,8 +143,11 @@ test("library context actions, confirmations, re-add and persistence work in Ele
       "Custom Tabler",
     );
     await page.getByRole("button", { name: "设置", exact: true }).click();
-    await page.getByRole("button", { name: "外观设置", exact: true }).click();
+    const settings = page.getByRole("dialog", { name: "设置", exact: true });
+    await settings.getByRole("button", { name: "外观", exact: true }).click();
     await page.getByLabel("外观主题").selectOption("dark");
+    await settings.getByRole("button", { name: "确定", exact: true }).click();
+    await expect(settings).toHaveCount(0);
     await page.getByTestId("library-repo-menu").click({ button: "right" });
     await page.screenshot({
       path: ".work/screenshots/library-context-dark.png",

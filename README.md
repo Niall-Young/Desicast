@@ -70,6 +70,8 @@ DesiCast 是 macOS Electron 应用，使用 [Gendesign Design System](https://gi
 
 首页、侧栏、图标网格和详情面板按用户的 Figma 设计还原，图库标识与控件 SVG 随应用打包；设计节点、尺寸与校验值见 [设计素材来源记录](src/renderer/design-assets/provenance.json)，原始品牌来源见 [来源记录](src/renderer/library-marks/provenance.json)。Lucide 保留官方深色版本，其余品牌保留设计原色。Unicons 使用用户提供图片的矢量重建版本，并非官方原始 SVG。品牌归各自所有者，图标许可不代表品牌使用授权。
 
+筛选控件使用上游 Checkbox，排序使用 RadioGroup/Radio；SVG 目录使用支持多选的 TreeSelect/Tree。组件源码及资源校验值见 [Gendesign 来源清单](gendesign-provenance.json)，`npm test` 校验导入源码与记录版本一致。该版本没有独立 Segmented/Menu，Tabs 没有滑块动画；动作弹层和右键菜单的组合边界见 [GENDESIGN.md](GENDESIGN.md)。
+
 ### 快速开始
 
 开发需要 macOS、Node 24+、npm、Git，以及用于 HTTPS Git 集成测试的 OpenSSL。桌面自动化需要可用的 macOS 图形会话。
@@ -85,7 +87,7 @@ npm run dev
 
 图标页面支持网格/列表切换，点击图标打开独立详情面板，顶部代码按钮可收起详情。搜索选项保留以图搜图与刷新入口；详情可复制名称、切换导出格式和导出文件，单色图标默认跟随使用处的颜色，尺寸在项目中调整；来源与许可保留在复制的代码和导出的资源中。
 
-1. **查找图标**：在首页或侧栏选择图库，或使用「全局搜索」。点击「添加图标库」打开 640px 弹窗连接团队仓库，名称最多 20 个字符；侧栏底部设置按钮打开带分类导航的设置弹窗，包含通用信息、外观、MCP 连接器、模型配置与图标库管理。外观模式点击「确定」保存，取消或关闭会放弃未保存的外观选择；模型及仓库使用各自的保存操作。MCP 标签仍可直接打开连接设置。填写 HTTPS URL，离开链接输入框后自动读取仓库信息，也可手动重试，然后下拉选择分支，通过多选级联目录选择器选择 SVG 目录或整个仓库。
+1. **查找图标**：在首页或侧栏选择图库，或使用「全局搜索」。点击「添加图标库」打开 640px 弹窗连接团队仓库，名称最多 20 个字符；侧栏底部设置按钮打开带分类导航的设置弹窗，包含通用信息、外观、MCP 连接器、模型配置与图标库管理。外观模式点击「确定」保存，取消或关闭会放弃未保存的外观选择；模型及仓库使用各自的保存操作。MCP 标签仍可直接打开连接设置。填写 HTTPS URL，离开链接输入框后自动读取仓库信息，也可手动重试，然后下拉选择分支，通过多选树形目录选择器选择 SVG 目录或整个仓库。
 2. **凭据配置**：可填写用户名与访问令牌连接私有仓库，令牌默认隐藏并在添加后保存至 Keychain；留空时自动复用本机 Git 凭据或已登录的 `gh` / `glab`。编辑时令牌留空保留已有凭据，视觉检索由弹窗底部开关控制，默认关闭。
 3. **图库同步**：添加仓库后立即同步，应用启动时检查更新，也可手动同步。移除图库只删除本地索引和凭据。
 4. **复制代码与导出**：选择图标和目标技术，复制代码或导出文件。导出会创建新的子目录，不静默覆盖现有资源。
@@ -133,6 +135,8 @@ npm run package      # 生成 macOS DMG / ZIP 安装包
 已验证矩阵：真实 Iconify 搜索、公开 Lucide 仓库同步、私有 GitHub 仓库同步、Keychain 读写、HTTPS 凭据与增改删同步、Electron 明暗主题及复制流程、HTML／React／Vue 实际渲染、独立 MCP 协议和 Codex 实际检索／Vue 获取。
 
 视觉模型测试使用受控服务响应，尚未验证用户的真实模型；本机无完整 Xcode，SwiftUI 目前验证资源结构，未完成 Xcode 编译。GitLab 使用同一 HTTPS Git 路径，尚未验证真实 GitLab 账户。
+
+桌面目录控件检查通过 Electron IPC 使用仓库元数据夹具；核心集成测试连接本地仓库验证 HTTPS Git。这些 UI 检查不代表当前公共 GitHub 可用性。
 
 ### MCP 服务与 CLI
 
@@ -202,6 +206,8 @@ Right-click any library in the sidebar or home screen to open it, pin/unpin it, 
 
 The home screen, sidebar, icon grid, and detail panel follow the user's Figma design, with library marks and control SVGs bundled locally. [Design asset provenance](src/renderer/design-assets/provenance.json) records nodes, dimensions, and checksums; [original brand sources](src/renderer/library-marks/provenance.json) remain available. Lucide retains its official dark variant; other brands retain the design's colors. Unicons uses a vector reconstruction of the user-supplied image, not an official original SVG. Brands belong to their respective owners; icon licenses do not grant brand usage rights.
 
+Filters use upstream Checkbox, sorting uses RadioGroup/Radio, and SVG directories use TreeSelect/Tree with multiple selection. [Gendesign provenance](gendesign-provenance.json) records component and asset checksums; `npm test` verifies imported source against the recorded revision. That revision has no standalone Segmented/Menu and its Tabs have no sliding indicator; [GENDESIGN.md](GENDESIGN.md) documents action popup and context menu compositions.
+
 ### Quick Start
 
 Development requires macOS, Node 24+, npm, Git, and OpenSSL for HTTPS Git integration tests. Desktop automation requires an active macOS graphical window session.
@@ -217,7 +223,7 @@ Restart the development server after modifying the main process or shared core; 
 
 The icon workspace supports grid and list views. Select an icon to open its separate detail panel, and use the code button in the title bar to collapse it. Search options include image search and refresh. Details provide name copying, export format tabs, and file export. Monochrome icons inherit the color at their point of use, and size is adjusted in the project. Copied code and exported resources retain source and license information.
 
-1. **Discover Icons**: Choose a library on the home screen or sidebar, or use "Global Search". Use "Add Library" to open a 640px modal and connect a team repository; names allow up to 20 characters. The bottom settings button opens a modal with section navigation for general information, appearance, MCP connectors, model configuration, and library management. Confirm saves the selected appearance mode; cancel or close discards that selection. Models and repositories retain their own save actions. The MCP badge also opens connection settings directly. Enter the HTTPS URL; repository information loads when the link field loses focus and can be retried manually. Then choose a branch from the dropdown and SVG directories (or the entire repository) using the multiselect cascader.
+1. **Discover Icons**: Choose a library on the home screen or sidebar, or use "Global Search". Use "Add Library" to open a 640px modal and connect a team repository; names allow up to 20 characters. The bottom settings button opens a modal with section navigation for general information, appearance, MCP connectors, model configuration, and library management. Confirm saves the selected appearance mode; cancel or close discards that selection. Models and repositories retain their own save actions. The MCP badge also opens connection settings directly. Enter the HTTPS URL; repository information loads when the link field loses focus and can be retried manually. Then choose a branch from the dropdown and SVG directories (or the entire repository) using the multiselect tree selector.
 2. **Configure Credentials**: Enter a username and access token for private repositories; tokens are masked by default and saved in Keychain after adding the library. Empty fields reuse local Git credentials or an authenticated `gh` / `glab` session. Leaving the token blank while editing preserves existing credentials. The footer controls vision search, which is disabled by default.
 3. **Synchronize Libraries**: Repositories synchronize immediately upon addition and check for updates on desktop launch. Manual synchronization is always available. Removing a source deletes only local cache indexes and credentials.
 4. **Copy & Export**: Select an icon and target technology, then copy code or export files. File exports create dedicated subdirectories to avoid silent overwrites.
@@ -265,6 +271,8 @@ Run packaging and desktop automation sequentially. Packaged artifacts are saved 
 Verified matrix: live Iconify search, public Lucide repository synchronization, private GitHub synchronization, Keychain storage round-trips, HTTPS credentials with CRUD sync, Electron light/dark themes, clipboard copy workflows, real HTML/React/Vue DOM rendering, standalone MCP protocol, and Codex retrieval of Vue components.
 
 Vision similarity tests use controlled mock responses; user-configured models are verified at runtime. Without a full local Xcode installation, SwiftUI tests validate directory and catalog structures rather than Xcode builds. GitLab shares the HTTPS Git pipeline and has not been tested against a live GitLab enterprise instance.
+
+Desktop directory-control checks use repository metadata fixtures through Electron IPC; core integration tests exercise HTTPS Git against a local repository. These UI checks do not establish current public GitHub availability.
 
 ### MCP Server & CLI
 

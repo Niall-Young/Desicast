@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Radio, RadioGroup } from "@/components/ui/radio";
 import { IconButton } from "@/components/ui/icon-button";
 import {
   Popover,
@@ -6,7 +7,6 @@ import {
   PopoverContent,
 } from "@/components/ui/popover";
 import { DesignIcon } from "./design";
-import check from "./design-assets/filter-check.svg?url";
 import {
   defaultLibraryFilter,
   type LibraryFilter,
@@ -85,37 +85,32 @@ export function LibraryFilterMenu({
         {groups.map((group) => (
           <section key={group.key} aria-label={group.title}>
             <div className="library-options-title">{group.title}</div>
-            {group.options.map(([option, label]) => {
-              const selected =
-                group.key === "sorts"
-                  ? value.sort === option
-                  : (value[group.key] as string[]).includes(option);
-              return (
-                <Button
-                  key={option}
-                  kind="plain"
-                  className="library-options-item"
-                  aria-pressed={selected}
-                  onClick={() =>
-                    group.key === "sorts"
-                      ? selectSort(option as LibrarySort)
-                      : toggle(group.key, option)
-                  }
-                >
+            {group.key === "sorts" ? (
+              <RadioGroup
+                layout="vertical"
+                className="gap-0"
+                aria-label="排序"
+                value={value.sort}
+                onValueChange={selectSort}
+              >
+                {group.options.map(([option, label]) => (
+                  <label key={option} className="library-options-item">
+                    <Radio value={option} />
+                    <span>{label}</span>
+                  </label>
+                ))}
+              </RadioGroup>
+            ) : (
+              group.options.map(([option, label]) => (
+                <label key={option} className="library-options-item">
+                  <Checkbox
+                    checked={(value[group.key] as string[]).includes(option)}
+                    onCheckedChange={() => toggle(group.key, option)}
+                  />
                   <span>{label}</span>
-                  {selected && (
-                    <img
-                      src={check}
-                      width="16"
-                      height="16"
-                      alt=""
-                      className="library-options-check"
-                      aria-hidden="true"
-                    />
-                  )}
-                </Button>
-              );
-            })}
+                </label>
+              ))
+            )}
           </section>
         ))}
       </PopoverContent>

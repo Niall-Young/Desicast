@@ -30,65 +30,8 @@
 .dark .add-library-icon {
   filter: invert(1);
 }
-.add-library-select,
-.add-library-password {
-  position: relative;
-}
 .add-library-select [data-slot="native-select-wrapper"] {
   width: 100%;
-  opacity: 1;
-}
-.add-library-select [data-slot="native-select"] {
-  height: 32px;
-  border: 1px solid var(--nico-color-border-opaque);
-  border-radius: var(--nico-border-radius-sm);
-  padding: 4px 32px 4px 11px;
-  background: var(--nico-color-background-input);
-  font-size: 14px;
-}
-.add-library-select [data-slot="native-select"]:disabled {
-  color: var(--nico-color-text-disabled);
-}
-.add-library-select [data-slot="native-select-icon"] {
-  display: none;
-}
-.add-library-select > img,
-.add-library-password > img {
-  position: absolute;
-  right: 12px;
-  top: 8px;
-  pointer-events: none;
-}
-.add-library-password:not(.is-visible) [data-slot="password-input-icon"] {
-  visibility: hidden;
-}
-.add-library-dialog .directory-picker {
-  min-height: 32px;
-  gap: 4px;
-  padding: 0;
-  border-radius: var(--nico-border-radius-sm);
-  background: var(--nico-color-background-input);
-}
-.add-library-dialog .directory-picker > button {
-  width: 100%;
-  height: 32px;
-  padding: 4px 11px;
-  justify-content: flex-start;
-  border: 1px solid var(--nico-color-border-opaque);
-  border-radius: var(--nico-border-radius-sm);
-  background: transparent;
-  color: var(--nico-color-text-disabled);
-  opacity: 1;
-  overflow: hidden;
-}
-.add-library-dialog .directory-picker > button svg {
-  display: none;
-}
-.add-library-dialog .directory-tags:empty {
-  display: none;
-}
-.add-library-dialog .directory-tags:not(:empty) {
-  padding: 0 8px 4px;
 }
 .add-library-vision {
   display: flex;

@@ -103,6 +103,7 @@ export function SettingsDialog({
                 <Button
                   kind="plain"
                   className="settings-menu-item"
+                  selected={active === section.id}
                   aria-current={active === section.id ? "location" : undefined}
                   onClick={() => {
                     setActive(section.id);

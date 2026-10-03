@@ -12,25 +12,6 @@
 .mcp-clients {
   gap: 12px;
 }
-.mcp-clients [data-slot="tabs-list"] {
-  height: 32px;
-  padding: 0;
-  border-radius: var(--nico-border-radius-sm);
-  background: var(--nico-color-background-neutral-subtle);
-  max-width: 100%;
-}
-.mcp-clients [data-slot="tabs-trigger"] {
-  height: 32px;
-  padding: 4px 11px;
-  gap: 4px;
-  border-radius: var(--nico-border-radius-sm);
-  font-weight: var(--nico-font-weight-regular);
-  line-height: 22px;
-}
-.mcp-clients [data-slot="tabs-trigger"][data-active] {
-  border-color: var(--nico-color-border);
-  box-shadow: var(--nico-effect-shadow-small);
-}
 .mcp-panel {
   display: flex;
   flex-direction: column;

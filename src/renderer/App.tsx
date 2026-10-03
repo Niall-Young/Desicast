@@ -656,7 +656,8 @@ export function App() {
               <span>添加图标库</span>
             </Button>
             <Button
-              className={`nav-item ${page === "library" && !sourceId ? "active" : ""}`}
+              className="nav-item"
+              selected={page === "library" && !sourceId}
               kind="plain"
               onClick={() => {
                 chooseSource("");
@@ -723,10 +724,12 @@ export function App() {
                 id,
                 name,
                 Boolean(library),
-                <button
+                <Button
                   key={id}
                   data-testid={`library-${id}`}
-                  className={`nav-item ${page === "library" && (library ? sourceId === "public" && collection === id : sourceId === id) ? "active" : ""}`}
+                  className="nav-item"
+                  kind="plain"
+                  selected={page === "library" && (library ? sourceId === "public" && collection === id : sourceId === id)}
                   title={`${library?.name ?? name} · ${library ? (metadata ? metadata.total.toLocaleString() + " 个图标" : "数量暂不可用") : source!.iconCount.toLocaleString() + " 个图标"}${changes ? " · " + changeDescription(changes) : ""}`}
                   onClick={() => {
                     chooseSource(library ? "public" : id);
@@ -747,7 +750,7 @@ export function App() {
                         : "—"
                       : source!.iconCount.toLocaleString()}
                   </span>
-                </button>,
+                </Button>,
               );
             })}
             {visibleLibraries.length === 0 && (

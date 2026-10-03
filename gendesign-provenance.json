@@ -1,0 +1,162 @@
+{
+  "source": "https://github.com/Niall-Young/Gendesign-Design-system",
+  "revision": "af09961698140b80b0a5a06f3170896a76c8032d",
+  "files": {
+    "components/ui/assets/checkbox-check.svg": {
+      "sha256": "0cd95435307c0528bdcaa01f72d06872c818b4604903ec6f5b4f24d68c62a894",
+      "normalizedSha256": "0cd95435307c0528bdcaa01f72d06872c818b4604903ec6f5b4f24d68c62a894",
+      "parser": null
+    },
+    "components/ui/assets/checkbox-indeterminate.svg": {
+      "sha256": "98d4b91dbd149b74ef63991dac6b7b5382ec260bb18099d6ab918f0e10185d3e",
+      "normalizedSha256": "98d4b91dbd149b74ef63991dac6b7b5382ec260bb18099d6ab918f0e10185d3e",
+      "parser": null
+    },
+    "components/ui/assets/radio-selected.svg": {
+      "sha256": "c4ce72633e388d947f863b10470b649dcda3ea7db08c0b47f0cba36b99630a35",
+      "normalizedSha256": "c4ce72633e388d947f863b10470b649dcda3ea7db08c0b47f0cba36b99630a35",
+      "parser": null
+    },
+    "components/ui/button.tsx": {
+      "sha256": "944fecc168e73f7301517bc4346d43c6baba650354090178e01a20e8048f7580",
+      "normalizedSha256": "a4763e060786a4bb27db4ea96957acfc012ec5da68c39dffc916a4dd67b446eb",
+      "parser": "typescript"
+    },
+    "components/ui/checkbox.css": {
+      "sha256": "69a70f3fc5f5afb61265f18724d7361af001a0899962f79af35fba36096620ef",
+      "normalizedSha256": "d99fe294d6445dbfd99d9de9fe000d8fac0ec1913bb0b23c3859ffd855ce1dc6",
+      "parser": "css"
+    },
+    "components/ui/checkbox.tsx": {
+      "sha256": "2ad57aca77a48eb2ea3e327557b1753be11069b380da80d5fa3fa1e5109e8bca",
+      "normalizedSha256": "2e38c8b7fe3b48c00d83793ce9b9dbb6486f9fd1a952ba407bd03a0c198c9857",
+      "parser": "typescript"
+    },
+    "components/ui/dialog.tsx": {
+      "sha256": "7050923cd163105eab1ac0275f124655252c3251eee96e9c8d4ee54110b8def3",
+      "normalizedSha256": "92b8d6e0c95a5b9206c5fa8cdb110c58163a3e835959b283130dbf472dfe8468",
+      "parser": "typescript"
+    },
+    "components/ui/icon-button.tsx": {
+      "sha256": "ae7c91bd9c137f14d7fc1a263315961193bf0ad3acc5060d40ca2d5c84f354f6",
+      "normalizedSha256": "022e85cd97cf6e98c892a31410832d42d42f421b56052f0719ee4bd8eb2187c7",
+      "parser": "typescript"
+    },
+    "components/ui/input.tsx": {
+      "sha256": "a24ec2d4e4e14ee4c7bc03ee2e3203b4e2646a1b367414bf7fc1ea266e9772d2",
+      "normalizedSha256": "54ece2f4d5986fc13ce998efad0b73fadf7d7ee1691fa4098cafaedcd6afd07a",
+      "parser": "typescript"
+    },
+    "components/ui/internal/input-base.tsx": {
+      "sha256": "57a262bf1731a9353ede9d7ed358500c65933834347d95a453a5f4f37e918a52",
+      "normalizedSha256": "dcfcae56626a192af1c8b6d65a1388cde5de383d4b3c3deda32c45e014abbaa9",
+      "parser": "typescript"
+    },
+    "components/ui/internal/input-clear.tsx": {
+      "sha256": "a0aebd3587df38c8c9124cba6854547fa216fd362e9c67fd279ffcf9bd574874",
+      "normalizedSha256": "afc4942bbf5afb290cb4d8b685e122bb8e61bb212610ba8321cfa182f6d55bf4",
+      "parser": "typescript"
+    },
+    "components/ui/label.tsx": {
+      "sha256": "5a935225f90c058ed31621d1ac6abf970e521da994df9ec10dabff3b4eaa2a87",
+      "normalizedSha256": "f4b5ccab395d17f66450607ea8a0f9cdace2625e5349d164f6e35fb1b983c354",
+      "parser": "typescript"
+    },
+    "components/ui/message.tsx": {
+      "sha256": "34f3fc43debef263d8be866a7e9a34e8f1041d1a194b4c0b2985343729aecff3",
+      "normalizedSha256": "4c65247277692f411fe3a55fca507eaf8818326a8b6e55361217efcffa655f60",
+      "parser": "typescript",
+      "adaptation": "cn import uses the equivalent lib/utils.ts re-export"
+    },
+    "components/ui/modal.tsx": {
+      "sha256": "3d08bc7ebd1d81571d52efcc47867dddb9677d60c00d4a98f9174d8d5cbf8561",
+      "normalizedSha256": "8df3eb5d381d0191d89b5241b064bfa49c193aa68e96c7948d05c152a53c7dbc",
+      "parser": "typescript"
+    },
+    "components/ui/native-select.tsx": {
+      "sha256": "69afa6756960749ed265a21ee1c431fca3770a043a0548a0ebeb397a31fef74f",
+      "normalizedSha256": "b9ac093927f87a2bb982714b24515d74f78666482589ef7ec07aeecb4379373f",
+      "parser": "typescript"
+    },
+    "components/ui/password-input.tsx": {
+      "sha256": "5fc722f9247a5e52e2376068395b78882d76631132d93cc27bc98f9a2c6e8452",
+      "normalizedSha256": "2b09a892184960a18cfd1f10662102dac52d0f44e99b6725d2c73975fe294692",
+      "parser": "typescript"
+    },
+    "components/ui/popover.tsx": {
+      "sha256": "f3a851d2f9a3c834c134d7d2c5506e7e49a719daaf339d85072a68acedbc1117",
+      "normalizedSha256": "8af836624087df08f2459b39806e91ff8f30f35e9679c3b4740c318a13b164dd",
+      "parser": "typescript"
+    },
+    "components/ui/radio.tsx": {
+      "sha256": "a154843bf545f6ed343fa8f2addc0003cafdddaa344941d574ee2779d7d854a3",
+      "normalizedSha256": "ffd472d6e08cc899fc27a1d07894f2161ddc00d251b6f7afb293bb683631262f",
+      "parser": "typescript"
+    },
+    "components/ui/search-box.tsx": {
+      "sha256": "4f9731947fa5f11ea04fa7c83cfaa2135ec521265b8c826034bb3b4eff6ab7b4",
+      "normalizedSha256": "5cf0657a9bb7770de26cdc190625cf9b9475133ab841ead242fe937c3640c43f",
+      "parser": "typescript"
+    },
+    "components/ui/skeleton.css": {
+      "sha256": "d28ffad6d8a9e9ee886800a32119754c79a7cbd0f97ae2ad8c5546fc88ea92f7",
+      "normalizedSha256": "667a3c9c236e751cf330bfb3d72fba770d37a59992e74f80c1cd5b9ada7e6e7e",
+      "parser": "css"
+    },
+    "components/ui/skeleton.tsx": {
+      "sha256": "5d9edb29fa614e0fd3734abbd8529ed7e488706747e1e69c51b149aaf168ebab",
+      "normalizedSha256": "6fe5a847cdd06b59e768403a889b1b166f0ed0635a48ae14f79eaf105d1ff0c8",
+      "parser": "typescript"
+    },
+    "components/ui/spinner.tsx": {
+      "sha256": "40f34f43d94416d75164c6440bbe8037bec7ba1082160d28e9526ade83896a6c",
+      "normalizedSha256": "b879693877f87a05191b46a1499979ae97fb6b26b5f49d8a43b745494563ad80",
+      "parser": "typescript"
+    },
+    "components/ui/status-indicator.tsx": {
+      "sha256": "42890e35b1b2876b37aabc752b926881449def573a9e1d754b5536931d6b5e84",
+      "normalizedSha256": "c83f41876082277e2e929fc19d2cd82e560ca2cbc7fc625f56dd6783d4acfae0",
+      "parser": "typescript"
+    },
+    "components/ui/switch.tsx": {
+      "sha256": "822fec9f5091c38956e91628f6b731e9cbb6f1ae31d2025d9574453e15fb3714",
+      "normalizedSha256": "036e0411270152f0439572f966e411a47b1273e9fb8d6598c450dadb542fac1f",
+      "parser": "typescript"
+    },
+    "components/ui/tabs.tsx": {
+      "sha256": "84c4c33888a4b4b7bb695c7277279d665a351542a4933462c8f333e6fdc60764",
+      "normalizedSha256": "d1e0ee635da0d7e262650ce030262f2ab3dbb9e52d51ef82284f0493eb850f52",
+      "parser": "typescript"
+    },
+    "components/ui/textarea.tsx": {
+      "sha256": "d1b06a6c6bd7b37db71dabb5cf693299006aa9b85a73bef17cca5a5c30a34c39",
+      "normalizedSha256": "81ff3e99f1d4991498bf3c1081b1d6c517abff2febc6e05313956f6857bab502",
+      "parser": "typescript"
+    },
+    "components/ui/toast.tsx": {
+      "sha256": "c1bcc68803cb46c35f34d3da7a4034952034f1bb3ab93b9dbad4452522012194",
+      "normalizedSha256": "97e7c087bbc718ddec511b2ebd68d12a72293d37ab3e1072690bd92868d7b19c",
+      "parser": "typescript"
+    },
+    "components/ui/tooltip.tsx": {
+      "sha256": "570473fb7b70ca020355d3ab5fa7f3e4dde3742fd6cd36d0bfe62f051628f447",
+      "normalizedSha256": "a7a30bff8f3589f1d3bbd4912c9d126197b04910d372256013cdec9379716f91",
+      "parser": "typescript"
+    },
+    "components/ui/tree-select.tsx": {
+      "sha256": "0477c9d9fd1fe6d35556b37c0b2fed5bb562821513109f87ecacc8c1d85f126f",
+      "normalizedSha256": "9c43b47a2e5f63b2aec17043a1d9bf8ed6a12d3d5d916b8023710bc8e819e2b0",
+      "parser": "typescript"
+    },
+    "components/ui/tree.tsx": {
+      "sha256": "21570af3e14f39c2e20ce7b6413d70f79f442c2f35886d107443598273b2c8f2",
+      "normalizedSha256": "a61c807d4d07006e84d3218352118324c9f7ad2ab982d3ac67b960d8b075afc5",
+      "parser": "typescript"
+    },
+    "components/ui/pagination.tsx": {
+      "sha256": "916f0bbf7ea0b9d49c863f0124c050324fde75466891e745a2cb676f4bd4a0d4",
+      "normalizedSha256": "b46900bb8e1a6b20585218066acc3ecb90189398790b128e0810d88b3325edc3",
+      "parser": "typescript"
+    }
+  }
+}

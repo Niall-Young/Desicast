@@ -467,12 +467,38 @@ test("Default libraries show bundled design SVG assets, totals, theme variants a
   await expect(teamRow.locator(".library-change-dot")).toHaveCount(0);
 });
 
-test("Repository dialog loads branches and cascaded directory selections with optional credentials", async () => {
+test("Repository dialog uses metadata fixtures and upstream multiselect directory controls", async () => {
   const page = await app.firstWindow();
   await openSettings(page, "仓库管理");
   await page.getByRole("button", { name: "添加仓库", exact: true }).click();
   await expect(page.getByLabel("用户名", { exact: true })).toBeVisible();
   await expect(page.getByLabel("访问令牌", { exact: true })).toBeVisible();
+  // Exercise the real Electron bridge and UI without cloning a large remote repo per selection.
+  // HTTPS Git browsing and credential behavior are covered by repository-sync.test.ts.
+  await app.evaluate(({ ipcMain }) => {
+    ipcMain.removeHandler("desicast:call");
+    ipcMain.handle(
+      "desicast:call",
+      (_event, method: string, input: { branch?: string }) => {
+        if (method !== "browseRepository")
+          throw new Error(`Unexpected fixture call: ${method}`);
+        return {
+          ok: true,
+          value: {
+            branches: ["main", "preview"],
+            branch: input.branch ?? "main",
+            directories: [
+              "packages",
+              "packages/lucide-react",
+              "packages/lucide-static",
+            ],
+            authorization: "UI metadata fixture",
+          },
+        };
+      },
+    );
+  });
+
   await page.getByLabel("图标库名称").fill("Lucide test");
   await expect(
     page.getByRole("button", { name: "添加", exact: true }),
@@ -488,14 +514,22 @@ test("Repository dialog loads branches and cascaded directory selections with op
     page.getByRole("button", { name: "SVG 目录", exact: true }),
   ).toBeEnabled({ timeout: 45000 });
   await page.getByRole("button", { name: "SVG 目录", exact: true }).click();
-  await page.getByRole("button", { name: "packages", exact: true }).click();
-  await page
-    .getByLabel("选择目录 packages/lucide-react", { exact: true })
-    .check();
-  await page
-    .getByLabel("选择目录 packages/lucide-static", { exact: true })
-    .check();
+  const packages = page.getByRole("treeitem", {
+    name: "packages",
+    exact: true,
+  });
+  await packages.focus();
+  await packages.press("ArrowRight");
+  for (const name of ["lucide-react", "lucide-static"]) {
+    const directory = page.getByRole("treeitem", { name, exact: true });
+    await directory.click();
+    await expect(directory).toHaveAttribute("aria-selected", "true");
+  }
   await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: "移除目录 packages/lucide-react" }),
+  ).toBeVisible();
+  await page.getByLabel("仓库分支").selectOption("main");
   await expect(
     page.getByRole("button", { name: "移除目录 packages/lucide-react" }),
   ).toBeVisible();
@@ -632,6 +666,21 @@ test("Icon workspace reflows between grid, list and export details while retaini
     path: ".work/screenshots/icon-detail-light.png",
     scale: "css",
   });
+  const viewTabs = page.locator(".view-tabs");
+  const tabsStyle = await viewTabs.evaluate((element) => {
+    const list = getComputedStyle(element);
+    const tab = getComputedStyle(
+      element.querySelector('[data-slot="tabs-trigger"]')!,
+    );
+    return {
+      padding: list.paddingTop,
+      height: list.height,
+      transition: tab.transitionDuration,
+    };
+  });
+  expect(tabsStyle.padding).toBe("3px");
+  expect(tabsStyle.height).toBe("36px");
+  expect(tabsStyle.transition).not.toBe("0s");
   await page.getByRole("tab", { name: "列表视图" }).click();
   await expect(page.locator(".icon-grid")).toHaveClass(/icon-list/);
   await expect(page.getByTestId("icon-card").first()).toHaveAttribute(
@@ -712,7 +761,9 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
     await expect(dialog).toBeVisible();
     const bounds = await dialog.boundingBox();
     expect(bounds!.width).toBe(640);
-    expect(bounds!.height).toBe(465);
+    expect(bounds!.height).toBeLessThanOrEqual(
+      await page.evaluate(() => innerHeight - 32),
+    );
     const assets = await dialog.locator("img").evaluateAll((images) =>
       images.map((image) => ({
         loaded: (image as HTMLImageElement).naturalWidth > 0,
@@ -720,9 +771,15 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
         height: image.getBoundingClientRect().height,
       })),
     );
-    expect(assets).toHaveLength(3);
+    expect(assets).toHaveLength(1);
     for (const asset of assets)
       expect(asset).toEqual({ loaded: true, width: 16, height: 16 });
+    await expect(
+      dialog.locator('[data-slot="native-select-icon"]'),
+    ).toBeVisible();
+    await expect(
+      dialog.locator('[data-slot="password-input-icon"]'),
+    ).toBeVisible();
     await dialog.screenshot({
       path: `.work/screenshots/add-library-${theme}.png`,
       scale: "css",

@@ -18,16 +18,7 @@
 .settings-menu-item {
   width: 100%;
   justify-content: flex-start;
-  gap: 8px;
-  height: 32px;
-  padding: 5px 12px;
   margin-bottom: 2px;
-  color: var(--nico-color-text-subtle);
-  font-weight: var(--nico-font-weight-regular);
-}
-.settings-menu-item[aria-current] {
-  background: var(--nico-color-interaction-selected);
-  color: var(--nico-color-text);
 }
 .settings-menu-group {
   padding: 7px 10px 5px;
@@ -92,10 +83,6 @@
 .settings-cell [data-slot="native-select-wrapper"] {
   width: 160px;
   flex: 0 0 160px;
-}
-.settings-cell [data-slot="native-select"] {
-  border-color: var(--nico-color-border-opaque);
-  border-radius: var(--nico-border-radius-sm);
 }
 .settings-sections .settings-content {
   width: 100%;
@@ -164,9 +151,6 @@
     grid-template-columns: 120px minmax(0, 1fr);
     gap: 12px;
     padding-inline: 12px;
-  }
-  .settings-menu-item {
-    padding-inline: 8px;
   }
   .settings-cell {
     flex-wrap: wrap;
