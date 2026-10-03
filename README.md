@@ -68,7 +68,7 @@ DesiCast 是 macOS Electron 应用，使用 [Gendesign Design System](https://gi
 
 首页每页最多显示 8 个图标库（4 列 × 2 行），超过 8 个时在下方居中显示上一页、下一页图标按钮和页码。下一页向左滑动，上一页向右滑动；系统开启减少动态效果时取消滑动过渡。
 
-右键侧栏或首页中的任意图标库，可打开、置顶/取消置顶、配置、查看来源或移除。置顶状态和公共图库的显示名称保存在本机，置顶优先于侧栏排序。团队图库配置直接打开该仓库的编辑表单；公共图库配置可修改显示名称。移除须确认：公共图库从导航中隐藏，可在“添加图标库”弹窗重新添加，仍可通过全局搜索和 MCP 获取；团队仓库会删除本地索引和凭证，不修改远端仓库。
+右键侧栏或首页中的任意图标库，可打开、置顶/取消置顶、配置、查看来源或移除。置顶状态和公共图库的显示名称保存在本机，置顶优先于侧栏排序。团队图库配置直接打开该仓库的编辑表单；公共图库配置可修改显示名称。移除须确认：公共图库从导航中隐藏，可在“添加图标库”弹窗重新添加，仍可通过 MCP 获取；团队仓库会删除本地索引和凭证，不修改远端仓库。
 
 首页、侧栏、图标网格和详情面板按用户的 Figma 设计还原，图库标识与控件 SVG 随应用打包；设计节点、尺寸与校验值见 [设计素材来源记录](src/renderer/design-assets/provenance.json)，原始品牌来源见 [来源记录](src/renderer/library-marks/provenance.json)。Lucide 保留官方深色版本，其余品牌保留设计原色。Unicons 使用用户提供图片的矢量重建版本，并非官方原始 SVG。品牌归各自所有者，图标许可不代表品牌使用授权。
 
@@ -89,6 +89,8 @@ npm run dev
 
 ### 使用方法
 
+全局搜索通过侧栏或 ⌘K 打开弹窗，不再使用独立搜索页面；仅检索保留的默认公共图库和已添加的团队图库，已移除的图库不参与检索。未输入时可直接打开图库，输入后显示图标与所属库，支持 ↑↓ 选择、Enter 打开详情及 Esc 关闭。图标集下拉也仅显示保留的默认图库，“全部图标集”打开全局搜索弹窗。
+
 图标页面支持网格/列表切换，点击图标打开独立详情面板，顶部代码按钮可收起详情。搜索框右侧提供独立的以图搜图与刷新按钮，网格/列表切换按设计使用 32px 分段控件；详情可复制名称、切换导出格式和导出文件，单色图标默认跟随使用处的颜色，尺寸在项目中调整；来源与许可保留在复制的代码和导出的资源中。
 
 1. **查找图标**：在首页或侧栏选择图库，或使用「全局搜索」。点击「添加图标库」打开 640 × 615px 固定高度弹窗连接团队仓库，名称最多 20 个字符，显示名称最多 100 个字符；超限仍可输入，超出部分标红并在字段下方提示错误，恢复到限制内才可保存；侧栏底部设置按钮进入带分类导航的独立设置页面，包含通用信息、外观、MCP 连接器、模型配置与图标库管理。侧栏「返回」回到进入设置前的页面；外观模式切换后立即保存；模型及仓库使用各自的保存操作。MCP 标签仍可直接打开连接设置。名称下方先选择公开或私有仓库：公开仓库仅需链接与 SVG 目录；私有仓库在链接下方显示用户名和访问令牌，未配置本机凭据时需填写令牌。离开链接输入框后自动解析仓库信息，链接右侧的「解析仓库」按钮显示加载状态；解析完成或失败后可手动重新解析，默认使用仓库默认分支，其他分支可通过直接显示的分支选择器切换；通过多选树形目录选择器选择 SVG 目录或整个仓库。
@@ -96,7 +98,7 @@ npm run dev
 3. **图库同步**：添加仓库后立即同步，应用启动时检查更新，也可手动同步。移除图库只删除本地索引和凭据。
 4. **复制代码与导出**：选择图标和目标技术，复制代码或导出文件。导出会创建新的子目录，不静默覆盖现有资源。
 5. **多端集成**：React 输出要求 React 18+；Vue 输出要求 Vue 3.5+。SwiftUI 将导出的 `.imageset` 拖入 `Assets.xcassets`，再使用返回的 `Image` 代码。
-6. **视觉搜索与快捷键**：<kbd>⌘</kbd> + <kbd>K</kbd> 聚焦搜索。图片支持上传、拖入或剪贴板粘贴，并在搜索前交互式裁剪。
+6. **视觉搜索与快捷键**：<kbd>⌘</kbd> + <kbd>K</kbd> 打开全局搜索弹窗。图片支持上传、拖入或剪贴板粘贴，并在搜索前交互式裁剪。
 
 ### 配置说明
 
@@ -212,7 +214,7 @@ Default shortcuts include Lucide, Tabler Icons, Remix Icon, Unicons, MingCute, G
 
 The home screen shows up to 8 libraries per page (4 columns × 2 rows). With more than 8 libraries, centered previous/next icon buttons and a page counter appear below the grid. Next slides left and previous slides right; the system reduced-motion preference disables the sliding transition.
 
-Right-click any library in the sidebar or home screen to open it, pin/unpin it, configure it, view its source, or remove it. Pinning and public-library display names persist locally; pinned libraries precede sidebar sorting. Team configuration opens that repository’s edit form; public configuration changes its display name. Removal requires confirmation: public libraries are hidden from navigation and can be re-added from the “Add Library” modal, while remaining available to global search and MCP; removing a team repository deletes its local index and credentials without changing the remote repository.
+Right-click any library in the sidebar or home screen to open it, pin/unpin it, configure it, view its source, or remove it. Pinning and public-library display names persist locally; pinned libraries precede sidebar sorting. Team configuration opens that repository’s edit form; public configuration changes its display name. Removal requires confirmation: public libraries are hidden from navigation and can be re-added from the “Add Library” modal, while remaining available through MCP; removing a team repository deletes its local index and credentials without changing the remote repository.
 
 The home screen, sidebar, icon grid, and detail panel follow the user's Figma design, with library marks and control SVGs bundled locally. [Design asset provenance](src/renderer/design-assets/provenance.json) records nodes, dimensions, and checksums; [original brand sources](src/renderer/library-marks/provenance.json) remain available. Lucide retains its official dark variant; other brands retain the design's colors. Unicons uses a vector reconstruction of the user-supplied image, not an official original SVG. Brands belong to their respective owners; icon licenses do not grant brand usage rights.
 
@@ -233,6 +235,8 @@ Restart the development server after modifying the main process or shared core; 
 
 ### Usage
 
+Global search opens a modal from the sidebar or ⌘K instead of a dedicated search page. It searches retained default public libraries and added team libraries, excluding removed libraries. With an empty query, open a library directly; typing lists icons and their libraries. Use ↑↓ to select, Enter to open details, and Esc to close. The collection dropdown also lists only retained default libraries; “All collections” opens global search.
+
 The icon workspace supports grid and list views. Select an icon to open its separate detail panel, and use the code button in the title bar to collapse it. Separate image search and refresh buttons sit beside the search field, followed by a 32px segmented grid/list control matching the design. Details provide name copying, export format tabs, and file export. Monochrome icons inherit the color at their point of use, and size is adjusted in the project. Copied code and exported resources retain source and license information.
 
 1. **Discover Icons**: Choose a library on the home screen or sidebar, or use "Global Search". Use "Add Library" to open a fixed-height 640 × 615px modal and connect a team repository; repository names allow up to 20 characters and display names up to 100. Typing can continue beyond the limit; excess text turns red and a field error appears below the input. Saving is available once the name is back within the limit. The bottom settings button opens a dedicated page with section navigation for general information, appearance, MCP connectors, model configuration, and library management. The sidebar Back button returns to the previous workspace; appearance changes save immediately. Models and repositories retain their own save actions. The MCP badge also opens connection settings directly. Choose public or private below the library name. Public repositories only require a link and SVG directories; private repositories show the username and access token below the link. Without local credentials, enter an access token. Repository information loads when the link field loses focus. The “Parse Repository” button beside the link shows a loading state and allows manual re-parsing after success or failure. The repository default branch is selected automatically; use the visible branch selector to choose another branch. Select SVG directories (or the entire repository) using the multiselect tree selector.
@@ -240,7 +244,7 @@ The icon workspace supports grid and list views. Select an icon to open its sepa
 3. **Synchronize Libraries**: Repositories synchronize immediately upon addition and check for updates on desktop launch. Manual synchronization is always available. Removing a source deletes only local cache indexes and credentials.
 4. **Copy & Export**: Select an icon and target technology, then copy code or export files. File exports create dedicated subdirectories to avoid silent overwrites.
 5. **Multi-Target Integration**: React output targets React 18+; Vue output targets Vue 3.5+. For SwiftUI, drag the exported `.imageset` into `Assets.xcassets`, then use the generated `Image` code.
-6. **Visual Search & Shortcuts**: Press <kbd>⌘</kbd> + <kbd>K</kbd> to focus the search bar. Reference images can be uploaded, dragged, or pasted from the clipboard, with interactive cropping before search.
+6. **Visual Search & Shortcuts**: Press <kbd>⌘</kbd> + <kbd>K</kbd> to open the global search modal. Reference images can be uploaded, dragged, or pasted from the clipboard, with interactive cropping before search.
 
 ### Configuration
 

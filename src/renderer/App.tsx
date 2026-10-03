@@ -1,3 +1,4 @@
+import { GlobalSearchDialog } from "./GlobalSearchDialog";
 import { ModelSettings } from "./ModelSettings";
 import { AddLibraryDialog } from "./AddLibraryDialog";
 import { IconViewSwitch } from "./IconViewSwitch";
@@ -202,6 +203,7 @@ export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [mcpOpen, setMcpOpen] = useState(false);
   const [libraryFilter, setLibraryFilter] = useState("");
+  const [globalSearchOpen, setGlobalSearchOpen] = useState(false);
   const [librarySearchOpen, setLibrarySearchOpen] = useState(false);
   const librarySearchButton = useRef<HTMLButtonElement>(null);
   const [libraryOptions, setLibraryOptions] =
@@ -240,6 +242,7 @@ export function App() {
     [cropOpen, setCropOpen] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null),
     generation = useRef(0),
+    pendingSearchIcon = useRef<Icon | undefined>(undefined),
     searchInput = useRef<HTMLInputElement>(null),
     syncing = useRef(new Set<string>());
   const lastExportTarget = useRef<Target>(target),
@@ -325,9 +328,7 @@ export function App() {
     const handler = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
-        setSettingsOpen(false);
-        setPage("library");
-        requestAnimationFrame(() => searchInput.current?.focus());
+        setGlobalSearchOpen((open) => !open);
       }
       if (event.key === "Escape") {
         setCropOpen(false);
@@ -359,6 +360,15 @@ export function App() {
       })
         .then((value) => {
           if (current !== generation.current) return;
+          const opened = pendingSearchIcon.current;
+          pendingSearchIcon.current = undefined;
+          if (opened && !value.icons.some((icon) => icon.id === opened.id)) {
+            value = {
+              ...value,
+              icons: [opened, ...value.icons],
+              total: Math.max(value.total, 1),
+            };
+          }
           setResult(value);
           setSelected(
             (previous) =>
@@ -416,6 +426,7 @@ export function App() {
     };
   }, [selected?.id, selected?.svg, target]);
   function chooseSource(id: string) {
+    pendingSearchIcon.current = undefined;
     setSourceId(id);
     setCollection("");
     setOffset(0);
@@ -542,6 +553,22 @@ export function App() {
     ? collections.find((item) => item.id === collection)?.changes
     : activeSource?.changes;
   const teams = sources.filter((source) => source.kind === "repository");
+  const availablePublicLibraries = defaultLibraries
+    .filter((library) => !libraryPreferences[library.id]?.hidden)
+    .map((library) => ({
+      ...library,
+      name: libraryPreferences[library.id]?.name ?? library.name,
+    }));
+  const searchLibraries = [
+    ...availablePublicLibraries.map((library) => ({
+      id: library.id,
+      name: library.name,
+      public: true,
+    })),
+    ...teams
+      .filter((source) => !libraryPreferences[source.id]?.hidden)
+      .map((source) => ({ id: source.id, name: source.name, public: false })),
+  ];
   const visibleLibraries = filterLibraries(
     defaultLibraries.map((library) => ({
       ...library,
@@ -751,12 +778,9 @@ export function App() {
                 </Button>
                 <Button
                   className="nav-item"
-                  selected={page === "library" && !sourceId}
+                  selected={globalSearchOpen}
                   kind="plain"
-                  onClick={() => {
-                    chooseSource("");
-                    requestAnimationFrame(() => searchInput.current?.focus());
-                  }}
+                  onClick={() => setGlobalSearchOpen(true)}
                 >
                   <DesignIcon name="search" />
                   <span>全局搜索</span>
@@ -1003,7 +1027,7 @@ export function App() {
                         aria-label="图标集"
                         items={[
                           { value: "", label: "全部图标集" },
-                          ...collections.map((item) => ({
+                          ...availablePublicLibraries.map((item) => ({
                             value: item.id,
                             label: item.name,
                           })),
@@ -1011,6 +1035,10 @@ export function App() {
                         value={collection}
                         onValueChange={(value) => {
                           if (value === undefined) return;
+                          if (!value) {
+                            setGlobalSearchOpen(true);
+                            return;
+                          }
                           setCollection(value);
                           setOffset(0);
                         }}
@@ -1485,6 +1513,28 @@ export function App() {
             </ModalFooter>
           </ModalContent>
         </Modal>
+      )}
+      {globalSearchOpen && (
+        <GlobalSearchDialog
+          libraries={searchLibraries}
+          onClose={() => setGlobalSearchOpen(false)}
+          onLibrary={(library) => {
+            chooseSource(library.public ? "public" : library.id);
+            if (library.public) setCollection(library.id);
+            setGlobalSearchOpen(false);
+          }}
+          onIcon={(icon) => {
+            chooseSource(icon.sourceId);
+            if (icon.sourceId === "public") setCollection(icon.collection);
+            generation.current++;
+            pendingSearchIcon.current = icon;
+            setRevision((value) => value + 1);
+            setQuery(icon.name);
+            setSelected(icon);
+            setDetailOpen(true);
+            setGlobalSearchOpen(false);
+          }}
+        />
       )}
       {addLibraryOpen && (
         <AddLibraryDialog
