@@ -681,7 +681,11 @@ export function App() {
           </div>
         ) : (
           <div className="window-title">
-            <img src={brandLogo} width="28" height="28" alt="DesiCast Logo" />
+            {settingsOpen ? (
+              <Settings1Regular size={20} aria-hidden="true" />
+            ) : (
+              <img src={brandLogo} width="28" height="28" alt="DesiCast Logo" />
+            )}
             <span>{settingsOpen ? "设置" : "DesiCast"}</span>
           </div>
         )}
