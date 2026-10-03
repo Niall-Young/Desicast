@@ -192,7 +192,6 @@ export function SettingsPage({
           </div>
         </section>
         <section id="settings-connector">
-          <h2>连接器</h2>
           <MCPClientPanel
             descriptionPlacement="above-tabs"
             info={info}

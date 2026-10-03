@@ -10,7 +10,79 @@
   filter: invert(1);
 }
 .mcp-clients {
+  display: flex;
+  flex-direction: column;
   gap: 12px;
+}
+.settings-sections .mcp-clients {
+  gap: 8px;
+}
+.mcp-client-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-block: 5px;
+}
+.mcp-client-context {
+  flex: 1;
+  min-width: 0;
+}
+.settings-sections .mcp-client-context h2 {
+  padding: 0;
+  margin: 0;
+}
+.settings-sections .mcp-client-context .mcp-client-description {
+  margin: 0.1px 0 0;
+}
+/* Application Segmented: the imported Gendesign revision has no such control. */
+.mcp-client-segmented {
+  display: flex;
+  flex-shrink: 0;
+  width: fit-content;
+  height: 32px;
+  overflow: hidden;
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-background-neutral-subtle);
+}
+.mcp-client-segmented > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 4px 11px;
+  border: var(--nico-border-weight-base) solid transparent;
+  border-radius: var(--nico-border-radius-sm);
+  background: transparent;
+  color: var(--nico-color-text-subtle);
+  font: inherit;
+  line-height: 22px;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mcp-client-segmented > button:hover {
+  background: var(--nico-color-interaction-hover);
+}
+.mcp-client-segmented > button[data-active] {
+  border-color: var(--nico-color-border);
+  background: var(--nico-color-surface);
+  color: var(--nico-color-text);
+  box-shadow: var(--nico-effect-shadow-small);
+}
+.mcp-client-segmented > button:focus-visible {
+  outline: 2px solid var(--nico-color-border-brand);
+  outline-offset: -2px;
+}
+.settings-sections .mcp-panel .mcp-code pre {
+  min-height: 90px;
+  max-height: 244px;
+}
+@media (max-width: 760px) {
+  .mcp-client-header {
+    flex-wrap: wrap;
+  }
+  .mcp-client-context {
+    flex-basis: 100%;
+  }
 }
 .mcp-panel {
   display: flex;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -157,31 +158,53 @@ export function MCPClientPanel({
   descriptionPlacement?: "panel" | "above-tabs";
 }) {
   const [activeClient, setActiveClient] = useState<string>("codex");
+  const inSettings = descriptionPlacement === "above-tabs";
+  const Root = inSettings ? TabsPrimitive.Root : Tabs;
+  const List = inSettings ? TabsPrimitive.List : TabsList;
+  const Trigger = inSettings ? TabsPrimitive.Tab : TabsTrigger;
+  const Panel = inSettings ? TabsPrimitive.Panel : TabsContent;
   const description = (clientId: string) =>
     clientId === "other"
       ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接"
       : clientId === "claude"
         ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP"
         : "请复制下方内容在终端中执行，连接 Codex 的 MCP";
+  const clientTabs = (
+    <List
+      aria-label="MCP 客户端"
+      className={inSettings ? "mcp-client-segmented" : undefined}
+    >
+      {clients.map((client) => (
+        <Trigger key={client.id} value={client.id}>
+          <img src={client.icon} className="mcp-icon" alt="" />
+          {client.label}
+        </Trigger>
+      ))}
+    </List>
+  );
   return (
-    <Tabs
+    <Root
       value={activeClient}
       onValueChange={setActiveClient}
       className="mcp-clients"
     >
-      {descriptionPlacement === "above-tabs" && (
-        <p className="mcp-client-description">{description(activeClient)}</p>
+      {inSettings ? (
+        <div className="mcp-client-header">
+          <div className="mcp-client-context">
+            <h2>连接器</h2>
+            <p className="mcp-client-description">
+              {activeClient === "other"
+                ? description(activeClient)
+                : "请复制下方内容在终端中执行，连接 MCP"}
+            </p>
+          </div>
+          {clientTabs}
+        </div>
+      ) : (
+        clientTabs
       )}
-      <TabsList aria-label="MCP 客户端">
-        {clients.map((client) => (
-          <TabsTrigger key={client.id} value={client.id}>
-            <img src={client.icon} className="mcp-icon" alt="" />
-            {client.label}
-          </TabsTrigger>
-        ))}
-      </TabsList>
       {clients.map((client) => (
-        <TabsContent key={client.id} value={client.id} className="mcp-panel">
+        <Panel key={client.id} value={client.id} className="mcp-panel">
           {descriptionPlacement === "panel" && (
             <p className="mcp-client-description">{description(client.id)}</p>
           )}
@@ -210,8 +233,8 @@ export function MCPClientPanel({
                 (loadError ? "配置暂不可用" : "正在读取…")}
             </pre>
           </div>
-        </TabsContent>
+        </Panel>
       ))}
-    </Tabs>
+    </Root>
   );
 }
