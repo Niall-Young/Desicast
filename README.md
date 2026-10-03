@@ -89,7 +89,7 @@ npm run dev
 
 ### 使用方法
 
-全局搜索通过侧栏或 ⌘K 打开弹窗，不再使用独立搜索页面；仅检索保留的默认公共图库和已添加的团队图库，已移除的图库不参与检索。输入框固定在窗口上方，加载、空结果和结果数量变化不会改变其位置；长列表在弹窗内滚动。未输入时可直接打开图库，输入后显示图标与所属库，支持 ↑↓ 选择、Enter 打开详情及 Esc 关闭。图标集下拉也仅显示保留的默认图库，“全部图标集”打开全局搜索弹窗。
+全局搜索通过侧栏或 ⌘K 打开弹窗，不再使用独立搜索页面；仅检索保留的默认公共图库和已添加的团队图库，已移除的图库不参与检索。输入框固定在窗口上方，加载、空结果和结果数量变化不会改变其位置；长列表在弹窗内滚动。弹窗宽度为 640px，顶部为 48px 搜索栏，结果行高为 40px。未输入时可直接打开图库，输入后按图标库和图标分组显示匹配结果；底部「全部 / 图标库 / 图标」可筛选结果类型，「查看全部」展开更多已加载的图标。右上角「以图搜图」使用现有上传与裁剪流程。支持 ↑↓ 选择、Enter 打开及 Esc 或「退出」关闭。图标集下拉也仅显示保留的默认图库，“全部图标集”打开全局搜索弹窗。
 
 图标页面支持网格/列表切换，两种视图都在图标名称下方显示所属库名，点击图标打开独立详情面板，顶部代码按钮可收起详情。搜索框右侧提供独立的以图搜图与刷新按钮，网格/列表切换按设计使用 32px 分段控件；详情可复制名称、通过 32px 等宽 Segmented 切换导出格式和导出文件，单色图标默认跟随使用处的颜色，尺寸在项目中调整；来源与许可保留在复制的代码和导出的资源中。
 
@@ -235,7 +235,7 @@ Restart the development server after modifying the main process or shared core; 
 
 ### Usage
 
-Global search opens a modal from the sidebar or ⌘K instead of a dedicated search page. It searches retained default public libraries and added team libraries, excluding removed libraries. The input stays anchored near the top of the window through loading, empty results and changes in result count; long lists scroll within the modal. With an empty query, open a library directly; typing lists icons and their libraries. Use ↑↓ to select, Enter to open details, and Esc to close. The collection dropdown also lists only retained default libraries; “All collections” opens global search.
+Global search opens a modal from the sidebar or ⌘K instead of a dedicated search page. It searches retained default public libraries and added team libraries, excluding removed libraries. The input stays anchored near the top of the window through loading, empty results and changes in result count; long lists scroll within the modal. The dialog is 640px wide with a 48px search header and 40px result rows. With an empty query, open a library directly; typing groups matching libraries and icons. The All / Libraries / Icons footer filters result types, and Show all expands more loaded icons. The image-search action uses the existing upload and crop flow. Use ↑↓ to select, Enter to open, and Esc or Exit to close. The collection dropdown also lists only retained default libraries; “All collections” opens global search.
 
 The icon workspace supports grid and list views, both showing the library name below each icon name. Select an icon to open its separate detail panel, and use the code button in the title bar to collapse it. Separate image search and refresh buttons sit beside the search field, followed by a 32px segmented grid/list control matching the design. Details provide name copying, a 32px equal-width Segmented control for export formats, and file export. Monochrome icons inherit the color at their point of use, and size is adjusted in the project. Copied code and exported resources retain source and license information.
 

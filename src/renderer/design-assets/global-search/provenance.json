@@ -1,0 +1,24 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "nodeIds": [
+    "2023:20259",
+    "2023:21100"
+  ],
+  "retrievedAt": "2026-10-03",
+  "assets": {
+    "search": {
+      "sha256": "0515de9392586ebd2a1111b4dd1277fc3650d24d0d36d9b802d4407b40a4e73b",
+      "width": "12.7381",
+      "height": "12.7393",
+      "assetId": "6cdb5f35-9944-4d77-9e66-812a6eb98bca",
+      "nodeId": "2023:20259"
+    },
+    "more": {
+      "sha256": "5ef0731049d10fea285d164cd6b792ed2e083929fd9c3671ef450578b7055102",
+      "width": "10",
+      "height": "2",
+      "assetId": "e7f1bc2f-d6a4-47b7-875b-45747e7af8ee",
+      "nodeId": "2023:21100"
+    }
+  }
+}

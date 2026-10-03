@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react";
+import { Input } from "@base-ui/react/input";
+import { Button as ResultButton } from "@base-ui/react/button";
 import { Button } from "@/components/ui/button";
-import { SearchBox } from "@/components/ui/search-box";
+import { IconButton } from "@/components/ui/icon-button";
 import {
   Modal,
   ModalContent,
@@ -8,9 +10,13 @@ import {
   ModalDescription,
 } from "@/components/ui/modal";
 import { Spinner } from "@/components/ui/spinner";
-import { SearchRegular, FolderRegular } from "@mingcute/react/core-regular";
 import type { Icon, SearchResult } from "../core/types";
 import { api, svgUrl, isMonochrome } from "./api";
+import { defaultLibraries } from "./libraries";
+import { DesignIcon, LibraryMark, designNames } from "./design";
+import { Segmented, SegmentedList, SegmentedItem } from "./Segmented";
+import searchMark from "./design-assets/global-search/search.svg?url";
+import moreMark from "./design-assets/global-search/more.svg?url";
 import "./global-search.css";
 
 export interface SearchLibrary {
@@ -18,41 +24,63 @@ export interface SearchLibrary {
   name: string;
   public: boolean;
 }
+type Filter = "all" | "libraries" | "icons";
 
 export function GlobalSearchDialog({
   libraries,
   onClose,
   onLibrary,
   onIcon,
+  onImage,
+  imageEnabled,
 }: {
   libraries: SearchLibrary[];
   onClose: () => void;
   onLibrary: (library: SearchLibrary) => void;
   onIcon: (icon: Icon) => void;
+  onImage: (dataUrl: string) => void;
+  imageEnabled: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [icons, setIcons] = useState<Icon[]>([]);
+  const [filter, setFilter] = useState<Filter>("all");
+  const [expanded, setExpanded] = useState(false);
   const [busy, setBusy] = useState(false);
   const [warning, setWarning] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
   const rows = useRef<(HTMLElement | null)[]>([]);
-  // Library metadata polls in the background; only scope changes restart search.
-  const scope = JSON.stringify(
-    libraries.map(({ id, name, public: isPublic }) => ({
-      id,
-      name,
-      public: isPublic,
-    })),
-  );
+  const scope = JSON.stringify(libraries);
   const hasQuery = Boolean(query.trim());
-  const count = hasQuery ? icons.length : libraries.length;
+  const matchingLibraries =
+    filter === "icons"
+      ? []
+      : libraries.filter((library) => {
+          const label = `${library.id} ${library.name} ${designNames[library.id] ?? ""}`;
+          return (
+            !hasQuery ||
+            label.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
+          );
+        });
+  const visibleIcons =
+    filter === "libraries" || !hasQuery
+      ? []
+      : expanded
+        ? icons
+        : icons.slice(0, 5);
+  const showMore =
+    filter !== "libraries" && hasQuery && !expanded && icons.length > 5;
+  const count =
+    matchingLibraries.length + visibleIcons.length + Number(showMore);
+  const waiting = busy && filter !== "libraries";
   useEffect(() => {
     let alive = true;
     setIcons([]);
     setActive(0);
+    setExpanded(false);
     setWarning("");
-    if (!query.trim()) {
+    if (!query.trim() || filter === "libraries") {
       setBusy(false);
       return;
     }
@@ -86,14 +114,47 @@ export function GlobalSearchDialog({
       alive = false;
       clearTimeout(timer);
     };
-  }, [query, scope]);
+  }, [query, scope, filter]);
   useEffect(() => {
     rows.current[active]?.scrollIntoView({ block: "nearest" });
   }, [active]);
   function open(index: number) {
-    if (busy) return;
-    if (hasQuery && icons[index]) onIcon(icons[index]);
-    else if (!hasQuery && libraries[index]) onLibrary(libraries[index]);
+    if (matchingLibraries[index]) onLibrary(matchingLibraries[index]);
+    else if (visibleIcons[index - matchingLibraries.length])
+      onIcon(visibleIcons[index - matchingLibraries.length]);
+    else if (showMore && index === count - 1) {
+      setExpanded(true);
+      input.current?.focus();
+    }
+  }
+  function rowProps(index: number) {
+    return {
+      ref: (node: HTMLElement | null) => {
+        rows.current[index] = node;
+      },
+      id: `global-search-result-${index}`,
+      role: "option",
+      "aria-selected": active === index,
+      "data-selected": active === index,
+      className: "global-search-row",
+      onFocus: () => setActive(index),
+      onMouseEnter: () => setActive(index),
+      onClick: () => open(index),
+    };
+  }
+  function loadImage(file: File) {
+    if (!imageEnabled) return;
+    if (
+      !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
+      file.size > 8 * 1024 * 1024
+    ) {
+      setWarning("请选择小于 8 MB 的 PNG、JPEG 或 WebP");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => onImage(String(reader.result));
+    reader.onerror = () => setWarning("图片读取失败，请重新选择");
+    reader.readAsDataURL(file);
   }
   return (
     <Modal
@@ -108,26 +169,33 @@ export function GlobalSearchDialog({
           搜索已添加的图标库，使用上下方向键选择，按回车打开
         </ModalDescription>
         <div className="global-search-input">
-          <SearchBox
+          <span className="global-search-control-mark" aria-hidden="true">
+            <img src={searchMark} alt="" />
+          </span>
+          <Input
             ref={input}
-            size="lg"
-            aria-label="搜索已添加图库中的图标"
-            placeholder="搜索已添加图库中的图标…"
+            type="search"
+            aria-label="搜索图标关键词"
+            placeholder="搜索图标关键词"
             value={query}
-            onValueChange={(value) => setQuery(value)}
+            onValueChange={(value) => {
+              setQuery(value);
+              setActive(0);
+            }}
             role="combobox"
             aria-expanded
             aria-autocomplete="list"
             aria-controls="global-search-results"
             aria-activedescendant={
-              count && !busy ? `global-search-result-${active}` : undefined
+              count && active < count
+                ? `global-search-result-${active}`
+                : undefined
             }
             onKeyDown={(event) => {
               if (event.nativeEvent.isComposing) return;
               if (
                 (event.key === "ArrowDown" || event.key === "ArrowUp") &&
-                count &&
-                !busy
+                count
               ) {
                 event.preventDefault();
                 setActive(
@@ -142,38 +210,72 @@ export function GlobalSearchDialog({
               }
             }}
           />
-        </div>
-        <div className="global-search-heading">
-          {hasQuery ? "图标搜索结果" : "已添加的图标库"}
+          <IconButton
+            kind="tonal"
+            aria-label="以图搜图"
+            title={imageEnabled ? "以图搜图" : "请先开启图标库的视觉搜索"}
+            disabled={!imageEnabled}
+            onClick={() => fileInput.current?.click()}
+          >
+            <DesignIcon name="image-search" />
+          </IconButton>
+          <input
+            ref={fileInput}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            hidden
+            onChange={(event) => {
+              if (event.target.files?.[0]) loadImage(event.target.files[0]);
+              event.target.value = "";
+            }}
+          />
         </div>
         <div
           className="global-search-results"
           id="global-search-results"
           role="listbox"
-          aria-label={hasQuery ? "图标搜索结果" : "图标库"}
-          aria-busy={busy}
+          aria-label="搜索结果"
+          aria-busy={waiting}
         >
-          {busy ? (
+          {hasQuery && matchingLibraries.length > 0 && (
+            <div className="global-search-heading" role="presentation">
+              图标库
+            </div>
+          )}
+          {matchingLibraries.map((library, index) => {
+            const known = library.public
+              ? defaultLibraries.find((item) => item.id === library.id)
+              : undefined;
+            return (
+              <ResultButton key={`library:${library.id}`} {...rowProps(index)}>
+                {known ? (
+                  <LibraryMark library={known} />
+                ) : (
+                  <DesignIcon name="book-row" />
+                )}
+                <span className="global-search-name">
+                  {library.public && library.name === known?.name
+                    ? (designNames[library.id] ?? library.name)
+                    : library.name}
+                </span>
+              </ResultButton>
+            );
+          })}
+          {hasQuery && filter !== "libraries" && (
+            <div className="global-search-heading" role="presentation">
+              图标
+            </div>
+          )}
+          {waiting ? (
             <div className="global-search-empty" role="status">
               <Spinner width={16} height={16} />
               正在搜索
             </div>
-          ) : hasQuery ? (
-            icons.map((icon, index) => (
-              <Button
+          ) : (
+            visibleIcons.map((icon, index) => (
+              <ResultButton
                 key={icon.id}
-                ref={(node) => {
-                  rows.current[index] = node;
-                }}
-                id={`global-search-result-${index}`}
-                role="option"
-                aria-selected={active === index}
-                selected={active === index}
-                kind="plain"
-                className="global-search-row"
-                onFocus={() => setActive(index)}
-                onMouseEnter={() => setActive(index)}
-                onClick={() => onIcon(icon)}
+                {...rowProps(matchingLibraries.length + index)}
               >
                 <img
                   className={`global-search-preview ${isMonochrome(icon.svg) ? "monochrome" : ""}`}
@@ -190,42 +292,27 @@ export function GlobalSearchDialog({
                         : icon.sourceId),
                   )?.name ?? icon.collection}
                 </span>
-              </Button>
-            ))
-          ) : (
-            libraries.map((library, index) => (
-              <Button
-                key={library.id}
-                ref={(node) => {
-                  rows.current[index] = node;
-                }}
-                id={`global-search-result-${index}`}
-                role="option"
-                aria-selected={active === index}
-                selected={active === index}
-                kind="plain"
-                className="global-search-row"
-                onFocus={() => setActive(index)}
-                onMouseEnter={() => setActive(index)}
-                onClick={() => onLibrary(library)}
-              >
-                {library.public ? (
-                  <SearchRegular size={20} />
-                ) : (
-                  <FolderRegular size={20} />
-                )}
-                <span className="global-search-name">{library.name}</span>
-                <span className="global-search-source">
-                  {library.public ? "公共图库" : "团队图库"}
-                </span>
-              </Button>
+              </ResultButton>
             ))
           )}
-          {!busy && !count && (
+          {!waiting && showMore && (
+            <ResultButton
+              {...rowProps(count - 1)}
+              className="global-search-row global-search-more"
+            >
+              <span className="global-search-control-mark" aria-hidden="true">
+                <img src={moreMark} alt="" />
+              </span>
+              <span>查看全部</span>
+            </ResultButton>
+          )}
+          {!waiting && !count && (
             <div className="global-search-empty" role="status">
               {hasQuery
-                ? "没有找到匹配的图标，试试其他关键词"
-                : "添加图标库后开始搜索"}
+                ? "没有找到匹配结果，试试其他关键词"
+                : filter === "icons"
+                  ? "输入关键词开始搜索图标"
+                  : "添加图标库后开始搜索"}
             </div>
           )}
         </div>
@@ -235,15 +322,25 @@ export function GlobalSearchDialog({
           </div>
         )}
         <div className="global-search-footer">
-          <span>
-            <kbd>Enter</kbd> 打开
-          </span>
-          <span>
-            <kbd>↑ ↓</kbd> 选择
-          </span>
-          <span>
-            <kbd>Esc</kbd> 关闭
-          </span>
+          <Segmented
+            value={filter}
+            onValueChange={(value) => {
+              setFilter(value as Filter);
+              setActive(0);
+            }}
+          >
+            <SegmentedList
+              aria-label="搜索范围"
+              className="global-search-filters"
+            >
+              <SegmentedItem value="all">全部</SegmentedItem>
+              <SegmentedItem value="libraries">图标库</SegmentedItem>
+              <SegmentedItem value="icons">图标</SegmentedItem>
+            </SegmentedList>
+          </Segmented>
+          <Button kind="tonal" onClick={onClose}>
+            退出
+          </Button>
         </div>
       </ModalContent>
     </Modal>
