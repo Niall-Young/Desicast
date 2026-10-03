@@ -36,8 +36,13 @@
   height: 16px;
   flex-shrink: 0;
 }
-.dark .settings-icon {
-  filter: invert(1);
+.settings-icon > svg {
+  width: 100%;
+  height: 100%;
+}
+.settings-icon path {
+  fill: currentColor;
+  fill-opacity: 1;
 }
 .settings-sections {
   min-width: 0;

@@ -6,12 +6,23 @@ import { api, type MCPInfo } from "./api";
 import { MCPClientPanel } from "./MCPSettings";
 import "./settings-page.css";
 import { SettingsMenuButton } from "./SettingsMenuButton";
-import back from "./design-assets/settings-back.svg?url";
-import general from "./design-assets/settings-general.svg?url";
-import appearance from "./design-assets/settings-appearance.svg?url";
-import connector from "./design-assets/settings-connector.svg?url";
-import model from "./design-assets/settings-model.svg?url";
-import library from "./design-assets/settings-library.svg?url";
+import back from "./design-assets/settings-back.svg?raw";
+import general from "./design-assets/settings-general.svg?raw";
+import appearance from "./design-assets/settings-appearance.svg?raw";
+import connector from "./design-assets/settings-connector.svg?raw";
+import model from "./design-assets/settings-model.svg?raw";
+import library from "./design-assets/settings-library.svg?raw";
+
+function SettingsIcon({ artwork }: { artwork: string }) {
+  // Only bundled navigation assets are inlined; repository SVGs never enter here
+  return (
+    <span
+      className="settings-icon"
+      aria-hidden="true"
+      dangerouslySetInnerHTML={{ __html: artwork }}
+    />
+  );
+}
 
 const sections = [
   { id: "general", label: "通用设置", icon: general, group: "基础配置" },
@@ -112,7 +123,7 @@ export function SettingsPage({
     <div className="shell settings-page">
       <aside className="settings-sidebar" aria-label="设置导航">
         <SettingsMenuButton className="settings-back" onClick={onClose}>
-          <img src={back} alt="" className="settings-icon" />
+          <SettingsIcon artwork={back} />
           返回
         </SettingsMenuButton>
         <nav className="settings-menu" aria-label="设置分类">
@@ -132,7 +143,7 @@ export function SettingsPage({
                     ?.scrollIntoView({ block: "start", behavior: "instant" });
                 }}
               >
-                <img src={section.icon} alt="" className="settings-icon" />
+                <SettingsIcon artwork={section.icon} />
                 {section.label}
               </SettingsMenuButton>
             </div>

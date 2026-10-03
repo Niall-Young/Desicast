@@ -949,13 +949,11 @@ test("Settings page navigation, persistent theme and connector copy stay usable"
   const dialog = page.locator(".settings-page");
   await expect(dialog).toBeVisible();
   await expect(dialog.locator(".settings-menu-item")).toHaveCount(5);
-  const assets = await dialog.locator(".settings-icon").evaluateAll((images) =>
-    images.map((image) => ({
-      width: image.getBoundingClientRect().width,
-      height: image.getBoundingClientRect().height,
-      loaded:
-        (image as HTMLImageElement).complete &&
-        (image as HTMLImageElement).naturalWidth > 0,
+  const assets = await dialog.locator(".settings-icon").evaluateAll((icons) =>
+    icons.map((icon) => ({
+      width: icon.getBoundingClientRect().width,
+      height: icon.getBoundingClientRect().height,
+      loaded: Boolean(icon.querySelector("svg path")),
     })),
   );
   expect(
