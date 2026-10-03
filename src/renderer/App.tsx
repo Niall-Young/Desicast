@@ -39,6 +39,8 @@ import {
   GridRegular,
 } from "@mingcute/react/core-regular";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
+import { GithubFilled } from "@mingcute/react/core-filled";
 import { IconButton } from "@/components/ui/icon-button";
 import { useMessage } from "@/components/ui/message";
 import { SearchBox } from "@/components/ui/search-box";
@@ -1206,25 +1208,23 @@ export function App() {
                           </div>
                           <div className="identity-row">
                             <span>来源</span>
-                            <Button
-                              className="source-link"
-                              kind="plain"
-                              size="sm"
+                            <LinkButton
+                              color="link"
                               onClick={() =>
                                 api("openUrl", selected.sourceUrl).catch(report)
                               }
                               leftIcon={
                                 selected.sourceUrl.includes("github.com") ? (
-                                  <DesignIcon name="github" />
+                                  <GithubFilled />
                                 ) : (
                                   <LinkRegular size={16} />
                                 )
                               }
                             >
                               {selected.sourceUrl.includes("github.com")
-                                ? "Github"
+                                ? "GitHub"
                                 : "查看来源"}
-                            </Button>
+                            </LinkButton>
                           </div>
                         </div>
                         {selected.reason && (

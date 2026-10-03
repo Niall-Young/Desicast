@@ -152,6 +152,11 @@
       "sha256": "916f0bbf7ea0b9d49c863f0124c050324fde75466891e745a2cb676f4bd4a0d4",
       "normalizedSha256": "b46900bb8e1a6b20585218066acc3ecb90189398790b128e0810d88b3325edc3",
       "parser": "typescript"
+    },
+    "components/ui/link-button.tsx": {
+      "sha256": "7ddaea28a25ff514eea1bbddcb9ff198b958c520922b13da3797fd8a21f15cc9",
+      "normalizedSha256": "e428d0ba16693f0bc9ac3530c5705a4ac3e465719670835f2990b850880c2c4a",
+      "parser": "typescript"
     }
   }
 }

@@ -8,6 +8,8 @@ Imported UI components, their transitive component dependencies, `lib/utils.ts`,
 
 ## Consumption and verification
 
+Icon source actions use the upstream LinkButton with its link color, default size, transparent background, and hover underline. GitHub actions use the MingCute brand icon. Application layout does not override LinkButton appearance or interaction states.
+
 [gendesign-provenance.json](gendesign-provenance.json) records raw upstream and formatting-normalized SHA-256 checksums for the imported controls and their assets at the revision above. `npm test` checks normalized source fidelity. Message's `cn` import uses the equivalent `lib/utils.ts` re-export; this is the only recorded source adaptation.
 
 Library options use Base UI Checkbox and Radio/RadioGroup primitives with a trailing MingCute check mark. The imported Checkbox and Radio controls do not support borderless menu rows at this revision; this application composition preserves selection and keyboard semantics without repainting their internal slots. Repository directories use upstream TreeSelect/Tree with `multiple`: Cascader at this revision selects a single leaf and cannot preserve directory multiselection. The adapter only builds repository nodes and enforces the whole-repository and 20-directory rules. Inputs, password visibility, Tabs and popover motion retain upstream implementations.

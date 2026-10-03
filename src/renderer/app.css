@@ -1501,13 +1501,10 @@ pre {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.identity-row > button {
+.identity-row > button[data-slot="icon-button"] {
   flex-shrink: 0;
   height: 22px;
   padding: 0;
-}
-.identity-row .source-link {
-  color: var(--nico-color-link);
 }
 .library-view .export-section {
   display: flex;
