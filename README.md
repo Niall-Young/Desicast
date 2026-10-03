@@ -126,11 +126,11 @@ npm run dev
 npm run typecheck    # 静态类型检查
 npm test             # 核心逻辑与集成测试
 npm run build        # 构建共享核心、主进程与渲染器
-npm run test:ui      # Playwright 桌面 UI 自动化测试
+npm run test:ui      # Playwright 桌面 UI 自动化测试，仅在明确要求时运行
 npm run package      # 生成 macOS DMG / ZIP 安装包
 ```
 
-打包与桌面自动化测试需按顺序运行。安装包输出到 `release/`，包含当前机器架构的 `.app`、ZIP 和 DMG；当前已通过 Apple Silicon 构建验证。安装包未做 Developer ID 签名或公证，供本地与团队内部使用；不自动对外发布。
+日常由用户自行验证桌面交互和视觉效果。AI 不自动运行 `test:ui` 或打开应用做验证；这套 Playwright 测试会启动真实 Electron 窗口并模拟交互，只有用户明确要求时才运行，且需先执行 `npm run build`。打包和本地安装也需用户明确要求。打包与桌面自动化测试需按顺序运行。安装包输出到 `release/`，包含当前机器架构的 `.app`、ZIP 和 DMG；当前已通过 Apple Silicon 构建验证。安装包未做 Developer ID 签名或公证，供本地与团队内部使用；不自动对外发布。
 
 已验证矩阵：真实 Iconify 搜索、公开 Lucide 仓库同步、私有 GitHub 仓库同步、Keychain 读写、HTTPS 凭据与增改删同步、Electron 明暗主题及复制流程、HTML／React／Vue 实际渲染、独立 MCP 协议和 Codex 实际检索／Vue 获取。
 
@@ -262,11 +262,11 @@ See [GENDESIGN.md](GENDESIGN.md) for design system provenance, and [AGENTS.md](A
 npm run typecheck    # Static TypeScript type check
 npm test             # Core logic and integration tests
 npm run build        # Build core, Electron main, and renderer bundles
-npm run test:ui      # Playwright desktop UI automation tests
+npm run test:ui      # Playwright desktop UI automation tests, only on explicit request
 npm run package      # Create local macOS DMG and ZIP packages
 ```
 
-Run packaging and desktop automation sequentially. Packaged artifacts are saved to `release/`, containing `.app`, ZIP, and DMG bundles for the host architecture (verified on Apple Silicon). Bundles are not Developer ID signed or notarized and are intended for local and internal use.
+The user verifies desktop interactions and visual results during routine work. AI agents must not automatically run `test:ui` or launch the app for verification. These Playwright tests launch real Electron windows and simulate interactions; run them only on explicit request, after `npm run build`. Packaging and local installation also require an explicit request. Run packaging and desktop automation sequentially. Packaged artifacts are saved to `release/`, containing `.app`, ZIP, and DMG bundles for the host architecture (verified on Apple Silicon). Bundles are not Developer ID signed or notarized and are intended for local and internal use.
 
 Verified matrix: live Iconify search, public Lucide repository synchronization, private GitHub synchronization, Keychain storage round-trips, HTTPS credentials with CRUD sync, Electron light/dark themes, clipboard copy workflows, real HTML/React/Vue DOM rendering, standalone MCP protocol, and Codex retrieval of Vue components.
 
