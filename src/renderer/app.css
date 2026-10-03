@@ -34,7 +34,7 @@ input {
   flex: 1;
   min-width: 0;
   height: 52px;
-  padding: 14px 14px 10px 16px;
+  padding: 0 14px 0 16px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1045,7 +1045,8 @@ pre {
   display: flex;
   align-items: center;
   gap: 24px;
-  padding: 14px 14px 10px 20px;
+  height: 100%;
+  padding: 0 14px 0 20px;
   width: var(--sidebar-width);
 }
 .native-controls-space {
