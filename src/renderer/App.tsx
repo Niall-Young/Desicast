@@ -1274,7 +1274,7 @@ export function App() {
                               复制代码
                             </Button>
                             <IconButton
-                              kind="ghost"
+                              kind="tonal"
                               aria-label="导出资源文件"
                               title={
                                 target === "swiftui"
