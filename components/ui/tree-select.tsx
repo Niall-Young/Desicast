@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { DownRegular, CloseRegular } from "@mingcute/react/core-regular";
+import { DownRegular } from "@mingcute/react/core-regular";
+import { CloseCircleFilled } from "@mingcute/react/core-filled";
 import { cn } from "@/lib/utils";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
 import {
@@ -117,7 +118,7 @@ function TreeSelect({
       ref={container}
       data-slot="tree-select"
       data-size={size}
-      className={cn("relative w-80 max-w-full", className)}
+      className={cn("group/tree-select relative w-80 max-w-full", className)}
     >
       <PopoverPrimitive.Root
         open={!blocked && (open ?? isOpen)}
@@ -151,7 +152,7 @@ function TreeSelect({
             data-slot="tree-select-value"
             className={cn(
               "min-w-0 flex-1 truncate",
-              clearable && current.length > 0 && !blocked && "pr-8",
+              clearable && current.length > 0 && !blocked && "pr-6",
               !current.length && "text-(--nico-color-text-disabled)",
             )}
             title={text || undefined}
@@ -204,16 +205,18 @@ function TreeSelect({
       {clearable && current.length > 0 && !blocked && (
         <IconButton
           data-slot="tree-select-clear"
+          type="button"
           kind="plain"
           size="sm"
           aria-label={clearLabel}
-          className="absolute right-9 top-1/2 size-6 -translate-y-1/2"
+          className="invisible absolute right-9 top-1/2 size-4 -translate-y-1/2 rounded-full border-0 p-0 text-(--nico-color-icon-subtlest) group-hover/tree-select:visible group-focus-within/tree-select:visible"
+          onMouseDown={(event) => event.preventDefault()}
           onClick={() => {
             change([]);
             trigger.current?.focus();
           }}
         >
-          <CloseRegular size={16} aria-hidden="true" />
+          <CloseCircleFilled size={16} aria-hidden="true" />
         </IconButton>
       )}
       <input ref={hiddenInput} type="hidden" form={form} disabled={disabled} />
