@@ -704,3 +704,71 @@ test("Same-count public modification updates badges and refreshes SVGs on demand
     store.close();
   });
 });
+
+test("DeepSeek vision disables default thinking so ranking has a complete JSON budget", async () => {
+  const sharp = (await import("sharp")).default;
+  const input = await sharp(Buffer.from(mono)).png().toBuffer();
+  const dataUrl = `data:image/png;base64,${input.toString("base64")}`;
+  for (const baseUrl of [
+    "https://api.deepseek.com",
+    "https://api.deepseek.com/v1",
+    "https://model.example/v1",
+  ]) {
+    const requests: any[] = [];
+    const model = new VisionModel(
+      { baseUrl, model: "deepseek-flash", consent: true },
+      "fixture-secret",
+      async (_url, options) => {
+        requests.push(JSON.parse(String(options?.body)));
+        return Response.json({
+          choices: [
+            {
+              finish_reason: "stop",
+              message: {
+                content: JSON.stringify(
+                  requests.length === 1
+                    ? {
+                        keywords: ["search"],
+                        shape: "circle",
+                        style: "outline",
+                      }
+                    : { matches: [{ id: icon.id, reason: "相似轮廓" }] },
+                ),
+              },
+            },
+          ],
+        });
+      },
+    );
+    const description = await model.describe(dataUrl);
+    assert.equal(
+      (await model.rank(dataUrl, [icon], description))[0].id,
+      icon.id,
+    );
+    for (const request of requests) {
+      assert.deepEqual(
+        request.thinking,
+        baseUrl.includes("api.deepseek.com") ? { type: "disabled" } : undefined,
+      );
+    }
+  }
+});
+
+test("Truncated vision output reports output exhaustion instead of a configuration or JSON error", async () => {
+  const sharp = (await import("sharp")).default;
+  const input = await sharp(Buffer.from(mono)).png().toBuffer();
+  const model = new VisionModel(
+    { baseUrl: "https://model.example/v1", model: "fixture", consent: true },
+    undefined,
+    async () =>
+      Response.json({
+        choices: [
+          { finish_reason: "length", message: { content: '{"keywords":[' } },
+        ],
+      }),
+  );
+  await assert.rejects(
+    model.describe(`data:image/png;base64,${input.toString("base64")}`),
+    /输出达到长度上限/,
+  );
+});

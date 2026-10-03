@@ -61,7 +61,8 @@ export class VisionModel {
   private async call(prompt: string, images: string[]): Promise<unknown> {
     if (!this.settings.model.trim())
       throw new Error("请先配置支持图片输入的模型");
-    const response = await this.fetcher(modelEndpoint(this.settings.baseUrl), {
+    const endpoint = modelEndpoint(this.settings.baseUrl);
+    const response = await this.fetcher(endpoint, {
       method: "POST",
       signal: AbortSignal.timeout(60_000),
       headers: {
@@ -72,6 +73,11 @@ export class VisionModel {
         model: this.settings.model,
         temperature: 0,
         max_tokens: 1800,
+        // DeepSeek defaults to high-effort thinking, which shares the output
+        // budget and can exhaust it before the JSON ranking is complete.
+        ...(new URL(endpoint).hostname === "api.deepseek.com"
+          ? { thinking: { type: "disabled" } }
+          : {}),
         messages: [
           {
             role: "user",
@@ -91,8 +97,12 @@ export class VisionModel {
         `模型请求失败（HTTP ${response.status}），请检查地址、凭证和图片能力`,
       );
     const data = (await response.json()) as {
-      choices?: { message?: { content?: string } }[];
+      choices?: { finish_reason?: string; message?: { content?: string } }[];
     };
+    if (data.choices?.[0]?.finish_reason === "length")
+      throw new Error(
+        "模型输出达到长度上限，未完成搜索结果，请重试或调整模型输出设置",
+      );
     const value = data.choices?.[0]?.message?.content;
     if (typeof value !== "string") throw new Error("模型未返回有效文本");
     try {

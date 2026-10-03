@@ -100,6 +100,8 @@ npm run dev
 
 视觉模型使用兼容 OpenAI Chat Completions 的图片输入接口。在模型配置中点击「添加供应商」，通过 640px 弹窗填写 API 基础地址（通常以 `/v1` 结尾）、模型名称和可选 API Key。可用「测试连接」发送图片请求检查当前草稿，测试不会保存设置；点击「确定」后保存并启用该模型。已添加的供应商以单选列表展示，切换后立即保存并用于桌面和 MCP 视觉搜索，不设独立的视觉能力开关。点击每行右侧删除按钮后，需在确认弹窗中确认才会删除供应商并清除其 Keychain 凭据；删除当前供应商后启用剩余列表中的第一个，删完后恢复空状态。API Key 按供应商分别保存在 Keychain，旧版单模型配置和 Key 会保留。支持 HTTPS 或本机 HTTP 服务。
 
+连接官方 DeepSeek API 时，图片识别与排序会关闭默认思考模式，为 JSON 结果保留输出预算；输出被截断时会明确提示长度上限。
+
 参考图和允许的候选图标预览会发送到该服务；团队仓库默认禁止模型图片搜索，可按仓库单独开启。图片限 PNG、JPEG、WebP 格式（最大 8 MB），模型处理上限 1600 万像素。搜索基于关键词召回和视觉排序，不保证找到原图标。
 
 默认数据目录为 `~/Library/Application Support/DesiCast`。SQLite 启用 WAL 模式；已缓存图标可完全离线使用。凭据严格安全保存在 macOS Keychain 中。Git 使用临时、限定仓库主机的凭据助手，严禁将令牌写入 URL 或普通配置文件。
@@ -136,7 +138,7 @@ npm run package      # 生成 macOS DMG / ZIP 安装包
 
 已验证矩阵：真实 Iconify 搜索、公开 Lucide 仓库同步、私有 GitHub 仓库同步、Keychain 读写、HTTPS 凭据与增改删同步、Electron 明暗主题及复制流程、HTML／React／Vue 实际渲染、独立 MCP 协议和 Codex 实际检索／Vue 获取。
 
-视觉模型测试使用受控服务响应，尚未验证用户的真实模型；本机无完整 Xcode，SwiftUI 目前验证资源结构，未完成 Xcode 编译。GitLab 使用同一 HTTPS Git 路径，尚未验证真实 GitLab 账户。
+视觉模型回归测试使用受控服务响应，另已通过用户配置的官方 DeepSeek Flash 与真实 Iconify 检索验证参考图片的描述和排序，不代表所有模型或图片都能匹配；本机无完整 Xcode，SwiftUI 目前验证资源结构，未完成 Xcode 编译。GitLab 使用同一 HTTPS Git 路径，尚未验证真实 GitLab 账户。
 
 桌面目录控件检查通过 Electron IPC 使用仓库元数据夹具；核心集成测试连接本地仓库验证 HTTPS Git。这些 UI 检查不代表当前公共 GitHub 可用性。
 
@@ -238,6 +240,8 @@ The icon workspace supports grid and list views. Select an icon to open its sepa
 
 Vision similarity search connects to OpenAI-compatible Chat Completions endpoints supporting image inputs. Click "Add Provider" in model settings to enter the API base URL (typically ending in `/v1`), model name, and optional API key in a 640px dialog. "Test Connection" sends an image request using the draft without saving it; "Confirm" saves and activates the model. Saved providers appear in a radio list; selecting one saves immediately and uses it for desktop and MCP visual search, with no separate vision-capability switch. Click the delete button on each row, then confirm in the dialog to remove the provider and its Keychain credential. Removing the active provider activates the first remaining provider; removing the last restores the empty state. API keys are stored separately per provider in Keychain, and legacy single-model settings and keys are preserved. Both HTTPS and local HTTP services are supported.
 
+Image description and ranking disable default thinking on the official DeepSeek API to preserve the output budget for JSON results. Truncated output reports an explicit length-limit error.
+
 Reference images and permitted candidate previews are transmitted to the configured endpoint. Team repositories disable vision data sharing by default and can be opted-in per repository. Reference images accept PNG, JPEG, and WebP (up to 8 MB), with model processing capped at 16 megapixels. Keyword retrieval followed by visual ranking does not guarantee finding exact original icons.
 
 Default data directory is `~/Library/Application Support/DesiCast`. SQLite operates in WAL mode; cached icons are fully accessible offline. Credentials are encrypted in macOS Keychain. Git uses an ephemeral, host-scoped credential helper without persisting tokens to URLs or ordinary configuration files.
@@ -274,7 +278,7 @@ The user verifies desktop interactions and visual results during routine work. A
 
 Verified matrix: live Iconify search, public Lucide repository synchronization, private GitHub synchronization, Keychain storage round-trips, HTTPS credentials with CRUD sync, Electron light/dark themes, clipboard copy workflows, real HTML/React/Vue DOM rendering, standalone MCP protocol, and Codex retrieval of Vue components.
 
-Vision similarity tests use controlled mock responses; user-configured models are verified at runtime. Without a full local Xcode installation, SwiftUI tests validate directory and catalog structures rather than Xcode builds. GitLab shares the HTTPS Git pipeline and has not been tested against a live GitLab enterprise instance.
+Vision regression tests use controlled mock responses. Reference-image description and ranking have also been checked against the user-configured official DeepSeek Flash API and live Iconify search; this does not guarantee matches for every model or image. Without a full local Xcode installation, SwiftUI tests validate directory and catalog structures rather than Xcode builds. GitLab shares the HTTPS Git pipeline and has not been tested against a live GitLab enterprise instance.
 
 Desktop directory-control checks use repository metadata fixtures through Electron IPC; core integration tests exercise HTTPS Git against a local repository. These UI checks do not establish current public GitHub availability.
 
