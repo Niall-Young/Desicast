@@ -41,7 +41,6 @@
 .settings-sections {
   min-width: 0;
   overflow-y: auto;
-  scrollbar-width: thin;
   display: flex;
   flex-direction: column;
   gap: 20px;

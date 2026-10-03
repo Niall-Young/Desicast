@@ -144,22 +144,38 @@ code {
   color: var(--nico-color-text);
 }
 
-/* Native scrollbars share the same Nico colors in pages and popup scroll areas. */
+/* Keep Chromium's custom scrollbar path: non-auto scrollbar-width/color
+   overrides ::-webkit-scrollbar styling, including in nested scroll areas. */
 @supports selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: auto;
+    scrollbar-color: auto;
+    scrollbar-gutter: auto;
+  }
   ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
   }
   ::-webkit-scrollbar-track,
   ::-webkit-scrollbar-corner {
     background: transparent;
   }
+  ::-webkit-scrollbar-button {
+    display: none;
+  }
   ::-webkit-scrollbar-thumb {
-    background: var(--nico-color-background-neutral-subtle);
+    background: var(--nico-color-border);
+    border: 1px solid transparent;
+    background-clip: padding-box;
     border-radius: var(--nico-border-radius-full);
   }
-  ::-webkit-scrollbar-thumb:hover {
-    background: var(--nico-color-background-neutral-subtle-hover);
+  *:hover::-webkit-scrollbar-thumb,
+  *:focus-within::-webkit-scrollbar-thumb {
+    background-color: var(--nico-color-border-intense);
+  }
+  ::-webkit-scrollbar-thumb:hover,
+  ::-webkit-scrollbar-thumb:active {
+    background-color: var(--nico-color-text-subtlest);
   }
 }
 
@@ -167,10 +183,11 @@ code {
 @supports not selector(::-webkit-scrollbar) {
   * {
     scrollbar-width: thin;
-    scrollbar-color: var(--nico-color-background-neutral-subtle) transparent;
+    scrollbar-color: var(--nico-color-border) transparent;
+    scrollbar-gutter: auto;
   }
-  *:hover {
-    scrollbar-color: var(--nico-color-background-neutral-subtle-hover)
-      transparent;
+  *:hover,
+  *:focus-within {
+    scrollbar-color: var(--nico-color-border-intense) transparent;
   }
 }
