@@ -862,12 +862,6 @@ pre {
 .reference-strip > button:last-child {
   margin-left: auto;
 }
-.match-reason {
-  font-size: 11px;
-  line-height: 19px;
-  color: var(--nico-color-text-subtle);
-  margin: 0 0 17px;
-}
 .modal-backdrop {
   position: fixed;
   inset: 0;

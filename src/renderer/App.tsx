@@ -1226,9 +1226,6 @@ export function App() {
                             </LinkButton>
                           </div>
                         </div>
-                        {selected.reason && (
-                          <p className="match-reason">{selected.reason}</p>
-                        )}
                         <div className="export-section">
                           <Tabs
                             value={target}
