@@ -1145,11 +1145,33 @@ pre {
   font-size: var(--nico-font-size-sm);
   line-height: var(--nico-line-height-sm);
 }
+.library-options-sort {
+  display: flex;
+  flex-direction: column;
+}
 .library-options-item {
   display: flex;
+  width: 100%;
   align-items: center;
+  justify-content: space-between;
   gap: 8px;
   padding: 6px 12px;
+  border-radius: var(--nico-border-radius-sm);
+  color: var(--nico-color-text);
+  cursor: pointer;
+  outline: none;
+}
+.library-options-item:hover {
+  background: var(--nico-color-interaction-hover);
+}
+.library-options-item:focus-visible {
+  outline: 2px solid var(--nico-color-border-brand);
+  outline-offset: -2px;
+}
+.library-options-check {
+  display: flex;
+  flex-shrink: 0;
+  color: var(--nico-color-icon);
 }
 .library-heading-actions [data-active="true"] {
   background: var(--nico-color-interaction-selected);

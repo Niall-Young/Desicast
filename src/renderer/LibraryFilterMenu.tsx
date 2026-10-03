@@ -1,5 +1,7 @@
-import { Checkbox } from "@/components/ui/checkbox";
-import { Radio, RadioGroup } from "@/components/ui/radio";
+import { Checkbox } from "@base-ui/react/checkbox";
+import { Radio } from "@base-ui/react/radio";
+import { RadioGroup } from "@base-ui/react/radio-group";
+import { CheckRegular } from "@mingcute/react/core-regular";
 import { IconButton } from "@/components/ui/icon-button";
 import {
   Popover,
@@ -87,28 +89,37 @@ export function LibraryFilterMenu({
             <div className="library-options-title">{group.title}</div>
             {group.key === "sorts" ? (
               <RadioGroup
-                layout="vertical"
-                className="gap-0"
+                className="library-options-sort"
                 aria-label="排序"
                 value={value.sort}
                 onValueChange={selectSort}
               >
                 {group.options.map(([option, label]) => (
-                  <label key={option} className="library-options-item">
-                    <Radio value={option} />
+                  <Radio.Root
+                    key={option}
+                    value={option}
+                    className="library-options-item"
+                  >
                     <span>{label}</span>
-                  </label>
+                    <Radio.Indicator className="library-options-check">
+                      <CheckRegular aria-hidden="true" size={20} />
+                    </Radio.Indicator>
+                  </Radio.Root>
                 ))}
               </RadioGroup>
             ) : (
               group.options.map(([option, label]) => (
-                <label key={option} className="library-options-item">
-                  <Checkbox
-                    checked={(value[group.key] as string[]).includes(option)}
-                    onCheckedChange={() => toggle(group.key, option)}
-                  />
+                <Checkbox.Root
+                  key={option}
+                  className="library-options-item"
+                  checked={(value[group.key] as string[]).includes(option)}
+                  onCheckedChange={() => toggle(group.key, option)}
+                >
                   <span>{label}</span>
-                </label>
+                  <Checkbox.Indicator className="library-options-check">
+                    <CheckRegular aria-hidden="true" size={20} />
+                  </Checkbox.Indicator>
+                </Checkbox.Root>
               ))
             )}
           </section>
