@@ -679,6 +679,14 @@ pre {
   gap: 10px;
   margin-top: 14px;
 }
+.settings-note {
+  font-size: 11px;
+  line-height: 21px;
+  color: var(--nico-color-text-subtlest);
+  padding-top: 24px;
+  margin-top: 26px;
+  border-top: 1px solid var(--nico-color-border);
+}
 .repository-row {
   display: flex;
   gap: 16px;
