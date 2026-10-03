@@ -524,7 +524,6 @@ test("Repository dialog uses metadata fixtures and upstream multiselect director
     .fill("https://github.com/lucide-icons/lucide.git");
   await page.getByRole("button", { name: "读取仓库信息" }).click();
   await expect(page.getByText(/已连接 ·/)).toBeVisible({ timeout: 45000 });
-  await page.locator(".add-library-advanced summary").click();
   const branch = page.getByRole("combobox", { name: "仓库分支" });
   await expect(branch).toBeEnabled();
   await expect(branch).toHaveCSS(
@@ -809,10 +808,14 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
     });
     await expect(dialog).toBeVisible();
     await expect(dialog.getByLabel("访问令牌", { exact: true })).toHaveCount(0);
+    const publicBounds = await dialog.boundingBox();
     await dialog.getByRole("radio", { name: "私有仓库", exact: true }).click();
-    await dialog.locator(".add-library-advanced summary").click();
     const bounds = await dialog.boundingBox();
     expect(bounds!.width).toBe(640);
+    expect(bounds!.height).toBe(
+      Math.min(615, await page.evaluate(() => innerHeight - 32)),
+    );
+    expect(bounds!.height).toBe(publicBounds!.height);
     expect(bounds!.height).toBeLessThanOrEqual(
       await page.evaluate(() => innerHeight - 32),
     );

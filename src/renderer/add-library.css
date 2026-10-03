@@ -1,6 +1,21 @@
-/* Figma 2018:11975 · Gendesign controls and Nico tokens. */
+/* Figma 2018:11975 / 2023:19832 · Gendesign controls and Nico tokens. */
 .add-library-dialog {
   width: 640px;
+  height: 615px;
+  box-sizing: border-box;
+}
+.add-library-body {
+  flex: 1;
+}
+.add-library-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.add-library-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 .add-library-grid {
   display: grid;
@@ -23,12 +38,6 @@
   grid-column: 1 / -1;
 }
 .add-library-hint {
-  color: var(--nico-color-text-subtlest);
-}
-.add-library-auth-hint {
-  margin: -12px 0 0;
-  font-size: var(--nico-font-size-xs);
-  line-height: 20px;
   color: var(--nico-color-text-subtlest);
 }
 .add-library-icon {
@@ -82,18 +91,54 @@
   color: var(--nico-color-text-subtle);
 }
 
-.add-library-option {
-  display: inline-flex;
+/* Base UI radio semantics with the Figma Segmented appearance. */
+.add-library-access {
+  display: flex;
   align-items: center;
-  gap: 8px;
-}
-.add-library-advanced {
+  justify-content: space-between;
+  gap: 4px;
+  min-height: 32px;
   color: var(--nico-color-text-subtle);
-  font-size: var(--nico-font-size-sm);
+  line-height: 22px;
 }
-.add-library-advanced summary {
+.repository-access-segmented {
+  display: flex;
+  flex-shrink: 0;
+  height: 32px;
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-background-neutral-subtle);
+}
+.repository-access-segmented > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 11px;
+  border: var(--nico-border-weight-base) solid transparent;
+  border-radius: var(--nico-border-radius-sm);
+  background: transparent;
+  color: var(--nico-color-text-subtle);
+  font: inherit;
+  line-height: 22px;
+  white-space: nowrap;
   cursor: pointer;
 }
-.add-library-advanced[open] > .add-library-field {
-  margin-top: 12px;
+.repository-access-segmented > button:not(:disabled):hover {
+  background: var(--nico-color-interaction-hover);
+}
+.repository-access-segmented > button[data-checked] {
+  border-color: var(--nico-color-border);
+  background: var(--nico-color-surface);
+  color: var(--nico-color-text);
+  box-shadow: var(--nico-effect-shadow-small);
+}
+.repository-access-segmented > button:focus-visible {
+  outline: 2px solid var(--nico-color-border-brand);
+  outline-offset: -2px;
+}
+.repository-access-segmented > button:disabled {
+  color: var(--nico-color-text-disabled);
+  cursor: not-allowed;
+}
+.add-library-branch {
+  grid-column: 1;
 }
