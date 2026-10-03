@@ -80,15 +80,3 @@
   background: var(--nico-color-background-accent-green);
   color: var(--nico-color-text-accent-green);
 }
-.mcp-check-status,
-.mcp-error {
-  margin: 12px 0 0;
-  font-size: 14px;
-  line-height: 22px;
-}
-.mcp-check-status {
-  color: var(--nico-color-text-positive);
-}
-.mcp-error {
-  color: var(--nico-color-text-negative);
-}

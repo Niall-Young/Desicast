@@ -38,10 +38,10 @@ import {
   GridRegular,
   LeftRegular,
   RightRegular,
-  CheckRegular,
 } from "@mingcute/react/core-regular";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
+import { useMessage } from "@/components/ui/message";
 import { SearchBox } from "@/components/ui/search-box";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
@@ -125,6 +125,7 @@ function Field({
 }
 
 export function App() {
+  const message = useMessage();
   const [page, setPage] = useState<Page>("home"),
     [sources, setSources] = useState<Source[]>([]),
     [collections, setCollections] = useState<Collection[]>([]),
@@ -214,8 +215,6 @@ export function App() {
     [result, setResult] = useState<SearchResult>({ icons: [], total: 0 }),
     [selected, setSelected] = useState<Icon>(),
     [busy, setBusy] = useState(false),
-    [notice, setNotice] = useState(""),
-    [error, setError] = useState(""),
     [revision, setRevision] = useState(0);
   const [target, setTarget] = useState<Target>("svg"),
     [exported, setExported] = useState<ExportResult>(),
@@ -256,12 +255,15 @@ export function App() {
       catalogSnapshot.current = next;
       setCollections(value);
     });
-  const flash = (message: string) => {
-    setNotice(message);
-    setTimeout(() => setNotice(""), 3500);
+  const flash = (text: string) => {
+    message.add({ title: text, color: "positive" });
   };
   const report = (err: unknown) =>
-    setError(err instanceof Error ? err.message : "操作失败");
+    message.add({
+      title: err instanceof Error ? err.message : "操作失败",
+      color: "negative",
+      timeout: 8000,
+    });
   useEffect(() => {
     api<LibraryPreferences>("libraryPreferences")
       .then(setLibraryPreferences)
@@ -311,7 +313,6 @@ export function App() {
       }
       if (event.key === "Escape") {
         setCropOpen(false);
-        setError("");
       }
     };
     window.addEventListener("keydown", handler);
@@ -322,7 +323,6 @@ export function App() {
     const current = ++generation.current;
     const timer = setTimeout(() => {
       setBusy(true);
-      setError("");
       setVisionResult(false);
       api<SearchResult>("search", {
         query,
@@ -402,7 +402,6 @@ export function App() {
   async function sync(source: Source) {
     if (syncing.current.has(source.id)) return;
     syncing.current.add(source.id);
-    setError("");
     flash(`正在同步 ${source.name}`);
     try {
       await api("sync", source.id);
@@ -420,7 +419,10 @@ export function App() {
       !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
       file.size > 8 * 1024 * 1024
     ) {
-      setError("请选择小于 8 MB 的 PNG、JPEG 或 WebP");
+      message.add({
+        title: "请选择小于 8 MB 的 PNG、JPEG 或 WebP",
+        color: "negative",
+      });
       return;
     }
     const reader = new FileReader();
@@ -441,7 +443,6 @@ export function App() {
     }
     const current = ++generation.current;
     setBusy(true);
-    setError("");
     try {
       const value = await api<SearchResult>("vision", {
         dataUrl,
@@ -812,25 +813,6 @@ export function App() {
           {page !== "home" && page !== "library" && (
             <div className="page-heading">
               <div className="heading-title">{titles[page]}</div>
-            </div>
-          )}
-          {error && (
-            <div className="banner error" role="alert">
-              <span>{error}</span>
-              <IconButton
-                kind="plain"
-                size="sm"
-                aria-label="关闭错误提示"
-                onClick={() => setError("")}
-              >
-                <CloseRegular size={16} />
-              </IconButton>
-            </div>
-          )}
-          {notice && (
-            <div className="notice" role="status">
-              <CheckRegular size={15} />
-              {notice}
             </div>
           )}
           {page === "home" ? (

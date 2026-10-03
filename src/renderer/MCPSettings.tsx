@@ -54,9 +54,8 @@ export function MCPSettings({
   onNotice: (message: string) => void;
 }) {
   const [info, setInfo] = useState<MCPInfo>();
-  const [error, setError] = useState("");
+  const [loadError, setLoadError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState("");
   useEffect(() => {
     let active = true;
     api<MCPInfo>("mcpInfo")
@@ -64,8 +63,9 @@ export function MCPSettings({
         if (active) setInfo(value);
       })
       .catch((error) => {
-        if (active)
-          setError(error instanceof Error ? error.message : "读取配置失败");
+        if (!active) return;
+        setLoadError(error instanceof Error ? error.message : "读取配置失败");
+        onError(error);
       });
     return () => {
       active = false;
@@ -73,17 +73,15 @@ export function MCPSettings({
   }, []);
   async function check() {
     setBusy(true);
-    setError("");
     try {
       const value = await api<{ tools: number; sourceCount: number }>(
         "mcpCheck",
       );
-      setStatus(
+      onNotice(
         `连接正常 · ${value.tools} 个工具 · ${value.sourceCount} 个来源`,
       );
-      onNotice("独立 MCP 进程自检通过");
     } catch (error) {
-      setError(error instanceof Error ? error.message : "连接检查失败");
+      onError(error);
     } finally {
       setBusy(false);
     }
@@ -152,22 +150,12 @@ export function MCPSettings({
                   </div>
                   <pre>
                     {info?.[client.field] ??
-                      (error ? "配置暂不可用" : "正在读取…")}
+                      (loadError ? "配置暂不可用" : "正在读取…")}
                   </pre>
                 </div>
               </TabsContent>
             ))}
           </Tabs>
-          {status && (
-            <p role="status" className="mcp-check-status">
-              {status}
-            </p>
-          )}
-          {error && (
-            <p role="alert" className="mcp-error">
-              {error}
-            </p>
-          )}
         </ModalBody>
         <ModalFooter
           additionItem={
