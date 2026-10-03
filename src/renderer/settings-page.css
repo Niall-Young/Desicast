@@ -110,10 +110,6 @@
 .settings-sections .field .hint {
   display: none;
 }
-.settings-sections .settings-note {
-  font-size: 12px;
-  margin-top: 12px;
-}
 .settings-sections .mcp-panel .mcp-client-description {
   display: none;
 }
