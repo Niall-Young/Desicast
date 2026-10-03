@@ -102,7 +102,7 @@ export function LibraryFilterMenu({
                   >
                     <span>{label}</span>
                     <Radio.Indicator className="library-options-check">
-                      <CheckRegular aria-hidden="true" size={20} />
+                      <CheckRegular aria-hidden="true" size={16} />
                     </Radio.Indicator>
                   </Radio.Root>
                 ))}
@@ -117,7 +117,7 @@ export function LibraryFilterMenu({
                 >
                   <span>{label}</span>
                   <Checkbox.Indicator className="library-options-check">
-                    <CheckRegular aria-hidden="true" size={20} />
+                    <CheckRegular aria-hidden="true" size={16} />
                   </Checkbox.Indicator>
                 </Checkbox.Root>
               ))

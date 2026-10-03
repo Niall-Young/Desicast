@@ -1164,7 +1164,7 @@ pre {
 .library-options-check {
   display: flex;
   flex-shrink: 0;
-  color: var(--nico-color-icon);
+  color: var(--nico-color-icon-subtle);
 }
 .library-heading-actions [data-active="true"] {
   background: var(--nico-color-interaction-selected);
