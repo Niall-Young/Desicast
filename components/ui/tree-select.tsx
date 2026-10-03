@@ -152,14 +152,22 @@ function TreeSelect({
             data-slot="tree-select-value"
             className={cn(
               "min-w-0 flex-1 truncate",
-              clearable && current.length > 0 && !blocked && "pr-6",
               !current.length && "text-(--nico-color-text-disabled)",
             )}
             title={text || undefined}
           >
             {text || placeholder}
           </span>
-          <span data-slot="tree-select-icon" className={selectIconClass}>
+          <span
+            data-slot="tree-select-icon"
+            className={cn(
+              selectIconClass,
+              clearable &&
+                current.length > 0 &&
+                !blocked &&
+                "group-hover/tree-select:invisible group-focus-within/tree-select:invisible",
+            )}
+          >
             <DownRegular size={16} aria-hidden="true" />
           </span>
         </PopoverPrimitive.Trigger>
@@ -209,7 +217,7 @@ function TreeSelect({
           kind="plain"
           size="sm"
           aria-label={clearLabel}
-          className="invisible absolute right-9 top-1/2 size-4 -translate-y-1/2 rounded-full border-0 p-0 text-(--nico-color-icon-subtlest) group-hover/tree-select:visible group-focus-within/tree-select:visible"
+          className="invisible absolute right-3 top-1/2 size-4 -translate-y-1/2 rounded-full border-0 p-0 text-(--nico-color-icon-subtlest) group-hover/tree-select:visible group-focus-within/tree-select:visible"
           onMouseDown={(event) => event.preventDefault()}
           onClick={() => {
             change([]);
