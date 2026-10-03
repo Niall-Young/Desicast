@@ -141,6 +141,7 @@ export function App() {
   const [configurationName, setConfigurationName] = useState("");
   const [savingLibrary, setSavingLibrary] = useState(false);
   const [addLibraryOpen, setAddLibraryOpen] = useState(false);
+  const openAddLibrary = () => setAddLibraryOpen(true);
   const [editRepository, setEditRepository] = useState<string>();
   const [repositoryEditRevision, setRepositoryEditRevision] = useState(0);
   async function saveLibrary(id: string, patch: LibraryPreference) {
@@ -729,11 +730,9 @@ export function App() {
                 <Button
                   className="nav-item"
                   kind="plain"
-                  onClick={() => {
-                    setAddLibraryOpen(true);
-                  }}
+                  onClick={openAddLibrary}
                 >
-                  <DesignIcon name="add" />
+                  <AddRegular size={16} />
                   <span>添加图标库</span>
                 </Button>
                 <Button
@@ -768,14 +767,10 @@ export function App() {
                   <IconButton
                     kind="plain"
                     size="sm"
-                    aria-label="添加团队仓库"
-                    onClick={() => {
-                      setEditRepository(undefined);
-                      setRepositoryEditRevision((value) => value + 1);
-                      navigate("repositories");
-                    }}
+                    aria-label="添加图标库"
+                    onClick={openAddLibrary}
                   >
-                    <DesignIcon name="library-add" />
+                    <AddRegular size={16} />
                   </IconButton>
                 </div>
               </div>
