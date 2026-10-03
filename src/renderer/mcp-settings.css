@@ -44,8 +44,7 @@
 }
 .mcp-code pre {
   padding: 12px;
-  min-height: 90px;
-  max-height: 244px;
+  height: 244px;
   overflow: auto;
   font-family: var(--nico-font-family-sans);
   font-size: 14px;
