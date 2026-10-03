@@ -143,10 +143,10 @@ test("library context actions, confirmations, re-add and persistence work in Ele
       "Custom Tabler",
     );
     await page.getByRole("button", { name: "设置", exact: true }).click();
-    const settings = page.getByRole("dialog", { name: "设置", exact: true });
+    const settings = page.locator(".settings-page");
     await settings.getByRole("button", { name: "外观", exact: true }).click();
     await page.getByLabel("外观主题").selectOption("dark");
-    await settings.getByRole("button", { name: "确定", exact: true }).click();
+    await settings.getByRole("button", { name: "返回", exact: true }).click();
     await expect(settings).toHaveCount(0);
     await page.getByTestId("library-repo-menu").click({ button: "right" });
     await page.screenshot({

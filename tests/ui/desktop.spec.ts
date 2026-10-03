@@ -15,15 +15,17 @@ import type { Icon, Source } from "../../src/core/types";
 
 let app: ElectronApplication, directory: string;
 async function openSettings(page: Page, name: string) {
-  const dialog = page.getByRole("dialog", { name: "设置", exact: true });
-  await expect(page.locator(".settings-dialog[data-ending-style]")).toHaveCount(
+  const dialog = page.locator(".settings-page");
+  await expect(page.locator(".settings-page[data-ending-style]")).toHaveCount(
     0,
   );
   if (await dialog.count())
-    await dialog.getByRole("button", { name: "关闭设置" }).click();
+    await dialog.getByRole("button", { name: "返回" }).click();
   await page.getByRole("button", { name: "设置", exact: true }).click();
   if (name === "首页") {
-    await dialog.getByRole("button", { name: "首页", exact: true }).click();
+    await dialog.getByRole("button", { name: "返回", exact: true }).click();
+    if (!(await page.locator(".home-content").count()))
+      await page.getByRole("button", { name: "返回", exact: true }).click();
     return;
   }
   const labels: Record<string, string> = {
@@ -245,12 +247,10 @@ test("Themes, settings forms and 960px layout remain usable", async () => {
   await openSettings(page, "外观设置");
   await page.getByLabel("外观主题").selectOption("dark");
   await page
-    .getByRole("dialog", { name: "设置", exact: true })
-    .getByRole("button", { name: "确定", exact: true })
+    .locator(".settings-page")
+    .getByRole("button", { name: "返回", exact: true })
     .click();
-  await expect(
-    page.getByRole("dialog", { name: "设置", exact: true }),
-  ).toHaveCount(0);
+  await expect(page.locator(".settings-page")).toHaveCount(0);
   await expect(page.locator("html")).toHaveClass("dark");
   await page
     .locator(".sidebar")
@@ -272,7 +272,10 @@ test("Themes, settings forms and 960px layout remain usable", async () => {
   await page.getByLabel("模型名称", { exact: true }).fill("vision-model");
   await page.getByLabel("允许发送图片到模型").click();
   await page.getByRole("button", { name: "保存设置" }).click();
-  await page.getByRole("button", { name: "关闭设置", exact: true }).click();
+  await page
+    .locator(".settings-page")
+    .getByRole("button", { name: "返回", exact: true })
+    .click();
   await expect(page.getByText("模型设置已保存")).toBeVisible();
   await page.screenshot({ path: ".work/screenshots/model-dark.png" });
   await page.getByRole("button", { name: "MCP 连接", exact: true }).click();
@@ -343,7 +346,10 @@ test("Image search uses the configured local vision endpoint and Gendesign crop 
     await page.getByLabel("模型名称", { exact: true }).fill("fixture-vision");
     await page.getByLabel("允许发送图片到模型").click();
     await page.getByRole("button", { name: "保存设置" }).click();
-    await page.getByRole("button", { name: "关闭设置", exact: true }).click();
+    await page
+      .locator(".settings-page")
+      .getByRole("button", { name: "返回", exact: true })
+      .click();
     await page
       .locator(".sidebar")
       .getByRole("button", { name: "Design team", exact: false })
@@ -404,12 +410,10 @@ test("Default libraries show bundled design SVG assets, totals, theme variants a
     await openSettings(page, "外观设置");
     await page.getByLabel("外观主题").selectOption(theme);
     await page
-      .getByRole("dialog", { name: "设置", exact: true })
-      .getByRole("button", { name: "确定", exact: true })
+      .locator(".settings-page")
+      .getByRole("button", { name: "返回", exact: true })
       .click();
-    await expect(
-      page.getByRole("dialog", { name: "设置", exact: true }),
-    ).toHaveCount(0);
+    await expect(page.locator(".settings-page")).toHaveCount(0);
     await remix.click();
     await expect(page.getByTestId("icon-card")).toHaveAttribute(
       "title",
@@ -563,12 +567,10 @@ test("Figma home opens existing libraries and preserves global search, settings 
     await openSettings(page, "外观设置");
     await page.getByLabel("外观主题").selectOption(theme);
     await page
-      .getByRole("dialog", { name: "设置", exact: true })
-      .getByRole("button", { name: "确定", exact: true })
+      .locator(".settings-page")
+      .getByRole("button", { name: "返回", exact: true })
       .click();
-    await expect(
-      page.getByRole("dialog", { name: "设置", exact: true }),
-    ).toHaveCount(0);
+    await expect(page.locator(".settings-page")).toHaveCount(0);
     await openSettings(page, "首页");
     await expect(page.locator(".home-library-card")).toHaveCount(7);
     await expect
@@ -696,12 +698,10 @@ test("Icon workspace reflows between grid, list and export details while retaini
   await openSettings(page, "外观设置");
   await page.getByLabel("外观主题").selectOption("dark");
   await page
-    .getByRole("dialog", { name: "设置", exact: true })
-    .getByRole("button", { name: "确定", exact: true })
+    .locator(".settings-page")
+    .getByRole("button", { name: "返回", exact: true })
     .click();
-  await expect(
-    page.getByRole("dialog", { name: "设置", exact: true }),
-  ).toHaveCount(0);
+  await expect(page.locator(".settings-page")).toHaveCount(0);
   await page
     .locator(".sidebar")
     .getByRole("button", { name: "Design team", exact: false })
@@ -713,14 +713,17 @@ test("Icon workspace reflows between grid, list and export details while retaini
   });
   await window.evaluate((window) => window.setSize(960, 640));
   await page.setViewportSize({ width: 960, height: 640 });
-  const fits = await page
-    .locator(".detail")
-    .evaluate(
-      (panel) =>
-        panel.getBoundingClientRect().right <= innerWidth &&
-        panel.scrollWidth <= panel.clientWidth,
-    );
-  expect(fits).toBe(true);
+  await expect
+    .poll(() =>
+      page
+        .locator(".detail")
+        .evaluate(
+          (panel) =>
+            panel.getBoundingClientRect().right <= innerWidth &&
+            panel.scrollWidth <= panel.clientWidth,
+        ),
+    )
+    .toBe(true);
   await page
     .getByRole("button", { name: "复制代码", exact: true })
     .scrollIntoViewIfNeeded();
@@ -744,12 +747,10 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
     await openSettings(page, "外观设置");
     await page.getByLabel("外观主题").selectOption(theme);
     await page
-      .getByRole("dialog", { name: "设置", exact: true })
-      .getByRole("button", { name: "确定", exact: true })
+      .locator(".settings-page")
+      .getByRole("button", { name: "返回", exact: true })
       .click();
-    await expect(
-      page.getByRole("dialog", { name: "设置", exact: true }),
-    ).toHaveCount(0);
+    await expect(page.locator(".settings-page")).toHaveCount(0);
     await page
       .locator(".sidebar")
       .getByRole("button", { name: "Design team", exact: false })
@@ -839,8 +840,11 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
     "test-only-token",
   );
   store.close();
-  if (await page.getByRole("dialog", { name: "设置", exact: true }).count())
-    await page.getByRole("button", { name: "关闭设置", exact: true }).click();
+  if (await page.locator(".settings-page").count())
+    await page
+      .locator(".settings-page")
+      .getByRole("button", { name: "返回", exact: true })
+      .click();
   await page.getByTestId("library-tabler").click({ button: "right" });
   await page.getByRole("menuitem", { name: "移除图标库", exact: true }).click();
   await page
@@ -858,10 +862,10 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
   await expect(page.getByTestId("library-tabler")).toBeVisible();
 });
 
-test("Figma settings navigation, theme cancellation and connector copy stay usable", async () => {
+test("Settings page navigation, persistent theme and connector copy stay usable", async () => {
   const page = await app.firstWindow();
   await page.getByRole("button", { name: "设置", exact: true }).click();
-  const dialog = page.getByRole("dialog", { name: "设置", exact: true });
+  const dialog = page.locator(".settings-page");
   await expect(dialog).toBeVisible();
   await expect(dialog.locator(".settings-menu-item")).toHaveCount(5);
   const assets = await dialog.locator(".settings-icon").evaluateAll((images) =>
@@ -882,24 +886,22 @@ test("Figma settings navigation, theme cancellation and connector copy stay usab
     path: ".work/screenshots/settings-light.png",
     animations: "disabled",
   });
-  const originalTheme = await page.locator("html").getAttribute("class");
-  await dialog.getByRole("button", { name: "外观", exact: true }).click();
-  await dialog.getByLabel("外观主题").selectOption("dark");
-  await dialog.getByRole("button", { name: "取消", exact: true }).click();
-  await expect
-    .poll(() => page.locator("html").getAttribute("class"))
-    .toBe(originalTheme);
-  await expect(dialog).toHaveCount(0);
-  await openSettings(page, "外观设置");
-  await page.getByLabel("外观主题").selectOption("dark");
-  await page
-    .getByRole("dialog", { name: "设置", exact: true })
-    .getByRole("button", { name: "确定", exact: true })
-    .click();
   await expect(
     page.getByRole("dialog", { name: "设置", exact: true }),
   ).toHaveCount(0);
+  await expect(
+    page.getByRole("navigation", { name: "设置分类" }),
+  ).toBeVisible();
+  await dialog.getByRole("button", { name: "外观", exact: true }).click();
+  await dialog.getByLabel("外观主题").selectOption("dark");
   await expect(page.locator("html")).toHaveClass("dark");
+  await dialog.getByRole("button", { name: "返回", exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(
+    page.getByRole("heading", { name: "Hello，今天想用什么图标库？" }),
+  ).toBeVisible();
+  await openSettings(page, "外观设置");
+  await expect(page.getByLabel("外观主题")).toHaveValue("dark");
   const window = await app.browserWindow(page);
   await window.evaluate((window) => window.setSize(960, 640));
   await openSettings(page, "连接器");
@@ -914,8 +916,20 @@ test("Figma settings navigation, theme cancellation and connector copy stay usab
     animations: "disabled",
   });
   await expect(
-    dialog.getByRole("button", { name: "取消", exact: true }),
+    dialog.getByRole("button", { name: "返回", exact: true }),
   ).toBeVisible();
-  await page.keyboard.press("Escape");
+  await dialog.getByRole("button", { name: "返回", exact: true }).click();
   await expect(dialog).toHaveCount(0);
+  await page
+    .locator(".sidebar")
+    .getByRole("button", { name: "Design team", exact: false })
+    .click();
+  await page.getByLabel("搜索图标", { exact: true }).fill("search");
+  await expect(page.getByTestId("icon-card")).toHaveCount(1);
+  await page.getByRole("button", { name: "设置", exact: true }).click();
+  await dialog.getByRole("button", { name: "返回", exact: true }).click();
+  await expect(page.getByLabel("搜索图标", { exact: true })).toHaveValue(
+    "search",
+  );
+  await expect(page.getByTestId("icon-card")).toHaveCount(1);
 });

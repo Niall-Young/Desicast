@@ -8,7 +8,6 @@ import {
   ModalHeader,
   ModalTitle,
   ModalBody,
-  ModalDescription,
   ModalFooter,
 } from "@/components/ui/modal";
 import { api, type MCPInfo } from "./api";
@@ -167,13 +166,13 @@ export function MCPClientPanel({
       </TabsList>
       {clients.map((client) => (
         <TabsContent key={client.id} value={client.id} className="mcp-panel">
-          <ModalDescription>
+          <p className="mcp-client-description">
             {client.id === "other"
               ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接。"
               : client.id === "claude"
                 ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP。"
                 : "请复制下方内容在终端中执行，连接 Codex 的 MCP。"}
-          </ModalDescription>
+          </p>
           <div className="mcp-code">
             <div className="mcp-code-header">
               <span>{client.id === "other" ? "JSON" : "Bash"}</span>

@@ -21,7 +21,8 @@
 .mcp-panel[inert] {
   display: none;
 }
-.mcp-panel [data-slot="modal-description"] {
+.mcp-panel .mcp-client-description {
+  color: var(--nico-color-text-subtle);
   margin: 0;
   line-height: 22px;
 }

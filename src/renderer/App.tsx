@@ -1,5 +1,5 @@
 import { AddLibraryDialog } from "./AddLibraryDialog";
-import { SettingsDialog } from "./SettingsDialog";
+import { SettingsPage } from "./SettingsPage";
 import { MCPSettings } from "./MCPSettings";
 import { LibraryFilterMenu } from "./LibraryFilterMenu";
 import {
@@ -316,6 +316,7 @@ export function App() {
     const handler = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
+        setSettingsOpen(false);
         setPage("library");
         requestAnimationFrame(() => searchInput.current?.focus());
       }
@@ -576,7 +577,7 @@ export function App() {
   };
   return (
     <div
-      className={`app ${sidebarOpen ? "" : "sidebar-collapsed"} ${page === "home" ? "home-view" : page === "library" ? "library-view" : ""}`}
+      className={`app ${sidebarOpen || settingsOpen ? "" : "sidebar-collapsed"} ${settingsOpen ? "settings-view" : page === "home" ? "home-view" : page === "library" ? "library-view" : ""}`}
       onDragOver={(event) => event.preventDefault()}
       onDrop={(event) => {
         event.preventDefault();
@@ -600,9 +601,11 @@ export function App() {
               kind="plain"
               size="sm"
               aria-label="返回"
-              disabled={!previousPage}
+              disabled={!settingsOpen && !previousPage}
               onClick={() => {
-                if (previousPage) {
+                if (settingsOpen) {
+                  setSettingsOpen(false);
+                } else if (previousPage) {
                   setNextPage(page);
                   setPage(previousPage);
                   setPreviousPage(undefined);
@@ -615,7 +618,7 @@ export function App() {
               kind="plain"
               size="sm"
               aria-label="前进"
-              disabled={!nextPage}
+              disabled={settingsOpen || !nextPage}
               onClick={() => {
                 if (nextPage) {
                   setPreviousPage(page);
@@ -629,6 +632,7 @@ export function App() {
             <IconButton
               kind="plain"
               size="sm"
+              disabled={settingsOpen}
               aria-label="切换侧栏"
               aria-expanded={sidebarOpen}
               onClick={() => setSidebarOpen((value) => !value)}
@@ -637,7 +641,7 @@ export function App() {
             </IconButton>
           </div>
         </div>
-        {page === "library" ? (
+        {page === "library" && !settingsOpen ? (
           <div className="library-window-heading">
             <span className="window-library-title">
               {collection === "lucide" ? (
@@ -673,683 +677,15 @@ export function App() {
         ) : (
           <div className="window-title">
             <img src={brandLogo} width="28" height="28" alt="DesiCast Logo" />
-            <span>DesiCast</span>
+            <span>{settingsOpen ? "设置" : "DesiCast"}</span>
           </div>
         )}
       </header>
-      <div className="shell">
-        <aside
-          className="sidebar"
-          aria-label="图库导航"
-          aria-hidden={!sidebarOpen}
-          inert={!sidebarOpen}
-        >
-          <div className="sidebar-inner">
-            <div className="sidebar-menu">
-              <Button
-                className="nav-item"
-                kind="plain"
-                onClick={() => {
-                  setAddLibraryOpen(true);
-                }}
-              >
-                <DesignIcon name="add" />
-                <span>添加图标库</span>
-              </Button>
-              <Button
-                className="nav-item"
-                selected={page === "library" && !sourceId}
-                kind="plain"
-                onClick={() => {
-                  chooseSource("");
-                  requestAnimationFrame(() => searchInput.current?.focus());
-                }}
-              >
-                <DesignIcon name="search" />
-                <span>全局搜索</span>
-              </Button>
-            </div>
-            <div className="library-heading">
-              <span>图标库</span>
-              <div className="library-heading-actions">
-                <IconButton
-                  kind="plain"
-                  size="sm"
-                  aria-label="筛选图标库"
-                  aria-expanded={filterOpen}
-                  onClick={() => setFilterOpen((value) => !value)}
-                >
-                  <DesignIcon name="library-search" />
-                </IconButton>
-                <LibraryFilterMenu
-                  value={libraryOptions}
-                  onChange={setLibraryOptions}
-                />
-                <IconButton
-                  kind="plain"
-                  size="sm"
-                  aria-label="添加团队仓库"
-                  onClick={() => {
-                    setEditRepository(undefined);
-                    setRepositoryEditRevision((value) => value + 1);
-                    navigate("repositories");
-                  }}
-                >
-                  <DesignIcon name="library-add" />
-                </IconButton>
-              </div>
-            </div>
-            {filterOpen && (
-              <div className="sidebar-filter">
-                <SearchBox
-                  aria-label="筛选图标库"
-                  placeholder="搜索图标库"
-                  value={libraryFilter}
-                  onValueChange={setLibraryFilter}
-                />
-              </div>
-            )}
-            <div className="library-navigation">
-              {visibleLibraries.map((entry) => {
-                const library = entry.library;
-                const source = entry.source;
-                const metadata = library
-                  ? collections.find((item) => item.id === library.id)
-                  : undefined;
-                const id = library?.id ?? source!.id;
-                const name = library
-                  ? (libraryPreferences[id]?.name ?? designNames[library.id])
-                  : source!.name;
-                const changes = metadata?.changes ?? source?.changes;
-                return libraryMenu(
-                  id,
-                  name,
-                  Boolean(library),
-                  <Button
-                    key={id}
-                    data-testid={`library-${id}`}
-                    className="nav-item"
-                    kind="plain"
-                    selected={
-                      page === "library" &&
-                      (library
-                        ? sourceId === "public" && collection === id
-                        : sourceId === id)
-                    }
-                    title={`${library?.name ?? name} · ${library ? (metadata ? metadata.total.toLocaleString() + " 个图标" : "数量暂不可用") : source!.iconCount.toLocaleString() + " 个图标"}${changes ? " · " + changeDescription(changes) : ""}`}
-                    onClick={() => {
-                      chooseSource(library ? "public" : id);
-                      if (library) setCollection(id);
-                    }}
-                  >
-                    {library ? (
-                      <LibraryMark library={library} />
-                    ) : (
-                      <DesignIcon name="book-row" />
-                    )}
-                    <span>{name}</span>
-                    <ChangeBadge changes={changes} />
-                    <span className="nav-count">
-                      {library
-                        ? metadata
-                          ? metadata.total.toLocaleString()
-                          : "—"
-                        : source!.iconCount.toLocaleString()}
-                    </span>
-                  </Button>,
-                );
-              })}
-              {visibleLibraries.length === 0 && (
-                <p className="library-filter-empty">没有符合条件的图标库</p>
-              )}
-            </div>
-            <div className="sidebar-foot">
-              <IconButton
-                kind="plain"
-                aria-label="设置"
-                onClick={() => setSettingsOpen(true)}
-              >
-                <DesignIcon name="settings" />
-              </IconButton>
-              <Button
-                kind="plain"
-                className="mcp-badge"
-                aria-label="MCP 连接"
-                onClick={() => setMcpOpen(true)}
-              >
-                <DesignIcon name="check" />
-                <span>MCP</span>
-              </Button>
-            </div>
-          </div>
-        </aside>
-        <main className="workspace">
-          {page === "library" && activeChanges && (
-            <div className="library-change-notice" role="status">
-              <span>
-                {heading}：{changeDescription(activeChanges)}
-                {collection ? "（目录变更）" : ""}
-              </span>
-              <Button kind="plain" size="sm" onClick={acknowledgeChanges}>
-                标记已读
-              </Button>
-            </div>
-          )}
-          {page !== "home" && page !== "library" && (
-            <div className="page-heading">
-              <div className="heading-title">{titles[page]}</div>
-            </div>
-          )}
-          {page === "home" ? (
-            <section className="home-content" aria-label="选择图标库">
-              <div className="home-center">
-                <h1>Hello，今天想用什么图标库？</h1>
-                <div className="home-library-grid">
-                  {homeEntries.map(({ id, library, source }) => {
-                    const name = library
-                      ? (libraryPreferences[id]?.name ?? library.designName)
-                      : source!.name;
-                    return libraryMenu(
-                      id,
-                      name,
-                      Boolean(library),
-                      <Button
-                        key={id}
-                        kind="plain"
-                        className="home-library-card"
-                        data-testid={`home-library-${id}`}
-                        title={name}
-                        onClick={() => {
-                          chooseSource(library ? "public" : id);
-                          if (library) setCollection(id);
-                        }}
-                      >
-                        {library ? (
-                          <LibraryMark library={library} card />
-                        ) : (
-                          <span className="home-team-mark">
-                            <DesignIcon name="book-card" />
-                          </span>
-                        )}
-                        <span>{name}</span>
-                      </Button>,
-                    );
-                  })}
-                </div>
-              </div>
-            </section>
-          ) : page === "library" ? (
-            <div className="library-layout">
-              <section className="library-main">
-                <div className="search-toolbar">
-                  <SearchBox
-                    ref={searchInput}
-                    wrapperClassName="main-search"
-                    size="md"
-                    aria-label="搜索图标"
-                    placeholder="搜索图标名称"
-                    value={query}
-                    onValueChange={(value) => {
-                      setQuery(value);
-                      setOffset(0);
-                    }}
-                  />
-                  <div className="grid-toolbar-actions">
-                    <Popover>
-                      <PopoverTrigger
-                        render={
-                          <IconButton
-                            kind="plain"
-                            size="sm"
-                            aria-label="搜索选项"
-                          />
-                        }
-                      >
-                        <DesignIcon name="library-options" />
-                      </PopoverTrigger>
-                      <PopoverContent className="navigation-popup" align="end">
-                        <Button
-                          kind="plain"
-                          leftIcon={<PicRegular size={16} />}
-                          onClick={() => fileInput.current?.click()}
-                        >
-                          以图搜图
-                        </Button>
-                        <Button
-                          kind="plain"
-                          leftIcon={<Refresh1Regular size={16} />}
-                          onClick={refreshLibrary}
-                        >
-                          刷新图库
-                        </Button>
-                      </PopoverContent>
-                    </Popover>
-                    <Tabs
-                      value={view}
-                      onValueChange={(value) =>
-                        setView(value as "grid" | "list")
-                      }
-                    >
-                      <TabsList className="view-tabs" aria-label="图标显示方式">
-                        <TabsTrigger value="grid" aria-label="网格视图">
-                          <DesignIcon name="grid" />
-                        </TabsTrigger>
-                        <TabsTrigger value="list" aria-label="列表视图">
-                          <DesignIcon name="list" />
-                        </TabsTrigger>
-                      </TabsList>
-                    </Tabs>
-                  </div>
-                  <input
-                    ref={fileInput}
-                    type="file"
-                    accept="image/png,image/jpeg,image/webp"
-                    hidden
-                    onChange={(event) => {
-                      if (event.target.files?.[0])
-                        loadFile(event.target.files[0]);
-                      event.target.value = "";
-                    }}
-                  />
-                </div>
-                <div
-                  className="filter-toolbar"
-                  hidden={Boolean(sourceId) && !visionResult}
-                >
-                  <div className="filter-left">
-                    <NativeSelect
-                      size="sm"
-                      aria-label="图标集"
-                      value={collection}
-                      onChange={(event) => {
-                        setCollection(event.target.value);
-                        setOffset(0);
-                      }}
-                      disabled={Boolean(activeSource?.kind === "repository")}
-                    >
-                      <option value="">全部图标集</option>
-                      {collections.map((item) => (
-                        <option key={item.id} value={item.id}>
-                          {item.name}
-                        </option>
-                      ))}
-                    </NativeSelect>
-                    {visionResult ? (
-                      <span className="filter-hint">按形状与风格匹配</span>
-                    ) : (
-                      <span className="filter-hint">
-                        {query ? "搜索结果" : "探索常用图标"}
-                      </span>
-                    )}
-                  </div>
-                  <span className="result-count">
-                    {busy ? (
-                      <>
-                        <Spinner />
-                        搜索中
-                      </>
-                    ) : (
-                      `${result.total.toLocaleString()} 个图标`
-                    )}
-                  </span>
-                </div>
-                {reference && (
-                  <div className="reference-strip">
-                    <img src={reference} alt="图片搜索参考" />
-                    <span>参考图片</span>
-                    <Button
-                      size="sm"
-                      kind="plain"
-                      onClick={() => setCropOpen(true)}
-                    >
-                      裁剪
-                    </Button>
-                    <Button
-                      size="sm"
-                      kind="plain"
-                      disabled={busy}
-                      onClick={() => searchImage(reference)}
-                    >
-                      重新搜索
-                    </Button>
-                    <IconButton
-                      size="sm"
-                      kind="plain"
-                      aria-label="移除参考图"
-                      onClick={() => {
-                        setReference(undefined);
-                        setRevision((value) => value + 1);
-                      }}
-                    >
-                      <CloseRegular size={16} />
-                    </IconButton>
-                  </div>
-                )}
-                {result.warning && (
-                  <div className="inline-warning" role="status">
-                    {result.warning}
-                  </div>
-                )}
-                <div
-                  className={`grid-scroll ${busy ? "is-loading" : ""}`}
-                  aria-busy={busy}
-                >
-                  {result.icons.length ? (
-                    <div
-                      className={`icon-grid ${view === "list" ? "icon-list" : ""}`}
-                    >
-                      {result.icons.map((icon) => (
-                        <button
-                          key={icon.id}
-                          data-testid="icon-card"
-                          className={`icon-card ${selected?.id === icon.id ? "selected" : ""}`}
-                          aria-pressed={selected?.id === icon.id && detailOpen}
-                          onClick={() => {
-                            setSelected(icon);
-                            setDetailOpen(true);
-                          }}
-                          title={`${icon.name} · ${icon.collection}`}
-                        >
-                          <div className="card-art">
-                            <img
-                              className={
-                                isMonochrome(icon.svg) ? "monochrome" : ""
-                              }
-                              src={svgUrl(icon.svg)}
-                              alt=""
-                              width="48"
-                              height="48"
-                            />
-                          </div>
-                          <span className="card-name">{icon.name}</span>
-                          {view === "list" && (
-                            <span className="card-source">
-                              {designNames[icon.collection] ?? icon.collection}
-                            </span>
-                          )}
-                          {icon.sourceId !== "public" && (
-                            <span className="team-mark" title="团队图标" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  ) : busy ? (
-                    <div className="skeleton-grid">
-                      {Array.from({ length: 36 }, (_, index) => (
-                        <div className="skeleton-card" key={index} />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="empty-state">
-                      <Glyph>
-                        <SearchRegular />
-                      </Glyph>
-                      <h2>
-                        {activeSource?.kind === "repository"
-                          ? "这个仓库还没有匹配的图标"
-                          : "没有找到图标"}
-                      </h2>
-                      <p>
-                        {activeSource?.kind === "repository"
-                          ? "同步仓库或试试其他关键词"
-                          : "试试英文关键词，或检查网络连接"}
-                      </p>
-                      {activeSource?.kind === "repository" && (
-                        <Button kind="ghost" onClick={() => sync(activeSource)}>
-                          同步仓库
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-                <footer
-                  className="grid-footer"
-                  hidden={result.total <= 48 && !visionResult}
-                >
-                  <span>
-                    {visionResult
-                      ? "视觉匹配结果"
-                      : `${result.total.toLocaleString()} 个图标`}
-                  </span>
-                  <Pagination
-                    size="sm"
-                    count={Math.ceil(result.total / 48)}
-                    page={Math.floor(offset / 48) + 1}
-                    disabled={busy || visionResult}
-                    onPageChange={(value) => setOffset((value - 1) * 48)}
-                  />
-                </footer>
-              </section>
-              {detailMounted && (
-                <aside
-                  className={`detail ${detailOpen ? "" : "detail-exit"}`}
-                  aria-label="图标详情"
-                  aria-hidden={!detailOpen}
-                  inert={!detailOpen}
-                >
-                  {selected ? (
-                    <>
-                      <div className="detail-preview">
-                        <img
-                          className={
-                            isMonochrome(selected.svg) ? "monochrome" : ""
-                          }
-                          src={svgUrl(exported?.previewSvg ?? selected.svg)}
-                          alt={selected.name}
-                          width="80"
-                          height="80"
-                        />
-                      </div>
-                      <div className="detail-identity">
-                        <div className="identity-row">
-                          <span>名称</span>
-                          <h2>{selected.name}</h2>
-                          <IconButton
-                            kind="plain"
-                            size="sm"
-                            aria-label="复制图标名称"
-                            onClick={() =>
-                              api("copy", selected.name)
-                                .then(() => flash("图标名称已复制"))
-                                .catch(report)
-                            }
-                          >
-                            <DesignIcon name="copy-name" />
-                          </IconButton>
-                        </div>
-                        <div className="identity-row">
-                          <span>来源</span>
-                          <Button
-                            className="source-link"
-                            kind="plain"
-                            size="sm"
-                            onClick={() =>
-                              api("openUrl", selected.sourceUrl).catch(report)
-                            }
-                            leftIcon={
-                              selected.sourceUrl.includes("github.com") ? (
-                                <DesignIcon name="github" />
-                              ) : (
-                                <LinkRegular size={16} />
-                              )
-                            }
-                          >
-                            {selected.sourceUrl.includes("github.com")
-                              ? "Github"
-                              : "查看来源"}
-                          </Button>
-                        </div>
-                      </div>
-                      {selected.reason && (
-                        <p className="match-reason">{selected.reason}</p>
-                      )}
-                      <div className="export-section">
-                        <Tabs
-                          value={target}
-                          onValueChange={(value) => {
-                            const next = value as Target;
-                            pendingExportDirection.current =
-                              targets.indexOf(next) >
-                              targets.indexOf(target)
-                                ? "forward"
-                                : "backward";
-                            setTarget(next);
-                          }}
-                        >
-                          <TabsList className="target-tabs">
-                            {targets.map((value) => (
-                              <TabsTrigger key={value} value={value}>
-                                {labels[value]}
-                              </TabsTrigger>
-                            ))}
-                          </TabsList>
-                        </Tabs>
-                        <div className="code-preview">
-                          <pre
-                            key={codeAnimation.key}
-                            className={`code-slide-${codeAnimation.direction}`}
-                          >
-                            {exported?.code.replace(
-                              /^(?:\/\/ Source:[^\n]*\n|<!-- Source:[^\n]* -->\n)/,
-                              "",
-                            ) ?? "正在生成…"}
-                          </pre>
-                        </div>
-                        <div className="export-actions">
-                          <Button
-                            disabled={!exported || exportPending}
-                            onClick={copy}
-                          >
-                            复制代码
-                          </Button>
-                          <IconButton
-                            kind="ghost"
-                            aria-label="导出资源文件"
-                            title={
-                              target === "swiftui"
-                                ? "导出后将 .imageset 拖入 Assets.xcassets"
-                                : "导出资源文件"
-                            }
-                            disabled={!exported || exportPending}
-                            onClick={download}
-                          >
-                            <DesignIcon name="download" />
-                          </IconButton>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <div className="detail-empty">
-                      <CodeRegular size={24} />
-                      <p>
-                        选择一个图标
-                        <br />
-                        查看预览和使用代码
-                      </p>
-                    </div>
-                  )}
-                </aside>
-              )}
-            </div>
-          ) : (
-            <div className="settings-scroll">
-              {page === "repositories" ? (
-                <>
-                  {defaultLibraries.some(
-                    (library) => libraryPreferences[library.id]?.hidden,
-                  ) && (
-                    <div className="removed-public-libraries">
-                      <h2>已移除的公共图标库</h2>
-                      {defaultLibraries
-                        .filter(
-                          (library) => libraryPreferences[library.id]?.hidden,
-                        )
-                        .map((library) => (
-                          <Button
-                            key={library.id}
-                            kind="ghost"
-                            onClick={() =>
-                              saveLibrary(library.id, { hidden: false }).catch(
-                                report,
-                              )
-                            }
-                          >
-                            重新添加{" "}
-                            {libraryPreferences[library.id]?.name ??
-                              library.name}
-                          </Button>
-                        ))}
-                    </div>
-                  )}
-                  <RepositorySettings
-                    key={repositoryEditRevision}
-                    initialEditing={editRepository}
-                    onRemove={(source) =>
-                      setRemoveLibrary({
-                        id: source.id,
-                        name: source.name,
-                        public: false,
-                      })
-                    }
-                    sources={teams}
-                    onRefresh={() => {
-                      refreshSources();
-                      setRevision((value) => value + 1);
-                    }}
-                    onSync={sync}
-                    onError={report}
-                    onNotice={flash}
-                  />
-                </>
-              ) : page === "model" ? (
-                <ModelSettings
-                  settings={settings}
-                  onSettings={setSettings}
-                  onError={report}
-                  onNotice={flash}
-                />
-              ) : (
-                <div className="settings-content">
-                  <div className="settings-intro">
-                    <h1>让工作空间适合你</h1>
-                    <p>界面使用 Gendesign 组件与 Nico 主题。</p>
-                  </div>
-                  <Field label="外观">
-                    <NativeSelect
-                      aria-label="外观主题"
-                      value={settings.theme}
-                      onChange={(event) => {
-                        const next = {
-                          ...settings,
-                          theme: event.target.value as Settings["theme"],
-                        };
-                        api<Settings>("saveSettings", { settings: next })
-                          .then(setSettings)
-                          .catch(report);
-                      }}
-                    >
-                      <option value="system">跟随系统</option>
-                      <option value="light">浅色</option>
-                      <option value="dark">深色</option>
-                    </NativeSelect>
-                  </Field>
-                  <div className="settings-note">
-                    DesiCast 0.1.0 · 本地图库与独立 MCP 服务
-                    <br />
-                    图标本身保留来源的视觉风格。
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </main>
-      </div>
-      {settingsOpen && (
-        <SettingsDialog
+      {settingsOpen ? (
+        <SettingsPage
           settings={settings}
           onSettings={setSettings}
           onClose={() => setSettingsOpen(false)}
-          onHome={() => navigate("home")}
           onError={report}
           onNotice={flash}
           modelContent={
@@ -1380,6 +716,685 @@ export function App() {
             />
           }
         />
+      ) : (
+        <div className="shell">
+          <aside
+            className="sidebar"
+            aria-label="图库导航"
+            aria-hidden={!sidebarOpen}
+            inert={!sidebarOpen}
+          >
+            <div className="sidebar-inner">
+              <div className="sidebar-menu">
+                <Button
+                  className="nav-item"
+                  kind="plain"
+                  onClick={() => {
+                    setAddLibraryOpen(true);
+                  }}
+                >
+                  <DesignIcon name="add" />
+                  <span>添加图标库</span>
+                </Button>
+                <Button
+                  className="nav-item"
+                  selected={page === "library" && !sourceId}
+                  kind="plain"
+                  onClick={() => {
+                    chooseSource("");
+                    requestAnimationFrame(() => searchInput.current?.focus());
+                  }}
+                >
+                  <DesignIcon name="search" />
+                  <span>全局搜索</span>
+                </Button>
+              </div>
+              <div className="library-heading">
+                <span>图标库</span>
+                <div className="library-heading-actions">
+                  <IconButton
+                    kind="plain"
+                    size="sm"
+                    aria-label="筛选图标库"
+                    aria-expanded={filterOpen}
+                    onClick={() => setFilterOpen((value) => !value)}
+                  >
+                    <DesignIcon name="library-search" />
+                  </IconButton>
+                  <LibraryFilterMenu
+                    value={libraryOptions}
+                    onChange={setLibraryOptions}
+                  />
+                  <IconButton
+                    kind="plain"
+                    size="sm"
+                    aria-label="添加团队仓库"
+                    onClick={() => {
+                      setEditRepository(undefined);
+                      setRepositoryEditRevision((value) => value + 1);
+                      navigate("repositories");
+                    }}
+                  >
+                    <DesignIcon name="library-add" />
+                  </IconButton>
+                </div>
+              </div>
+              {filterOpen && (
+                <div className="sidebar-filter">
+                  <SearchBox
+                    aria-label="筛选图标库"
+                    placeholder="搜索图标库"
+                    value={libraryFilter}
+                    onValueChange={setLibraryFilter}
+                  />
+                </div>
+              )}
+              <div className="library-navigation">
+                {visibleLibraries.map((entry) => {
+                  const library = entry.library;
+                  const source = entry.source;
+                  const metadata = library
+                    ? collections.find((item) => item.id === library.id)
+                    : undefined;
+                  const id = library?.id ?? source!.id;
+                  const name = library
+                    ? (libraryPreferences[id]?.name ?? designNames[library.id])
+                    : source!.name;
+                  const changes = metadata?.changes ?? source?.changes;
+                  return libraryMenu(
+                    id,
+                    name,
+                    Boolean(library),
+                    <Button
+                      key={id}
+                      data-testid={`library-${id}`}
+                      className="nav-item"
+                      kind="plain"
+                      selected={
+                        page === "library" &&
+                        (library
+                          ? sourceId === "public" && collection === id
+                          : sourceId === id)
+                      }
+                      title={`${library?.name ?? name} · ${library ? (metadata ? metadata.total.toLocaleString() + " 个图标" : "数量暂不可用") : source!.iconCount.toLocaleString() + " 个图标"}${changes ? " · " + changeDescription(changes) : ""}`}
+                      onClick={() => {
+                        chooseSource(library ? "public" : id);
+                        if (library) setCollection(id);
+                      }}
+                    >
+                      {library ? (
+                        <LibraryMark library={library} />
+                      ) : (
+                        <DesignIcon name="book-row" />
+                      )}
+                      <span>{name}</span>
+                      <ChangeBadge changes={changes} />
+                      <span className="nav-count">
+                        {library
+                          ? metadata
+                            ? metadata.total.toLocaleString()
+                            : "—"
+                          : source!.iconCount.toLocaleString()}
+                      </span>
+                    </Button>,
+                  );
+                })}
+                {visibleLibraries.length === 0 && (
+                  <p className="library-filter-empty">没有符合条件的图标库</p>
+                )}
+              </div>
+              <div className="sidebar-foot">
+                <IconButton
+                  kind="plain"
+                  aria-label="设置"
+                  onClick={() => setSettingsOpen(true)}
+                >
+                  <DesignIcon name="settings" />
+                </IconButton>
+                <Button
+                  kind="plain"
+                  className="mcp-badge"
+                  aria-label="MCP 连接"
+                  onClick={() => setMcpOpen(true)}
+                >
+                  <DesignIcon name="check" />
+                  <span>MCP</span>
+                </Button>
+              </div>
+            </div>
+          </aside>
+          <main className="workspace">
+            {page === "library" && activeChanges && (
+              <div className="library-change-notice" role="status">
+                <span>
+                  {heading}：{changeDescription(activeChanges)}
+                  {collection ? "（目录变更）" : ""}
+                </span>
+                <Button kind="plain" size="sm" onClick={acknowledgeChanges}>
+                  标记已读
+                </Button>
+              </div>
+            )}
+            {page !== "home" && page !== "library" && (
+              <div className="page-heading">
+                <div className="heading-title">{titles[page]}</div>
+              </div>
+            )}
+            {page === "home" ? (
+              <section className="home-content" aria-label="选择图标库">
+                <div className="home-center">
+                  <h1>Hello，今天想用什么图标库？</h1>
+                  <div className="home-library-grid">
+                    {homeEntries.map(({ id, library, source }) => {
+                      const name = library
+                        ? (libraryPreferences[id]?.name ?? library.designName)
+                        : source!.name;
+                      return libraryMenu(
+                        id,
+                        name,
+                        Boolean(library),
+                        <Button
+                          key={id}
+                          kind="plain"
+                          className="home-library-card"
+                          data-testid={`home-library-${id}`}
+                          title={name}
+                          onClick={() => {
+                            chooseSource(library ? "public" : id);
+                            if (library) setCollection(id);
+                          }}
+                        >
+                          {library ? (
+                            <LibraryMark library={library} card />
+                          ) : (
+                            <span className="home-team-mark">
+                              <DesignIcon name="book-card" />
+                            </span>
+                          )}
+                          <span>{name}</span>
+                        </Button>,
+                      );
+                    })}
+                  </div>
+                </div>
+              </section>
+            ) : page === "library" ? (
+              <div className="library-layout">
+                <section className="library-main">
+                  <div className="search-toolbar">
+                    <SearchBox
+                      ref={searchInput}
+                      wrapperClassName="main-search"
+                      size="md"
+                      aria-label="搜索图标"
+                      placeholder="搜索图标名称"
+                      value={query}
+                      onValueChange={(value) => {
+                        setQuery(value);
+                        setOffset(0);
+                      }}
+                    />
+                    <div className="grid-toolbar-actions">
+                      <Popover>
+                        <PopoverTrigger
+                          render={
+                            <IconButton
+                              kind="plain"
+                              size="sm"
+                              aria-label="搜索选项"
+                            />
+                          }
+                        >
+                          <DesignIcon name="library-options" />
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="navigation-popup"
+                          align="end"
+                        >
+                          <Button
+                            kind="plain"
+                            leftIcon={<PicRegular size={16} />}
+                            onClick={() => fileInput.current?.click()}
+                          >
+                            以图搜图
+                          </Button>
+                          <Button
+                            kind="plain"
+                            leftIcon={<Refresh1Regular size={16} />}
+                            onClick={refreshLibrary}
+                          >
+                            刷新图库
+                          </Button>
+                        </PopoverContent>
+                      </Popover>
+                      <Tabs
+                        value={view}
+                        onValueChange={(value) =>
+                          setView(value as "grid" | "list")
+                        }
+                      >
+                        <TabsList
+                          className="view-tabs"
+                          aria-label="图标显示方式"
+                        >
+                          <TabsTrigger value="grid" aria-label="网格视图">
+                            <DesignIcon name="grid" />
+                          </TabsTrigger>
+                          <TabsTrigger value="list" aria-label="列表视图">
+                            <DesignIcon name="list" />
+                          </TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </div>
+                    <input
+                      ref={fileInput}
+                      type="file"
+                      accept="image/png,image/jpeg,image/webp"
+                      hidden
+                      onChange={(event) => {
+                        if (event.target.files?.[0])
+                          loadFile(event.target.files[0]);
+                        event.target.value = "";
+                      }}
+                    />
+                  </div>
+                  <div
+                    className="filter-toolbar"
+                    hidden={Boolean(sourceId) && !visionResult}
+                  >
+                    <div className="filter-left">
+                      <NativeSelect
+                        size="sm"
+                        aria-label="图标集"
+                        value={collection}
+                        onChange={(event) => {
+                          setCollection(event.target.value);
+                          setOffset(0);
+                        }}
+                        disabled={Boolean(activeSource?.kind === "repository")}
+                      >
+                        <option value="">全部图标集</option>
+                        {collections.map((item) => (
+                          <option key={item.id} value={item.id}>
+                            {item.name}
+                          </option>
+                        ))}
+                      </NativeSelect>
+                      {visionResult ? (
+                        <span className="filter-hint">按形状与风格匹配</span>
+                      ) : (
+                        <span className="filter-hint">
+                          {query ? "搜索结果" : "探索常用图标"}
+                        </span>
+                      )}
+                    </div>
+                    <span className="result-count">
+                      {busy ? (
+                        <>
+                          <Spinner />
+                          搜索中
+                        </>
+                      ) : (
+                        `${result.total.toLocaleString()} 个图标`
+                      )}
+                    </span>
+                  </div>
+                  {reference && (
+                    <div className="reference-strip">
+                      <img src={reference} alt="图片搜索参考" />
+                      <span>参考图片</span>
+                      <Button
+                        size="sm"
+                        kind="plain"
+                        onClick={() => setCropOpen(true)}
+                      >
+                        裁剪
+                      </Button>
+                      <Button
+                        size="sm"
+                        kind="plain"
+                        disabled={busy}
+                        onClick={() => searchImage(reference)}
+                      >
+                        重新搜索
+                      </Button>
+                      <IconButton
+                        size="sm"
+                        kind="plain"
+                        aria-label="移除参考图"
+                        onClick={() => {
+                          setReference(undefined);
+                          setRevision((value) => value + 1);
+                        }}
+                      >
+                        <CloseRegular size={16} />
+                      </IconButton>
+                    </div>
+                  )}
+                  {result.warning && (
+                    <div className="inline-warning" role="status">
+                      {result.warning}
+                    </div>
+                  )}
+                  <div
+                    className={`grid-scroll ${busy ? "is-loading" : ""}`}
+                    aria-busy={busy}
+                  >
+                    {result.icons.length ? (
+                      <div
+                        className={`icon-grid ${view === "list" ? "icon-list" : ""}`}
+                      >
+                        {result.icons.map((icon) => (
+                          <button
+                            key={icon.id}
+                            data-testid="icon-card"
+                            className={`icon-card ${selected?.id === icon.id ? "selected" : ""}`}
+                            aria-pressed={
+                              selected?.id === icon.id && detailOpen
+                            }
+                            onClick={() => {
+                              setSelected(icon);
+                              setDetailOpen(true);
+                            }}
+                            title={`${icon.name} · ${icon.collection}`}
+                          >
+                            <div className="card-art">
+                              <img
+                                className={
+                                  isMonochrome(icon.svg) ? "monochrome" : ""
+                                }
+                                src={svgUrl(icon.svg)}
+                                alt=""
+                                width="48"
+                                height="48"
+                              />
+                            </div>
+                            <span className="card-name">{icon.name}</span>
+                            {view === "list" && (
+                              <span className="card-source">
+                                {designNames[icon.collection] ??
+                                  icon.collection}
+                              </span>
+                            )}
+                            {icon.sourceId !== "public" && (
+                              <span className="team-mark" title="团队图标" />
+                            )}
+                          </button>
+                        ))}
+                      </div>
+                    ) : busy ? (
+                      <div className="skeleton-grid">
+                        {Array.from({ length: 36 }, (_, index) => (
+                          <div className="skeleton-card" key={index} />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="empty-state">
+                        <Glyph>
+                          <SearchRegular />
+                        </Glyph>
+                        <h2>
+                          {activeSource?.kind === "repository"
+                            ? "这个仓库还没有匹配的图标"
+                            : "没有找到图标"}
+                        </h2>
+                        <p>
+                          {activeSource?.kind === "repository"
+                            ? "同步仓库或试试其他关键词"
+                            : "试试英文关键词，或检查网络连接"}
+                        </p>
+                        {activeSource?.kind === "repository" && (
+                          <Button
+                            kind="ghost"
+                            onClick={() => sync(activeSource)}
+                          >
+                            同步仓库
+                          </Button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                  <footer
+                    className="grid-footer"
+                    hidden={result.total <= 48 && !visionResult}
+                  >
+                    <span>
+                      {visionResult
+                        ? "视觉匹配结果"
+                        : `${result.total.toLocaleString()} 个图标`}
+                    </span>
+                    <Pagination
+                      size="sm"
+                      count={Math.ceil(result.total / 48)}
+                      page={Math.floor(offset / 48) + 1}
+                      disabled={busy || visionResult}
+                      onPageChange={(value) => setOffset((value - 1) * 48)}
+                    />
+                  </footer>
+                </section>
+                {detailMounted && (
+                  <aside
+                    className={`detail ${detailOpen ? "" : "detail-exit"}`}
+                    aria-label="图标详情"
+                    aria-hidden={!detailOpen}
+                    inert={!detailOpen}
+                  >
+                    {selected ? (
+                      <>
+                        <div className="detail-preview">
+                          <img
+                            className={
+                              isMonochrome(selected.svg) ? "monochrome" : ""
+                            }
+                            src={svgUrl(exported?.previewSvg ?? selected.svg)}
+                            alt={selected.name}
+                            width="80"
+                            height="80"
+                          />
+                        </div>
+                        <div className="detail-identity">
+                          <div className="identity-row">
+                            <span>名称</span>
+                            <h2>{selected.name}</h2>
+                            <IconButton
+                              kind="plain"
+                              size="sm"
+                              aria-label="复制图标名称"
+                              onClick={() =>
+                                api("copy", selected.name)
+                                  .then(() => flash("图标名称已复制"))
+                                  .catch(report)
+                              }
+                            >
+                              <DesignIcon name="copy-name" />
+                            </IconButton>
+                          </div>
+                          <div className="identity-row">
+                            <span>来源</span>
+                            <Button
+                              className="source-link"
+                              kind="plain"
+                              size="sm"
+                              onClick={() =>
+                                api("openUrl", selected.sourceUrl).catch(report)
+                              }
+                              leftIcon={
+                                selected.sourceUrl.includes("github.com") ? (
+                                  <DesignIcon name="github" />
+                                ) : (
+                                  <LinkRegular size={16} />
+                                )
+                              }
+                            >
+                              {selected.sourceUrl.includes("github.com")
+                                ? "Github"
+                                : "查看来源"}
+                            </Button>
+                          </div>
+                        </div>
+                        {selected.reason && (
+                          <p className="match-reason">{selected.reason}</p>
+                        )}
+                        <div className="export-section">
+                          <Tabs
+                            value={target}
+                            onValueChange={(value) => {
+                              const next = value as Target;
+                              pendingExportDirection.current =
+                                targets.indexOf(next) > targets.indexOf(target)
+                                  ? "forward"
+                                  : "backward";
+                              setTarget(next);
+                            }}
+                          >
+                            <TabsList className="target-tabs">
+                              {targets.map((value) => (
+                                <TabsTrigger key={value} value={value}>
+                                  {labels[value]}
+                                </TabsTrigger>
+                              ))}
+                            </TabsList>
+                          </Tabs>
+                          <div className="code-preview">
+                            <pre
+                              key={codeAnimation.key}
+                              className={`code-slide-${codeAnimation.direction}`}
+                            >
+                              {exported?.code.replace(
+                                /^(?:\/\/ Source:[^\n]*\n|<!-- Source:[^\n]* -->\n)/,
+                                "",
+                              ) ?? "正在生成…"}
+                            </pre>
+                          </div>
+                          <div className="export-actions">
+                            <Button
+                              disabled={!exported || exportPending}
+                              onClick={copy}
+                            >
+                              复制代码
+                            </Button>
+                            <IconButton
+                              kind="ghost"
+                              aria-label="导出资源文件"
+                              title={
+                                target === "swiftui"
+                                  ? "导出后将 .imageset 拖入 Assets.xcassets"
+                                  : "导出资源文件"
+                              }
+                              disabled={!exported || exportPending}
+                              onClick={download}
+                            >
+                              <DesignIcon name="download" />
+                            </IconButton>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="detail-empty">
+                        <CodeRegular size={24} />
+                        <p>
+                          选择一个图标
+                          <br />
+                          查看预览和使用代码
+                        </p>
+                      </div>
+                    )}
+                  </aside>
+                )}
+              </div>
+            ) : (
+              <div className="settings-scroll">
+                {page === "repositories" ? (
+                  <>
+                    {defaultLibraries.some(
+                      (library) => libraryPreferences[library.id]?.hidden,
+                    ) && (
+                      <div className="removed-public-libraries">
+                        <h2>已移除的公共图标库</h2>
+                        {defaultLibraries
+                          .filter(
+                            (library) => libraryPreferences[library.id]?.hidden,
+                          )
+                          .map((library) => (
+                            <Button
+                              key={library.id}
+                              kind="ghost"
+                              onClick={() =>
+                                saveLibrary(library.id, {
+                                  hidden: false,
+                                }).catch(report)
+                              }
+                            >
+                              重新添加{" "}
+                              {libraryPreferences[library.id]?.name ??
+                                library.name}
+                            </Button>
+                          ))}
+                      </div>
+                    )}
+                    <RepositorySettings
+                      key={repositoryEditRevision}
+                      initialEditing={editRepository}
+                      onRemove={(source) =>
+                        setRemoveLibrary({
+                          id: source.id,
+                          name: source.name,
+                          public: false,
+                        })
+                      }
+                      sources={teams}
+                      onRefresh={() => {
+                        refreshSources();
+                        setRevision((value) => value + 1);
+                      }}
+                      onSync={sync}
+                      onError={report}
+                      onNotice={flash}
+                    />
+                  </>
+                ) : page === "model" ? (
+                  <ModelSettings
+                    settings={settings}
+                    onSettings={setSettings}
+                    onError={report}
+                    onNotice={flash}
+                  />
+                ) : (
+                  <div className="settings-content">
+                    <div className="settings-intro">
+                      <h1>让工作空间适合你</h1>
+                      <p>界面使用 Gendesign 组件与 Nico 主题。</p>
+                    </div>
+                    <Field label="外观">
+                      <NativeSelect
+                        aria-label="外观主题"
+                        value={settings.theme}
+                        onChange={(event) => {
+                          const next = {
+                            ...settings,
+                            theme: event.target.value as Settings["theme"],
+                          };
+                          api<Settings>("saveSettings", { settings: next })
+                            .then(setSettings)
+                            .catch(report);
+                        }}
+                      >
+                        <option value="system">跟随系统</option>
+                        <option value="light">浅色</option>
+                        <option value="dark">深色</option>
+                      </NativeSelect>
+                    </Field>
+                    <div className="settings-note">
+                      DesiCast 0.1.0 · 本地图库与独立 MCP 服务
+                      <br />
+                      图标本身保留来源的视觉风格。
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </main>
+        </div>
       )}
       {mcpOpen && (
         <MCPSettings
