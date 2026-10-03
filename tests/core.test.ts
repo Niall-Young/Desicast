@@ -374,6 +374,53 @@ test("Vision sends image payloads and filters invented IDs and duplicates with a
   assert.equal(results[0].reason, "相似轮廓");
 });
 
+test("Vision descriptions tolerate excess keywords while rejecting malformed model output", async () => {
+  const sharp = (await import("sharp")).default;
+  const input = await sharp(Buffer.from(mono)).png().toBuffer();
+  const dataUrl = `data:image/png;base64,${input.toString("base64")}`;
+  let response: unknown = {
+    keywords: [
+      " search ",
+      "Search",
+      "magnifier",
+      "zoom",
+      "lens",
+      "find",
+      "lookup",
+      "glass",
+    ],
+    shape: "circle and handle",
+    style: "outline",
+  };
+  const model = new VisionModel(
+    { baseUrl: "https://model.example/v1", model: "fixture", consent: true },
+    undefined,
+    async () =>
+      Response.json({
+        choices: [{ message: { content: JSON.stringify(response) } }],
+      }),
+  );
+  assert.deepEqual(await model.describe(dataUrl), {
+    keywords: ["search", "magnifier", "zoom", "lens", "find", "lookup"],
+    shape: "circle and handle",
+    style: "outline",
+  });
+  for (const keywords of [
+    [],
+    ["   "],
+    ["search", 42],
+    "search",
+    ["x".repeat(101)],
+  ]) {
+    response = { keywords, shape: "circle", style: "outline" };
+    await assert.rejects(model.describe(dataUrl), {
+      message: "模型返回的图标描述格式无效，请重试或更换视觉模型",
+    });
+  }
+  response = { keywords: ["search"], style: "outline" };
+  await assert.rejects(model.describe(dataUrl), /描述格式无效/);
+});
+
 test("Public catalog counts track decreases, persist unread changes, and protect newer revisions from stale acknowledgements", async () => {
   await temporary(async (directory) => {
     const store = new Store(directory);
