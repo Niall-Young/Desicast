@@ -1,5 +1,6 @@
 export type Target = "svg" | "html" | "react" | "vue" | "swiftui";
 export interface RepositoryInput {
+  access?: "public" | "private";
   name: string;
   url: string;
   branch: string;
@@ -18,6 +19,7 @@ export interface LibraryChanges {
   removed: number;
 }
 export interface Source {
+  access?: "public" | "private";
   createdAt?: string;
   id: string;
   kind: "public" | "repository";

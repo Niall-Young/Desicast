@@ -47,6 +47,7 @@ test.beforeEach(async () => {
     id: "repo-team",
     name: "Design team",
     kind: "repository",
+    access: "private",
     url: "https://github.com/team/icons",
     branch: "main",
     directories: ["icons"],
@@ -477,8 +478,17 @@ test("Repository dialog uses metadata fixtures and upstream multiselect director
   const page = await app.firstWindow();
   await openSettings(page, "仓库管理");
   await page.getByRole("button", { name: "添加仓库", exact: true }).click();
+  await expect(
+    page.getByRole("radio", { name: "公开仓库", exact: true }),
+  ).toBeChecked();
+  await expect(page.getByLabel("用户名", { exact: true })).toHaveCount(0);
+  await expect(page.getByLabel("访问令牌", { exact: true })).toHaveCount(0);
+  await page.getByRole("radio", { name: "私有仓库", exact: true }).click();
   await expect(page.getByLabel("用户名", { exact: true })).toBeVisible();
   await expect(page.getByLabel("访问令牌", { exact: true })).toBeVisible();
+  await page.getByLabel("访问令牌", { exact: true }).fill("discard-on-switch");
+  await page.getByRole("radio", { name: "公开仓库", exact: true }).click();
+  await expect(page.getByLabel("访问令牌", { exact: true })).toHaveCount(0);
   // Exercise the real Electron bridge and UI without cloning a large remote repo per selection.
   // HTTPS Git browsing and credential behavior are covered by repository-sync.test.ts.
   await app.evaluate(({ ipcMain }) => {
@@ -514,6 +524,7 @@ test("Repository dialog uses metadata fixtures and upstream multiselect director
     .fill("https://github.com/lucide-icons/lucide.git");
   await page.getByRole("button", { name: "读取仓库信息" }).click();
   await expect(page.getByText(/已连接 ·/)).toBeVisible({ timeout: 45000 });
+  await page.locator(".add-library-advanced summary").click();
   const branch = page.getByRole("combobox", { name: "仓库分支" });
   await expect(branch).toBeEnabled();
   await expect(branch).toHaveCSS(
@@ -797,6 +808,9 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
       exact: true,
     });
     await expect(dialog).toBeVisible();
+    await expect(dialog.getByLabel("访问令牌", { exact: true })).toHaveCount(0);
+    await dialog.getByRole("radio", { name: "私有仓库", exact: true }).click();
+    await dialog.locator(".add-library-advanced summary").click();
     const bounds = await dialog.boundingBox();
     expect(bounds!.width).toBe(640);
     expect(bounds!.height).toBeLessThanOrEqual(
@@ -861,6 +875,7 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
   }
   for (const close of ["Escape", "关闭添加图标库"]) {
     await page.getByRole("button", { name: "添加图标库", exact: true }).click();
+    await page.getByRole("radio", { name: "私有仓库", exact: true }).click();
     await expect(page.getByLabel("访问令牌", { exact: true })).toHaveValue("");
     if (close === "Escape") await page.keyboard.press("Escape");
     else await page.getByRole("button", { name: close }).click();

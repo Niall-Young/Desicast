@@ -4,6 +4,7 @@ import { IconButton } from "@/components/ui/icon-button";
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 import { Select } from "./Select";
+import { Radio, RadioGroup } from "@/components/ui/radio";
 import { Switch } from "@/components/ui/switch";
 import {
   Modal,
@@ -39,6 +40,10 @@ export function AddLibraryDialog({
   onNotice: (message: string) => void;
 }) {
   const [name, setName] = useState(source?.name ?? "");
+  const [access, setAccess] = useState<"public" | "private">(
+    source?.access ??
+      (source?.hasCredential || source?.username ? "private" : "public"),
+  );
   const [url, setUrl] = useState(source?.url ?? "");
   const [branch, setBranch] = useState(source?.branch ?? "");
   const [directories, setDirectories] = useState(source?.directories ?? []);
@@ -73,8 +78,11 @@ export function AddLibraryDialog({
       const result = await api<Metadata>("browseRepository", {
         url: url.trim(),
         branch: selectedBranch,
-        username: username.trim() || undefined,
-        token: token || undefined,
+        sourceId:
+          access === "private" && source?.url === url ? source.id : undefined,
+        username:
+          access === "private" ? username.trim() || undefined : undefined,
+        token: access === "private" ? token || undefined : undefined,
       });
       if (request !== version.current) return;
       setMetadata(result);
@@ -91,7 +99,13 @@ export function AddLibraryDialog({
       if (request === version.current) setLoading(false);
     }
   }
-  const unchangedRepository = source?.url === url && source?.branch === branch;
+  const originalAccess =
+    source?.access ??
+    (source?.hasCredential || source?.username ? "private" : "public");
+  const unchangedRepository =
+    source?.url === url &&
+    source?.branch === branch &&
+    originalAccess === access;
   async function save() {
     if (
       busy ||
@@ -109,8 +123,10 @@ export function AddLibraryDialog({
         url: url.trim(),
         branch,
         directories,
-        username: username.trim() || undefined,
-        token: token || undefined,
+        access,
+        username:
+          access === "private" ? username.trim() || undefined : undefined,
+        token: access === "private" ? token || undefined : undefined,
         allowVision,
       };
       if (source) await api("updateRepository", { id: source.id, repository });
@@ -178,58 +194,89 @@ export function AddLibraryDialog({
                 disabled={busy}
               />
             </label>
-            <label className="add-library-field">
-              <span>
-                用户名 <span className="add-library-hint">(可选)</span>
-              </span>
-              <Input
-                aria-label="用户名"
-                placeholder="仓库要求指定账号时填写"
-                value={username}
-                clearAll={false}
+            <div className="add-library-field add-library-full">
+              <span id="repository-access-label">仓库类型</span>
+              <RadioGroup
+                aria-labelledby="repository-access-label"
+                value={access}
                 disabled={busy}
                 onValueChange={(value) => {
+                  if (value !== "public" && value !== "private") return;
                   invalidate();
-                  setUsername(value);
+                  setAccess(value);
+                  setBranch("");
+                  setDirectories([]);
+                  setToken("");
+                  setUsername("");
+                  setVisible(false);
                 }}
-              />
-            </label>
-            <label className="add-library-field">
-              <span>
-                访问令牌 <span className="add-library-hint">(按需填写)</span>
-              </span>
-              <div
-                className={`add-library-password ${visible ? "is-visible" : ""}`}
               >
-                <PasswordInput
-                  aria-label="访问令牌"
-                  placeholder={
-                    source?.hasCredential
-                      ? "已保存，留空保留原令牌"
-                      : "未登录的私有仓库需填写令牌"
-                  }
-                  value={token}
-                  disabled={busy}
-                  visible={visible}
-                  onBlur={() => {
-                    if (url.trim() && !metadata && !loading)
-                      void loadRepository(branch || undefined);
-                  }}
-                  onVisibleChange={setVisible}
-                  showPasswordLabel="显示令牌"
-                  hidePasswordLabel="隐藏令牌"
-                  onValueChange={(value) => {
-                    invalidate();
-                    setToken(value);
-                  }}
-                />
-              </div>
-            </label>
-            <p className="add-library-auth-hint add-library-full">
-              公开仓库无需令牌，私有仓库优先复用本机 Git / gh / glab
-              凭据，未登录时请先填写令牌再输入仓库链接
-            </p>
-            <label className="add-library-field">
+                <label className="add-library-option">
+                  <Radio value="public" />
+                  公开仓库
+                </label>
+                <label className="add-library-option">
+                  <Radio value="private" />
+                  私有仓库
+                </label>
+              </RadioGroup>
+            </div>
+            {access === "private" && (
+              <>
+                <label className="add-library-field">
+                  <span>
+                    用户名 <span className="add-library-hint">(可选)</span>
+                  </span>
+                  <Input
+                    aria-label="用户名"
+                    placeholder="仓库要求指定账号时填写"
+                    value={username}
+                    clearAll={false}
+                    disabled={busy}
+                    onValueChange={(value) => {
+                      invalidate();
+                      setUsername(value);
+                    }}
+                  />
+                </label>
+                <label className="add-library-field">
+                  <span>
+                    访问令牌{" "}
+                    <span className="add-library-hint">(按需填写)</span>
+                  </span>
+                  <div
+                    className={`add-library-password ${visible ? "is-visible" : ""}`}
+                  >
+                    <PasswordInput
+                      aria-label="访问令牌"
+                      placeholder={
+                        source?.hasCredential
+                          ? "已保存，留空保留原令牌"
+                          : "未登录的私有仓库需填写令牌"
+                      }
+                      value={token}
+                      disabled={busy}
+                      visible={visible}
+                      onBlur={() => {
+                        if (url.trim() && !metadata && !loading)
+                          void loadRepository(branch || undefined);
+                      }}
+                      onVisibleChange={setVisible}
+                      showPasswordLabel="显示令牌"
+                      hidePasswordLabel="隐藏令牌"
+                      onValueChange={(value) => {
+                        invalidate();
+                        setToken(value);
+                      }}
+                    />
+                  </div>
+                </label>
+                <p className="add-library-auth-hint add-library-full">
+                  请先配置仓库访问凭据，已登录本机 Git / gh / glab 时可留空复用
+                </p>
+              </>
+            )}
+            <label className="add-library-field add-library-full">
               <span>仓库链接</span>
               <Input
                 aria-label="仓库链接"
@@ -246,30 +293,9 @@ export function AddLibraryDialog({
                 }}
                 onBlur={() => {
                   if (url.trim() && !metadata && !loading)
-                    void loadRepository();
+                    void loadRepository(branch || undefined);
                 }}
               />
-            </label>
-            <label className="add-library-field">
-              <span>分支</span>
-              <div className="add-library-select">
-                <Select
-                  aria-label="仓库分支"
-                  items={(metadata?.branches ?? []).map((item) => ({
-                    value: item,
-                    label: item,
-                  }))}
-                  value={branch || null}
-                  placeholder={loading ? "正在读取分支…" : "请选择分支"}
-                  disabled={!metadata || loading || busy}
-                  onValueChange={(value) => {
-                    if (!value || metadata?.branch === value) return;
-                    setBranch(value);
-                    setDirectories([]);
-                    void loadRepository(value);
-                  }}
-                />
-              </div>
             </label>
             <div className="add-library-field add-library-full">
               <span>SVG 目录</span>
@@ -281,6 +307,32 @@ export function AddLibraryDialog({
                 placeholder="请选择仓库内文件目录"
               />
             </div>
+            <details className="add-library-advanced add-library-full">
+              <summary>
+                分支设置{branch ? ` · ${branch}` : " · 自动使用默认分支"}
+              </summary>
+              <label className="add-library-field">
+                <span>分支</span>
+                <div className="add-library-select">
+                  <Select
+                    aria-label="仓库分支"
+                    items={(metadata?.branches ?? []).map((item) => ({
+                      value: item,
+                      label: item,
+                    }))}
+                    value={branch || null}
+                    placeholder={loading ? "正在读取分支…" : "请选择分支"}
+                    disabled={!metadata || loading || busy}
+                    onValueChange={(value) => {
+                      if (!value || metadata?.branch === value) return;
+                      setBranch(value);
+                      setDirectories([]);
+                      void loadRepository(value);
+                    }}
+                  />
+                </div>
+              </label>
+            </details>
           </form>
           {children}
           {(url.trim() || error) && (
@@ -291,7 +343,9 @@ export function AddLibraryDialog({
                     ? "正在读取仓库…"
                     : metadata
                       ? `已连接 · ${metadata.authorization}`
-                      : "可自动复用本机 Git / gh / glab 凭据")}
+                      : access === "private"
+                        ? "配置凭据后读取仓库信息"
+                        : "公开仓库无需配置凭据")}
               </span>
               <Button
                 size="sm"

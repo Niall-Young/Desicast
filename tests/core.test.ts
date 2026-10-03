@@ -290,6 +290,55 @@ test("Secrets stay outside persisted source/settings and disabled team vision is
       service.close();
     }
   }));
+test("Repository access type persists and switching to public removes private credentials", async () =>
+  temporary(async (path) => {
+    const secrets = new MemorySecrets();
+    const service = new IconService(path, secrets);
+    const input = {
+      name: "Team",
+      url: "https://gitlab.example/team/icons.git",
+      branch: "main",
+      directories: ["icons"],
+      allowVision: false,
+    };
+    try {
+      const source = await service.addRepository({
+        ...input,
+        access: "private",
+        username: "team-account",
+        token: "private-token",
+      });
+      assert.equal(service.store.source(source.id)?.access, "private");
+      await service.updateRepository(source.id, {
+        ...input,
+        access: "private",
+      });
+      assert.equal(
+        await secrets.get(`repository:${source.id}`),
+        "private-token",
+      );
+      await service.updateRepository(source.id, {
+        ...input,
+        access: "public",
+        username: "hidden-account",
+        token: "hidden-token",
+      });
+      assert.equal(service.store.source(source.id)?.access, "public");
+      assert.equal(service.store.source(source.id)?.username, undefined);
+      assert.equal(await secrets.get(`repository:${source.id}`), undefined);
+      const publicSource = await service.addRepository({
+        ...input,
+        access: "public",
+        token: "ignored-token",
+      });
+      assert.equal(
+        await secrets.get(`repository:${publicSource.id}`),
+        undefined,
+      );
+    } finally {
+      service.close();
+    }
+  }));
 test("Public library normalizes cached SVG and falls back without network", async () =>
   temporary(async (path) => {
     const fetcher: typeof fetch = async (input) => {

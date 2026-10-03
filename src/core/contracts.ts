@@ -20,6 +20,7 @@ export const exportSchema = z.object({
     .optional(),
 });
 export const repositorySchema = z.object({
+  access: z.enum(["public", "private"]).optional(),
   name: z.string().min(1).max(100),
   url: z.string().max(2000),
   branch: z.string().min(1).max(200),

@@ -81,3 +81,19 @@
   margin: 0;
   color: var(--nico-color-text-subtle);
 }
+
+.add-library-option {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.add-library-advanced {
+  color: var(--nico-color-text-subtle);
+  font-size: var(--nico-font-size-sm);
+}
+.add-library-advanced summary {
+  cursor: pointer;
+}
+.add-library-advanced[open] > .add-library-field {
+  margin-top: 12px;
+}

@@ -198,11 +198,12 @@ export class IconService {
       url,
       branch: input.branch,
       directories,
-      username: input.username,
+      access: input.access,
+      username: input.access === "public" ? undefined : input.username,
       allowVision: input.allowVision,
       iconCount: 0,
     };
-    if (input.token)
+    if (input.access !== "public" && input.token)
       await this.secrets.set(`repository:${source.id}`, input.token);
     this.store.saveSource(source);
     return source;
@@ -211,6 +212,7 @@ export class IconService {
     const existing = this.store.source(id);
     if (!existing || existing.kind !== "repository")
       throw new Error("仓库不存在");
+    const access = input.access ?? existing.access;
     repositoryUrl(input.url);
     repositoryDirectories(input.directories);
     if (
@@ -226,7 +228,9 @@ export class IconService {
         .get(`sync:${id}`, Date.now())
     )
       throw new Error("请等待仓库同步完成后修改配置");
-    if (input.token !== undefined) {
+    if (access === "public") {
+      await this.secrets.delete(`repository:${id}`);
+    } else if (input.token !== undefined) {
       if (input.token) await this.secrets.set(`repository:${id}`, input.token);
       else await this.secrets.delete(`repository:${id}`);
     }
@@ -236,7 +240,8 @@ export class IconService {
       url: repositoryUrl(input.url),
       branch: input.branch,
       directories: repositoryDirectories(input.directories),
-      username: input.username,
+      access,
+      username: access === "public" ? undefined : input.username,
       allowVision: input.allowVision,
     };
     this.store.saveSource(source);

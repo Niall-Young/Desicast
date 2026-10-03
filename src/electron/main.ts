@@ -134,19 +134,28 @@ async function call(method: string, input: unknown) {
     case "browseRepository": {
       const value = z
         .object({
+          sourceId: z.string().optional(),
           url: z.string().max(2000),
           branch: z.string().max(200).optional(),
           username: z.string().max(200).optional(),
           token: z.string().max(4096).optional(),
         })
         .parse(input);
+      const source = value.sourceId
+        ? service.store.source(value.sourceId)
+        : undefined;
+      const savedToken =
+        source?.kind === "repository" && source.url === value.url
+          ? await service.secrets.get(`repository:${source.id}`)
+          : undefined;
+      const token = value.token || savedToken;
       return browseRepository(
         value.url,
         value.branch,
-        value.token
+        token
           ? {
-              username: value.username || "oauth2",
-              password: value.token,
+              username: value.username || source?.username || "oauth2",
+              password: token,
               method: "访问令牌",
             }
           : undefined,
