@@ -79,6 +79,7 @@ export interface ExportResult {
   instructions: string;
 }
 export interface ModelSettings {
+  id?: string;
   baseUrl: string;
   model: string;
   hasKey?: boolean;
@@ -87,6 +88,7 @@ export interface ModelSettings {
 export interface Settings {
   theme: "system" | "light" | "dark";
   model: ModelSettings;
+  modelProviders?: (ModelSettings & { id: string })[];
 }
 export interface Collection {
   lastModified?: number;

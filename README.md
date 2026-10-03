@@ -96,7 +96,7 @@ npm run dev
 
 ### 配置说明
 
-视觉模型使用兼容 OpenAI Chat Completions 的图片输入接口。填写 API 基础地址（通常以 `/v1` 结尾）、模型名称和可选 Key，测试图片能力并确认发送范围。支持 HTTPS 或本机 HTTP 服务。
+视觉模型使用兼容 OpenAI Chat Completions 的图片输入接口。在模型配置中点击「添加供应商」，通过 640px 弹窗填写 API 基础地址（通常以 `/v1` 结尾）、模型名称和可选 API Key。可用「测试连接」发送图片请求检查当前草稿，测试不会保存设置；点击「确定」后保存并启用该模型。已添加的供应商以单选列表展示，切换后立即保存并用于桌面和 MCP 视觉搜索，不设独立的视觉能力开关。API Key 按供应商分别保存在 Keychain，旧版单模型配置和 Key 会保留。支持 HTTPS 或本机 HTTP 服务。
 
 参考图和允许的候选图标预览会发送到该服务；团队仓库默认禁止模型图片搜索，可按仓库单独开启。图片限 PNG、JPEG、WebP 格式（最大 8 MB），模型处理上限 1600 万像素。搜索基于关键词召回和视觉排序，不保证找到原图标。
 
@@ -232,7 +232,7 @@ The icon workspace supports grid and list views. Select an icon to open its sepa
 
 ### Configuration
 
-Vision similarity search connects to OpenAI-compatible Chat Completions endpoints supporting image inputs. Provide the API base URL (typically ending in `/v1`), model name, and optional API key, then verify connectivity and confirm data-sharing scope. Both HTTPS and local HTTP services are supported.
+Vision similarity search connects to OpenAI-compatible Chat Completions endpoints supporting image inputs. Click "Add Provider" in model settings to enter the API base URL (typically ending in `/v1`), model name, and optional API key in a 640px dialog. "Test Connection" sends an image request using the draft without saving it; "Confirm" saves and activates the model. Saved providers appear in a radio list; selecting one saves immediately and uses it for desktop and MCP visual search, with no separate vision-capability switch. API keys are stored separately per provider in Keychain, and legacy single-model settings and keys are preserved. Both HTTPS and local HTTP services are supported.
 
 Reference images and permitted candidate previews are transmitted to the configured endpoint. Team repositories disable vision data sharing by default and can be opted-in per repository. Reference images accept PNG, JPEG, and WebP (up to 8 MB), with model processing capped at 16 megapixels. Keyword retrieval followed by visual ranking does not guarantee finding exact original icons.
 

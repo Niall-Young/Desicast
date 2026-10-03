@@ -31,6 +31,7 @@ export const repositorySchema = z.object({
 export const settingsSchema = z.object({
   theme: z.enum(["system", "light", "dark"]),
   model: z.object({
+    id: z.string().max(100).optional(),
     baseUrl: z.string().max(2000),
     model: z.string().max(200),
     consent: z.boolean(),

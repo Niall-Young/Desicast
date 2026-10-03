@@ -169,8 +169,32 @@ async function call(method: string, input: unknown) {
       return service.sync(z.string().parse(input));
     case "vision":
       return service.vision(visionSchema.parse(input));
+    case "addModelProvider":
+      return service.addModelProvider(
+        z
+          .object({
+            baseUrl: z.string().min(1).max(2000),
+            model: z.string().min(1).max(200),
+            apiKey: z.string().max(4096).optional(),
+          })
+          .parse(input),
+      );
+    case "selectModelProvider":
+      return service.selectModelProvider(
+        z.string().min(1).max(100).parse(input),
+      );
     case "testModel":
-      return service.testModel();
+      return service.testModel(
+        input === undefined
+          ? undefined
+          : z
+              .object({
+                baseUrl: z.string().min(1).max(2000),
+                model: z.string().min(1).max(200),
+                apiKey: z.string().max(4096).optional(),
+              })
+              .parse(input),
+      );
     case "mcpInfo":
       return mcpInfo();
     case "mcpCheck": {

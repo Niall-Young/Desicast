@@ -18,6 +18,7 @@ import type {
   Settings,
   VisionInput,
   Icon,
+  ModelSettings,
 } from "./types";
 
 export class IconService {
@@ -42,29 +43,117 @@ export class IconService {
       })),
     );
   }
+  private modelSecret(model: ModelSettings) {
+    return model.id && model.id !== "legacy" ? `model:${model.id}` : "model";
+  }
+  private modelProviders(settings: Settings) {
+    return (
+      settings.modelProviders ??
+      (settings.model.model.trim()
+        ? [{ ...settings.model, id: settings.model.id ?? "legacy" }]
+        : [])
+    );
+  }
   async settings(): Promise<Settings> {
     const settings = this.store.settings();
+    const providers = this.modelProviders(settings);
     return {
       ...settings,
       model: {
         ...settings.model,
-        hasKey: Boolean(await this.secrets.get("model")),
+        consent: Boolean(settings.model.model.trim()),
+        id: settings.model.id ?? (providers.length ? "legacy" : undefined),
+        hasKey: Boolean(
+          await this.secrets.get(this.modelSecret(settings.model)),
+        ),
       },
+      modelProviders: await Promise.all(
+        providers.map(async (provider) => ({
+          ...provider,
+          hasKey: Boolean(await this.secrets.get(this.modelSecret(provider))),
+        })),
+      ),
     };
   }
   async saveSettings(settings: Settings, apiKey?: string) {
     modelEndpoint(settings.model.baseUrl);
+    const previous = this.store.settings();
+    const providers = this.modelProviders(previous);
+    const model = {
+      id:
+        settings.model.id ??
+        (settings.model.model.trim() ? "legacy" : undefined),
+      baseUrl: settings.model.baseUrl,
+      model: settings.model.model,
+      consent: settings.model.consent,
+    };
+    if (model.id && !providers.some((provider) => provider.id === model.id)) {
+      providers.push({ ...model, id: model.id });
+    }
     if (apiKey !== undefined) {
-      if (apiKey) await this.secrets.set("model", apiKey);
-      else await this.secrets.delete("model");
+      if (apiKey) await this.secrets.set(this.modelSecret(model), apiKey);
+      else await this.secrets.delete(this.modelSecret(model));
     }
     this.store.saveSetting("preferences", {
       theme: settings.theme,
-      model: {
-        baseUrl: settings.model.baseUrl,
-        model: settings.model.model,
-        consent: settings.model.consent,
-      },
+      model,
+      modelProviders: providers.map((provider) =>
+        provider.id === model.id
+          ? { ...model, id: provider.id }
+          : {
+              id: provider.id,
+              baseUrl: provider.baseUrl,
+              model: provider.model,
+              consent: provider.consent,
+            },
+      ),
+    });
+    return this.settings();
+  }
+  async addModelProvider(input: {
+    baseUrl: string;
+    model: string;
+    apiKey?: string;
+  }) {
+    const baseUrl = input.baseUrl.trim(),
+      name = input.model.trim();
+    modelEndpoint(baseUrl);
+    if (!name) throw new Error("请输入模型名称");
+    const settings = this.store.settings();
+    const provider = { id: randomUUID(), baseUrl, model: name, consent: true };
+    if (input.apiKey)
+      await this.secrets.set(this.modelSecret(provider), input.apiKey);
+    this.store.saveSetting("preferences", {
+      ...settings,
+      model: provider,
+      modelProviders: [
+        ...this.modelProviders(settings).map(
+          ({ id, baseUrl, model, consent }) => ({
+            id,
+            baseUrl,
+            model,
+            consent,
+          }),
+        ),
+        provider,
+      ],
+    });
+    return this.settings();
+  }
+  async selectModelProvider(id: string) {
+    const settings = this.store.settings();
+    const providers = this.modelProviders(settings);
+    const provider = providers.find((provider) => provider.id === id);
+    if (!provider) throw new Error("模型供应商不存在");
+    this.store.saveSetting("preferences", {
+      ...settings,
+      model: { ...provider, consent: true },
+      modelProviders: providers.map(({ id, baseUrl, model }) => ({
+        id,
+        baseUrl,
+        model,
+        consent: true,
+      })),
     });
     return this.settings();
   }
@@ -218,7 +307,7 @@ export class IconService {
       throw new Error("此来源已禁用模型图片搜索");
     const model = new VisionModel(
       settings.model,
-      await this.secrets.get("model"),
+      await this.secrets.get(this.modelSecret(settings.model)),
     );
     const description = await model.describe(input.dataUrl),
       candidates: Icon[] = [];
@@ -247,9 +336,20 @@ export class IconService {
         : undefined,
     };
   }
-  async testModel() {
-    const settings = await this.settings(),
-      model = new VisionModel(settings.model, await this.secrets.get("model"));
+  async testModel(draft?: { baseUrl: string; model: string; apiKey?: string }) {
+    const settings = await this.settings();
+    const config = draft
+      ? {
+          baseUrl: draft.baseUrl.trim(),
+          model: draft.model.trim(),
+          consent: true,
+        }
+      : settings.model;
+    modelEndpoint(config.baseUrl);
+    const model = new VisionModel(
+      config,
+      draft ? draft.apiKey : await this.secrets.get(this.modelSecret(config)),
+    );
     // A real image-input request checks vision capability, not just model listing.
     const sharp = (await import("sharp")).default;
     const image = await sharp(

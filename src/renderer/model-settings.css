@@ -1,0 +1,104 @@
+.model-settings {
+  position: relative;
+}
+.model-settings-header {
+  position: absolute;
+  top: -40px;
+  right: 0;
+}
+#settings-model > h2 {
+  padding-right: 112px;
+}
+.model-provider-list {
+  gap: 0;
+  border: 1px solid var(--nico-color-border);
+  border-radius: var(--nico-border-radius-md);
+  overflow: hidden;
+}
+.model-provider-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 12px;
+  padding: 12px 16px;
+  line-height: 22px;
+  cursor: pointer;
+}
+.model-provider-row + .model-provider-row::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 16px;
+  right: 16px;
+  border-top: 1px solid var(--nico-color-border);
+}
+.model-provider-row > span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.model-settings-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 48px 20px;
+  border: 1px solid var(--nico-color-border);
+  border-radius: var(--nico-border-radius-md);
+}
+.model-empty-icon {
+  display: flex;
+  padding: 12px;
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-background-neutral-subtle);
+}
+.model-empty-icon img {
+  width: 20px;
+  height: 20px;
+}
+.model-empty-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: center;
+  line-height: 22px;
+}
+.model-empty-copy p {
+  margin: 0;
+}
+.model-empty-copy p:first-child {
+  font-weight: var(--nico-font-weight-medium);
+}
+.model-empty-copy p:last-child {
+  color: var(--nico-color-text-subtlest);
+}
+.model-provider-dialog {
+  width: 640px;
+}
+.model-provider-form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  border: 1px solid var(--nico-color-border);
+  border-radius: var(--nico-border-radius-md);
+}
+.model-provider-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.model-provider-field > label {
+  color: var(--nico-color-text-subtle);
+  line-height: 22px;
+}
+.model-close-icon {
+  width: 16px;
+  height: 16px;
+}
+.dark .model-empty-icon img,
+.dark .model-close-icon {
+  filter: invert(1);
+}

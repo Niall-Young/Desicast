@@ -1,0 +1,30 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "nodes": [
+    "2023:18335",
+    "2023:19342",
+    "2023:19383"
+  ],
+  "retrievedAt": "2026-10-03",
+  "assets": {
+    "model-empty": {
+      "localFile": "model-empty.svg",
+      "nodeId": "2023:19373",
+      "sha256": "2d04f2671d6760c816b91e0f1eb8e38147167870de0d49404065295f617e48b3",
+      "width": "20",
+      "height": "20"
+    },
+    "model-close": {
+      "localFile": "model-close.svg",
+      "nodeId": "I2023:19383;31:9237;30:3178",
+      "sha256": "2887ff71f8b27b80b9312d787d70c8cc0b55e8e652f1016b3fa7cc903e630dd9",
+      "width": "16",
+      "height": "16"
+    }
+  },
+  "components": {
+    "radio": "Gendesign Radio and radio-selected.svg",
+    "divider": "Nico border separator",
+    "passwordVisibility": "Gendesign PasswordInput with MingCute EyeCloseRegular/Eye2Regular"
+  }
+}

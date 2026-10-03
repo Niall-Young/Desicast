@@ -1,3 +1,4 @@
+import { ModelSettings } from "./ModelSettings";
 import { AddLibraryDialog } from "./AddLibraryDialog";
 import { IconViewSwitch } from "./IconViewSwitch";
 import { SettingsPage } from "./SettingsPage";
@@ -46,11 +47,9 @@ import { IconButton } from "@/components/ui/icon-button";
 import { useMessage } from "@/components/ui/message";
 import { SearchBox } from "@/components/ui/search-box";
 import { Input } from "@/components/ui/input";
-import { PasswordInput } from "@/components/ui/password-input";
 import { Select } from "./Select";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Switch } from "@/components/ui/switch";
 import { Spinner } from "@/components/ui/spinner";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import {
@@ -1651,151 +1650,6 @@ function RepositorySettings({
         <br />
         私有仓库请先在本机授权 Git、gh 或 glab 后读取仓库；不支持 SSH 地址或 Git
         子模块。
-      </div>
-    </div>
-  );
-}
-
-function ModelSettings({
-  settings,
-  onSettings,
-  onError,
-  onNotice,
-}: {
-  settings: Settings;
-  onSettings: (value: Settings) => void;
-  onError: (err: unknown) => void;
-  onNotice: (message: string) => void;
-}) {
-  const [baseUrl, setBaseUrl] = useState(settings.model.baseUrl),
-    [model, setModel] = useState(settings.model.model),
-    [key, setKey] = useState(""),
-    [consent, setConsent] = useState(settings.model.consent),
-    [busy, setBusy] = useState(false),
-    [testing, setTesting] = useState(false);
-  async function save() {
-    const next = await api<Settings>("saveSettings", {
-      settings: { ...settings, model: { baseUrl, model, consent } },
-      apiKey: key || undefined,
-    });
-    onSettings(next);
-    setKey("");
-    return next;
-  }
-  return (
-    <div className="settings-content">
-      <div className="settings-intro">
-        <h1>用形状找到图标</h1>
-        <p>连接你自己的视觉模型，按参考图的轮廓和风格寻找相似 SVG</p>
-      </div>
-      <form
-        onSubmit={async (event) => {
-          event.preventDefault();
-          setBusy(true);
-          try {
-            await save();
-            onNotice("模型设置已保存");
-          } catch (err) {
-            onError(err);
-          } finally {
-            setBusy(false);
-          }
-        }}
-      >
-        <Field
-          label="API 地址"
-          hint="兼容 OpenAI Chat Completions 图片输入；支持 HTTPS 或本机 HTTP"
-        >
-          <Input
-            aria-label="模型 API 地址"
-            required
-            value={baseUrl}
-            onValueChange={setBaseUrl}
-          />
-        </Field>
-        <Field label="模型名称" hint="填写服务提供的视觉或多模态模型名称">
-          <Input
-            aria-label="模型名称"
-            placeholder="支持图片输入的模型"
-            value={model}
-            onValueChange={setModel}
-          />
-        </Field>
-        <Field
-          label="API Key"
-          hint="保存到 macOS Keychain；本地无认证服务可留空"
-        >
-          <PasswordInput
-            aria-label="模型 API Key"
-            placeholder={
-              settings.model.hasKey ? "已保存，留空保留" : "输入 API Key"
-            }
-            value={key}
-            onValueChange={setKey}
-          />
-        </Field>
-        {settings.model.hasKey && (
-          <Button
-            kind="plain"
-            color="negative"
-            size="sm"
-            onClick={async () => {
-              try {
-                const next = await api<Settings>("saveSettings", {
-                  settings: { ...settings, model: { baseUrl, model, consent } },
-                  apiKey: "",
-                });
-                onSettings(next);
-                onNotice("API Key 已清除");
-              } catch (err) {
-                onError(err);
-              }
-            }}
-          >
-            清除已保存 Key
-          </Button>
-        )}
-        <div className="toggle-row consent-row">
-          <div>
-            <span className="field-title">允许发送图片进行视觉搜索</span>
-            <p>参考图和已授权图标将发送到模型服务</p>
-          </div>
-          <Switch
-            size="md"
-            aria-label="允许发送图片到模型"
-            checked={consent}
-            onCheckedChange={setConsent}
-          />
-        </div>
-        <div className="form-actions">
-          <Button
-            kind="ghost"
-            loading={testing}
-            disabled={!model || busy}
-            onClick={async () => {
-              setTesting(true);
-              try {
-                await save();
-                await api("testModel");
-                onNotice("连接成功，已验证图片输入");
-              } catch (err) {
-                onError(err);
-              } finally {
-                setTesting(false);
-              }
-            }}
-          >
-            测试图片能力
-          </Button>
-          <Button type="submit" loading={busy} disabled={testing}>
-            保存设置
-          </Button>
-        </div>
-      </form>
-      <div className="settings-note">
-        搜索会先提取关键词，再比对候选图标。结果是相似匹配，不保证找到原图标。
-        <br />
-        支持 PNG、JPEG、WebP，单张不超过 8 MB。
       </div>
     </div>
   );
