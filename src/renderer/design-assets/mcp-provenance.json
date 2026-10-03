@@ -13,21 +13,21 @@
       "figmaAsset": "732de.svg",
       "sha256": "93d1c4c5f4a3fd8249076d1d09702b9271a5aea47ee6e287c674d2e4d0937ac2",
       "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
-      "nodeId": "I2018:13310;31:9239;2018:13430;32:10231;2018:13448;32:9819",
+      "nodeId": "I2018:13310;31:9239;2023:20133;32:10231;2023:20135;32:9819",
       "settingsNodeId": "I2023:19502;32:10231;2023:19504;32:9819"
     },
     "mcp-claude": {
       "figmaAsset": "3a0bc.svg",
       "sha256": "a36cd9af8c4f251c94f68ad1e4d9da209604b8006da339d542b9bccbe7d30d9e",
       "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
-      "nodeId": "I2018:13310;31:9239;2018:13430;32:10231;2018:13449;32:9839",
+      "nodeId": "I2018:13310;31:9239;2023:20133;32:10231;2023:20136;32:9839",
       "settingsNodeId": "I2023:19502;32:10231;2023:19505;32:9839"
     },
     "mcp-other": {
       "figmaAsset": "ec9db.svg",
       "sha256": "1d6164ed1bfb680845efa32f51496353d0c61c568b25393ba35e7d3e5346c877",
       "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
-      "nodeId": "I2018:13310;31:9239;2018:13430;32:10231;2018:13450;32:9839",
+      "nodeId": "I2018:13310;31:9239;2023:20133;32:10231;2023:20137;32:9839",
       "settingsNodeId": "I2023:19502;32:10231;2023:19506;32:9839"
     },
     "mcp-copy": {
@@ -45,5 +45,6 @@
     }
   },
   "settingsNodeId": "2023:18881",
-  "settingsRetrievedAt": "2026-10-03"
+  "settingsRetrievedAt": "2026-10-03",
+  "notes": "Dialog refreshed from Figma 2018:13310 on 2026-10-03. All five visible 16px SVG assets byte-match the latest exports. The former mcp-status asset is retained for provenance and is no longer rendered in the dialog."
 }

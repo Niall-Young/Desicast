@@ -352,6 +352,13 @@ input {
   text-overflow: ellipsis;
   width: 100%;
 }
+.card-labels {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  width: 100%;
+}
 .team-mark {
   position: absolute;
   top: 9px;
@@ -1386,7 +1393,7 @@ pre {
 }
 .library-view .icon-card {
   height: 134px;
-  padding: 23px 15px;
+  padding: 14px 15px;
   justify-content: center;
   gap: 16px;
   background: var(--nico-color-background-neutral-subtle);
@@ -1421,12 +1428,11 @@ pre {
 .icon-list .card-art {
   flex: 0 0 48px;
 }
-.library-view .icon-list .card-name {
+.library-view .icon-list .card-labels {
   flex: 1;
 }
-.icon-list .card-source {
-  width: auto;
-  max-width: 35%;
+.library-view .card-source {
+  font-size: var(--nico-font-size-xs);
 }
 .library-view .detail {
   width: var(--detail-width);

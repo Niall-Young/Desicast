@@ -567,6 +567,10 @@ export function App() {
       .filter((source) => !libraryPreferences[source.id]?.hidden)
       .map((source) => ({ id: source.id, name: source.name, public: false })),
   ];
+  const iconLibraryNames = new Map([
+    ...collections.map((item) => [item.id, item.name] as const),
+    ...searchLibraries.map((item) => [item.id, item.name] as const),
+  ]);
   const visibleLibraries = filterLibraries(
     defaultLibraries.map((library) => ({
       ...library,
@@ -1129,7 +1133,7 @@ export function App() {
                               setSelected(icon);
                               setDetailOpen(true);
                             }}
-                            title={`${icon.name} · ${icon.collection}`}
+                            title={`${icon.name} · ${iconLibraryNames.get(icon.sourceId === "public" ? icon.collection : icon.sourceId) ?? designNames[icon.collection] ?? icon.collection}`}
                           >
                             <div className="card-art">
                               <img
@@ -1142,13 +1146,18 @@ export function App() {
                                 height="48"
                               />
                             </div>
-                            <span className="card-name">{icon.name}</span>
-                            {view === "list" && (
+                            <span className="card-labels">
+                              <span className="card-name">{icon.name}</span>
                               <span className="card-source">
-                                {designNames[icon.collection] ??
+                                {iconLibraryNames.get(
+                                  icon.sourceId === "public"
+                                    ? icon.collection
+                                    : icon.sourceId,
+                                ) ??
+                                  designNames[icon.collection] ??
                                   icon.collection}
                               </span>
-                            )}
+                            </span>
                             {icon.sourceId !== "public" && (
                               <span className="team-mark" title="团队图标" />
                             )}

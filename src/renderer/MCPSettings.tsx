@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Tabs as TabsPrimitive } from "@base-ui/react/tabs";
 import { Button } from "@/components/ui/button";
 import { IconButton } from "@/components/ui/icon-button";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { LinkButton } from "@/components/ui/link-button";
 import {
   Modal,
   ModalContent,
@@ -18,7 +18,6 @@ import chatgpt from "./design-assets/mcp-chatgpt.svg?url";
 import claude from "./design-assets/mcp-claude.svg?url";
 import other from "./design-assets/mcp-other.svg?url";
 import copyIcon from "./design-assets/mcp-copy.svg?url";
-import statusIcon from "./design-assets/mcp-status.svg?url";
 import "./mcp-settings.css";
 
 const clients = [
@@ -116,23 +115,16 @@ export function MCPSettings({
         </ModalBody>
         <ModalFooter
           additionItem={
-            <Button
-              kind="plain"
-              size="sm"
-              className="mcp-service-tag"
+            <LinkButton
+              color="link"
               aria-label="检查 MCP 连接"
               title="检查本地 stdio MCP 连接"
-              loading={busy}
+              aria-busy={busy}
               disabled={busy}
               onClick={check}
             >
-              <img
-                src={statusIcon}
-                className="mcp-icon mcp-status-icon"
-                alt=""
-              />
-              MCP
-            </Button>
+              {busy ? "测试中…" : "测试链接"}
+            </LinkButton>
           }
         >
           <Button kind="tonal" onClick={onClose}>
@@ -150,20 +142,16 @@ export function MCPClientPanel({
   loadError = "",
   onError,
   onNotice,
-  descriptionPlacement = "panel",
+  descriptionPlacement = "beside-tabs",
 }: {
   info?: MCPInfo;
   loadError?: string;
   onError: (error: unknown) => void;
   onNotice: (message: string) => void;
-  descriptionPlacement?: "panel" | "above-tabs";
+  descriptionPlacement?: "beside-tabs" | "above-tabs";
 }) {
   const [activeClient, setActiveClient] = useState<string>("codex");
   const inSettings = descriptionPlacement === "above-tabs";
-  const Root = inSettings ? TabsPrimitive.Root : Tabs;
-  const List = inSettings ? TabsPrimitive.List : TabsList;
-  const Trigger = inSettings ? TabsPrimitive.Tab : TabsTrigger;
-  const Panel = inSettings ? TabsPrimitive.Panel : TabsContent;
   const description = (clientId: string) =>
     clientId === "other"
       ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接"
@@ -171,23 +159,21 @@ export function MCPClientPanel({
         ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP"
         : "请复制下方内容在终端中执行，连接 Codex 的 MCP";
   const clientTabs = (
-    <List
+    <TabsPrimitive.List
       aria-label="MCP 客户端"
-      className={
-        inSettings ? "mcp-client-segmented segmented-motion" : undefined
-      }
+      className="mcp-client-segmented segmented-motion"
     >
-      {inSettings && <SegmentedIndicator />}
+      <SegmentedIndicator />
       {clients.map((client) => (
-        <Trigger key={client.id} value={client.id}>
+        <TabsPrimitive.Tab key={client.id} value={client.id}>
           <img src={client.icon} className="mcp-icon" alt="" />
           {client.label}
-        </Trigger>
+        </TabsPrimitive.Tab>
       ))}
-    </List>
+    </TabsPrimitive.List>
   );
   return (
-    <Root
+    <TabsPrimitive.Root
       value={activeClient}
       onValueChange={setActiveClient}
       className="mcp-clients"
@@ -205,13 +191,21 @@ export function MCPClientPanel({
           {clientTabs}
         </div>
       ) : (
-        clientTabs
+        <div className="mcp-dialog-client-header">
+          {clientTabs}
+          <p className="mcp-client-description">
+            {activeClient === "other"
+              ? "请将下方 JSON 合并到客户端的 MCP 配置中"
+              : "请复制下方内容在终端中执行"}
+          </p>
+        </div>
       )}
       {clients.map((client) => (
-        <Panel key={client.id} value={client.id} className="mcp-panel">
-          {descriptionPlacement === "panel" && (
-            <p className="mcp-client-description">{description(client.id)}</p>
-          )}
+        <TabsPrimitive.Panel
+          key={client.id}
+          value={client.id}
+          className="mcp-panel"
+        >
           <div className="mcp-code">
             <div className="mcp-code-header">
               <span>{client.id === "other" ? "JSON" : "Bash"}</span>
@@ -237,8 +231,8 @@ export function MCPClientPanel({
                 (loadError ? "配置暂不可用" : "正在读取…")}
             </pre>
           </div>
-        </Panel>
+        </TabsPrimitive.Panel>
       ))}
-    </Root>
+    </TabsPrimitive.Root>
   );
 }

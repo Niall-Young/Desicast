@@ -6,7 +6,7 @@
   height: 16px;
   flex-shrink: 0;
 }
-.dark .mcp-icon:not(.mcp-status-icon) {
+.dark .mcp-icon {
   filter: invert(1);
 }
 .mcp-clients {
@@ -123,10 +123,24 @@
   overflow-wrap: anywhere;
   word-break: normal;
 }
-.mcp-dialog .mcp-service-tag {
-  height: 28px;
-  padding: 2px 8px;
-  border-radius: var(--nico-border-radius-sm);
-  background: var(--nico-color-background-accent-green);
-  color: var(--nico-color-text-accent-green);
+.mcp-dialog-client-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.mcp-dialog-client-header .mcp-client-description {
+  margin: 0;
+  color: var(--nico-color-text-subtlest);
+  font-size: var(--nico-font-size-sm);
+  line-height: var(--nico-line-height-sm);
+}
+.mcp-dialog .mcp-code pre {
+  margin: 0;
+  padding: 11px;
+  height: auto;
+  min-height: 90px;
+  max-height: 244px;
+  white-space: pre-wrap;
 }
