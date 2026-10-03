@@ -234,6 +234,7 @@ export function App() {
   }>({ key: 0, direction: "forward" });
   const [detailMounted, setDetailMounted] = useState(false);
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [viewDirection, setViewDirection] = useState<"forward" | "backward">();
   const [reference, setReference] = useState<string>(),
     [visionResult, setVisionResult] = useState(false),
     [cropOpen, setCropOpen] = useState(false);
@@ -1001,7 +1002,16 @@ export function App() {
                           <DesignIcon name="refresh-library" />
                         </IconButton>
                       </div>
-                      <IconViewSwitch value={view} onValueChange={setView} />
+                      <IconViewSwitch
+                        value={view}
+                        onValueChange={(next) => {
+                          if (next === view) return;
+                          setViewDirection(
+                            next === "list" ? "forward" : "backward",
+                          );
+                          setView(next);
+                        }}
+                      />
                     </div>
                     <input
                       ref={fileInput}
@@ -1103,7 +1113,9 @@ export function App() {
                   >
                     {result.icons.length ? (
                       <div
-                        className={`icon-grid ${view === "list" ? "icon-list" : ""}`}
+                        key={view}
+                        className={`icon-grid ${view === "list" ? "icon-list" : ""} ${viewDirection ? `code-slide-${viewDirection}` : ""}`}
+                        onAnimationEnd={() => setViewDirection(undefined)}
                       >
                         {result.icons.map((icon) => (
                           <button

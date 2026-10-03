@@ -273,8 +273,8 @@ function createWindow() {
     minHeight: 640,
     title: "DesiCast",
     titleBarStyle: "hiddenInset",
-    // Account for the native control inset so their visible centers align with navigation
-    trafficLightPosition: { x: 20, y: 16 },
+    // 19px top margin + 7px native control radius = 26px navigation center
+    trafficLightPosition: { x: 20, y: 19 },
     backgroundColor: "#ffffff",
     webPreferences: {
       preload: join(__dirname, "preload.cjs"),
