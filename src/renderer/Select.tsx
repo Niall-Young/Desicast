@@ -4,6 +4,7 @@ import { CheckRegular, DownRegular } from "@mingcute/react/core-regular";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
   selectTriggerClass,
+  selectIconClass,
   selectPopupClass,
   selectItemClass,
 } from "@/lib/select-styles";
@@ -71,7 +72,7 @@ export function Select({
           </SelectPrimitive.Value>
           <SelectPrimitive.Icon
             data-slot="select-icon"
-            className="shrink-0 text-(--nico-color-icon-subtlest)"
+            className={selectIconClass}
           >
             <DownRegular size={16} aria-hidden="true" />
           </SelectPrimitive.Icon>

@@ -142,8 +142,8 @@
       "sha256": "0477c9d9fd1fe6d35556b37c0b2fed5bb562821513109f87ecacc8c1d85f126f",
       "normalizedSha256": "9c43b47a2e5f63b2aec17043a1d9bf8ed6a12d3d5d916b8023710bc8e819e2b0",
       "parser": "typescript",
-      "adaptation": "Application adaptation requested by the owner: comma-separated selection labels and shared Select trigger/popup appearance through Base UI Popover",
-      "adaptedNormalizedSha256": "0dac76a6b64a209af46e0fb4bf346ab4fdd0fed57ae065733bb771d62e8158c1"
+      "adaptation": "Application adaptation requested by the owner: comma-separated selection labels, shared Select trigger/popup/icon appearance through Base UI Popover, and a clear action before the fixed trailing arrow",
+      "adaptedNormalizedSha256": "90bc321c751be9e470417ca5c44e87e5685bb213c94368ff436d0e9c91bdc805"
     },
     "components/ui/tree.tsx": {
       "sha256": "21570af3e14f39c2e20ce7b6413d70f79f442c2f35886d107443598273b2c8f2",

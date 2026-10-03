@@ -4,7 +4,11 @@ import * as React from "react";
 import { DownRegular, CloseRegular } from "@mingcute/react/core-regular";
 import { cn } from "@/lib/utils";
 import { Popover as PopoverPrimitive } from "@base-ui/react/popover";
-import { selectTriggerClass, selectPopupClass } from "@/lib/select-styles";
+import {
+  selectTriggerClass,
+  selectIconClass,
+  selectPopupClass,
+} from "@/lib/select-styles";
 import { IconButton } from "./icon-button";
 import { Tree, type TreeNode, type TreeProps } from "./tree";
 
@@ -138,7 +142,6 @@ function TreeSelect({
               : "hover:bg-(--nico-color-background-input-hover)",
             disabled && "cursor-not-allowed text-(--nico-color-text-disabled)",
             negative && "shadow-(--nico-effect-focused-negative)",
-            clearable && current.length > 0 && !blocked && "pr-16",
           )}
           onClick={(event) => {
             if (readOnly) event.preventDefault();
@@ -148,17 +151,16 @@ function TreeSelect({
             data-slot="tree-select-value"
             className={cn(
               "min-w-0 flex-1 truncate",
+              clearable && current.length > 0 && !blocked && "pr-8",
               !current.length && "text-(--nico-color-text-disabled)",
             )}
             title={text || undefined}
           >
             {text || placeholder}
           </span>
-          <DownRegular
-            size={16}
-            aria-hidden="true"
-            className="shrink-0 text-(--nico-color-icon-subtlest)"
-          />
+          <span data-slot="tree-select-icon" className={selectIconClass}>
+            <DownRegular size={16} aria-hidden="true" />
+          </span>
         </PopoverPrimitive.Trigger>
         <PopoverPrimitive.Portal>
           <PopoverPrimitive.Positioner
@@ -205,7 +207,7 @@ function TreeSelect({
           kind="plain"
           size="sm"
           aria-label={clearLabel}
-          className="absolute right-2 top-1/2 size-6 -translate-y-1/2"
+          className="absolute right-9 top-1/2 size-6 -translate-y-1/2"
           onClick={() => {
             change([]);
             trigger.current?.focus();
