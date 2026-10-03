@@ -1,5 +1,26 @@
 .mcp-dialog {
   width: 640px;
+  height: 354px;
+}
+.mcp-dialog > [data-slot="modal-body"] {
+  flex: 1;
+}
+.mcp-dialog .mcp-clients {
+  height: 100%;
+  min-height: 0;
+}
+.mcp-dialog .mcp-panel {
+  flex: 1;
+  min-height: 0;
+}
+.mcp-dialog .mcp-code {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.mcp-dialog .mcp-code-header {
+  flex-shrink: 0;
 }
 .mcp-icon {
   width: 16px;
@@ -124,6 +145,7 @@
   word-break: normal;
 }
 .mcp-dialog-client-header {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -139,8 +161,9 @@
 .mcp-dialog .mcp-code pre {
   margin: 0;
   padding: 11px;
-  height: auto;
-  min-height: 90px;
-  max-height: 244px;
+  flex: 1;
+  height: 0;
+  min-height: 0;
+  max-height: none;
   white-space: pre-wrap;
 }

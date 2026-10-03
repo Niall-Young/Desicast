@@ -150,7 +150,7 @@ npm run package      # 生成 macOS DMG / ZIP 安装包
 
 ### MCP 服务与 CLI
 
-点击侧栏底部 MCP 标签打开「MCP 配置」弹窗，在 ChatGPT（Codex）、Claude code 和其他页签中切换并复制适用于当前安装位置的 Codex、Claude Code 注册命令或其他客户端的通用 JSON。Claude Code 命令使用 `--transport stdio --scope user`，让当前用户的所有项目都能使用 DesiCast；执行后在新的 Claude Code 会话中输入 `/mcp` 查看连接状态。弹窗顶部并排显示客户端切换和操作提示，代码区按内容高度展开并支持滚动；底部「测试链接」检查本地 stdio MCP 服务并显示工具和来源数量。命令会自动携带图库数据目录，开发模式也会包含所需的 Electron 环境变量。开发时可直接运行：
+点击侧栏底部 MCP 标签打开「MCP 配置」弹窗，在 ChatGPT（Codex）、Claude code 和其他页签中切换并复制适用于当前安装位置的 Codex、Claude Code 注册命令或其他客户端的通用 JSON。Claude Code 命令使用 `--transport stdio --scope user`，让当前用户的所有项目都能使用 DesiCast；执行后在新的 Claude Code 会话中输入 `/mcp` 查看连接状态。弹窗顶部并排显示客户端切换和操作提示，弹窗固定为 640 × 354px，受窗口高度限制，代码区单独滚动，切换客户端或加载配置不改变弹窗高度；底部「测试链接」检查本地 stdio MCP 服务并显示工具和来源数量。命令会自动携带图库数据目录，开发模式也会包含所需的 Electron 环境变量。开发时可直接运行：
 
 ```sh
 npm run mcp        # 运行构建产物
@@ -296,7 +296,7 @@ Desktop directory-control checks use repository metadata fixtures through Electr
 
 ### MCP Server & CLI
 
-Click the MCP badge at the bottom of the sidebar to open the "MCP Configuration" modal. Switch between ChatGPT (Codex), Claude code, and Other to copy the installation-specific registration command for Codex or Claude Code, or generic JSON for other clients. The Claude Code command uses `--transport stdio --scope user` to make DesiCast available across the current user's projects; after running it, enter `/mcp` in a new Claude Code session to check the connection. The modal places client selection beside its instructions and sizes the scrollable code block to its content. The footer’s "Test connection" action checks the local stdio MCP server and reports tool and source counts. Commands include the library data directory and, in development, the required Electron environment variable. For development:
+Click the MCP badge at the bottom of the sidebar to open the "MCP Configuration" modal. Switch between ChatGPT (Codex), Claude code, and Other to copy the installation-specific registration command for Codex or Claude Code, or generic JSON for other clients. The Claude Code command uses `--transport stdio --scope user` to make DesiCast available across the current user's projects; after running it, enter `/mcp` in a new Claude Code session to check the connection. The modal places client selection beside its instructions and keeps a fixed 640 × 354px size within the viewport height limit, with independent code scrolling so client switches and configuration loading do not resize the modal. The footer’s "Test connection" action checks the local stdio MCP server and reports tool and source counts. Commands include the library data directory and, in development, the required Electron environment variable. For development:
 
 ```sh
 npm run mcp        # Run compiled MCP server
