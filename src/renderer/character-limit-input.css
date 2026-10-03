@@ -21,9 +21,13 @@
 .character-limit-excess {
   color: var(--nico-color-text-negative);
 }
+/* The form's existing 24px gap contains validation; do not add field height. */
 .character-limit-message-slot {
-  height: 26px;
-  padding-top: 4px;
+  position: absolute;
+  top: 100%;
+  inset-inline: 0;
+  height: 24px;
+  padding-top: 2px;
   box-sizing: border-box;
 }
 .character-limit-error {
@@ -31,7 +35,7 @@
   align-items: flex-start;
   gap: 4px;
   font-size: var(--nico-font-size-sm);
-  line-height: 22px;
+  line-height: 20px;
   color: var(--nico-color-text-negative);
 }
 .character-limit-error > span {
@@ -42,6 +46,6 @@
 }
 .character-limit-error > svg {
   flex-shrink: 0;
-  margin-top: 3px;
+  margin-top: 2px;
   color: var(--nico-color-icon-negative);
 }
