@@ -218,7 +218,6 @@ export function App() {
     [revision, setRevision] = useState(0);
   const [target, setTarget] = useState<Target>("svg"),
     [exported, setExported] = useState<ExportResult>(),
-    [copyState, setCopyState] = useState(false),
     [exportPending, setExportPending] = useState(false),
     [detailOpen, setDetailOpen] = useState(false);
   const [codeAnimation, setCodeAnimation] = useState<{
@@ -499,8 +498,7 @@ export function App() {
     if (!exported || exportPending) return;
     try {
       await api("copy", exported.code);
-      setCopyState(true);
-      setTimeout(() => setCopyState(false), 1800);
+      flash("代码已复制");
     } catch (err) {
       report(err);
     }
@@ -1220,7 +1218,7 @@ export function App() {
                             disabled={!exported || exportPending}
                             onClick={copy}
                           >
-                            {copyState ? "已复制" : "复制代码"}
+                            复制代码
                           </Button>
                           <IconButton
                             kind="ghost"

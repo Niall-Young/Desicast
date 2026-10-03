@@ -146,8 +146,9 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
           ? "<template>"
           : "Image(",
     );
+    await expect(page.getByLabel("消息通知")).toContainText("代码已复制");
     await expect(
-      page.getByRole("button", { name: "已复制", exact: true }),
+      page.getByRole("button", { name: "复制代码", exact: true }),
     ).toBeVisible();
     await page.waitForTimeout(1900);
   }
