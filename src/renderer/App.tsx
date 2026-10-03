@@ -86,7 +86,7 @@ const publicLibraryOrigins: Record<string, string> = {
   ic: "https://fonts.google.com/icons",
   eva: "https://akveo.github.io/eva-icons",
 };
-const targets: Target[] = ["svg", "html", "react", "vue", "swiftui"];
+const targets: Target[] = ["svg", "react", "vue", "swiftui"];
 const labels: Record<Target, string> = {
   svg: "SVG",
   html: "HTML",

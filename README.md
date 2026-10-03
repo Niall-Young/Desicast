@@ -61,7 +61,7 @@ DesiCast 是 macOS Electron 应用，使用 [Gendesign Design System](https://gi
 - **团队私有同步**：连接公开或私有 GitHub、GitLab、自托管 GitLab HTTPS 仓库，按需选择分支和 SVG 目录。
 - **原子增量快照**：原子同步团队图标并保留提交 SHA；同步失败时自动继续使用上一份安全缓存。
 - **双模搜索**：中英文关键词搜索；可使用用户配置的多模态模型进行参考图片的相似形状搜索。
-- **多技术导出**：一键复制 SVG、HTML、React TSX、Vue SFC 代码，导出 SwiftUI SVG image set 及配套调用代码。
+- **多技术导出**：一键复制 SVG（可直接嵌入 HTML）、React TSX、Vue SFC 代码，导出 SwiftUI SVG image set 及配套调用代码。桌面提供 SVG、React、Vue、SwiftUI 四种格式；MCP 仍支持 `html` 目标。
 - **独立 MCP 服务**：随安装包内置运行入口，无需常驻 Electron 桌面，且无需终端用户配置独立 Node 环境。
 
 默认快捷入口包括 Lucide、Tabler Icons、Remix Icon、Unicons、MingCute、Google Material Icons 和 Eva Icons。侧栏显示公共目录的实际图标总数（不是下载缓存数量），团队库显示成功索引的 SVG 数量。公共目录每天缓存、每小时自动检查，并可使用「刷新图库」立即检查；团队库同步后记录新增、SVG 更新和删除。公共库徽标提示目录数量、可用版本及 API 最后修改时间变化；旧缓存会按需更新，网络失败时仍保留旧 SVG；徽标跨重启保留，可在图库内「标记已读」。默认库支持无关键词分页浏览。侧栏「图库选项」提供仓库类型、状态与排序；类型和状态默认不勾选并支持多选，组内取并集、组间取交集。排序为单选，默认「首字母正序」，选择其他项会替换当前排序。旧仓库缺少添加时间时使用既有顺序，新增仓库记录添加时间。
@@ -207,7 +207,7 @@ The DesiCast mark is a purple little devil on a light glass tile. `assets/Desica
 - **Team Repositories**: Connect public or private HTTPS GitHub, GitLab, and self-hosted GitLab repositories with branch and SVG directory selection.
 - **Atomic Synchronization**: Synchronize team icons atomically with commit SHA tracking, cleanly retaining previous cache data when synchronization fails.
 - **Dual-Mode Search**: Bilingual keyword search (English and Chinese aliases) alongside visual shape similarity search powered by user-configured multimodal models.
-- **Multi-Framework Exports**: One-click code copying for SVG, HTML, React TSX, and Vue SFC; full asset set export with usage code for SwiftUI.
+- **Multi-Framework Exports**: One-click code copying for SVG (which can be embedded directly in HTML), React TSX, and Vue SFC; full asset set export with usage code for SwiftUI. The desktop offers SVG, React, Vue, and SwiftUI; MCP also supports the `html` target.
 - **Standalone MCP Server**: Bundled runtime executable requiring no desktop window presence and no user-installed Node environment.
 
 Default shortcuts include Lucide, Tabler Icons, Remix Icon, Unicons, MingCute, Google Material Icons, and Eva Icons. Public sidebar counts use catalog totals rather than downloaded cache counts; team counts reflect successfully indexed SVGs. The public catalog is cached daily, checked hourly, and can be checked immediately with “Refresh library”. Team synchronization records additions, SVG changes, and deletions. Public badges indicate catalog count, published version, and API modification-time changes where available. Cached SVGs refresh on demand while remaining available if the network fails. Unread badges persist across restarts and can be marked as read within the library. Default collections support paginated browsing without a keyword. Sidebar “Library options” provides type, status, and sorting controls. Types and statuses start unchecked and support multiple selections: matches are combined within a group and intersected across groups. Sorting is single-select and defaults to name ascending; choosing another option replaces the current sort. Older repositories without creation timestamps fall back to their existing order; new repositories record creation time.
