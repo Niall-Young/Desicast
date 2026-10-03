@@ -136,22 +136,24 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
   }
   await page.screenshot({ path: ".work/screenshots/team-light.png" });
   await page.getByRole("button", { name: "MCP 连接", exact: false }).click();
+  const dialog = page.getByRole("dialog", { name: "MCP 配置" });
+  await expect(dialog).toBeVisible();
   await expect(
-    page.getByRole("heading", { name: "连接 Codex", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "连接 Claude Code", exact: true }),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("heading", { name: "其他 MCP 客户端", exact: true }),
-  ).toBeVisible();
+    page.getByRole("tab", { name: "ChatGPT", exact: true }),
+  ).toHaveAttribute("aria-selected", "true");
   for (const [label, prefix] of [
     ["复制 Codex 命令", "codex mcp add desicast"],
     ["复制 Claude Code 命令", "claude mcp add"],
   ]) {
+    await page
+      .getByRole("tab", {
+        name: label.includes("Claude") ? "Claude code" : "ChatGPT",
+        exact: true,
+      })
+      .click();
     const button = page.getByRole("button", { name: label, exact: true });
     await expect(button).toBeEnabled();
-    const shown = await button.locator("..").locator("pre").innerText();
+    const shown = await dialog.locator(".mcp-code pre:visible").innerText();
     await button.click();
     await expect
       .poll(() => app.evaluate(({ clipboard }) => clipboard.readText()))
@@ -165,6 +167,7 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
       expect(copied).toContain("--transport stdio --scope user desicast -- ");
     }
   }
+  await page.getByRole("tab", { name: "其他", exact: true }).click();
   await page
     .getByRole("button", { name: "复制 MCP JSON", exact: true })
     .click();
@@ -178,11 +181,45 @@ test("Desktop uses Gendesign, searches team icons, copies each target, and conne
   expect(configuration.mcpServers.desicast.env).toEqual({
     ELECTRON_RUN_AS_NODE: "1",
   });
+  await page.getByRole("tab", { name: "ChatGPT", exact: true }).click();
+  await page.screenshot({
+    animations: "disabled",
+    path: ".work/screenshots/mcp-design-light.png",
+  });
+  const assets = await dialog.locator("img:visible").evaluateAll((images) =>
+    images.map((image) => {
+      const bounds = image.getBoundingClientRect();
+      return {
+        loaded: (image as HTMLImageElement).naturalWidth > 0,
+        width: bounds.width,
+        height: bounds.height,
+      };
+    }),
+  );
+  expect(assets).toHaveLength(6);
+  for (const asset of assets)
+    expect(asset).toEqual({ loaded: true, width: 16, height: 16 });
   await page.getByRole("button", { name: "检查 MCP 连接" }).click();
   await expect(page.getByText("连接正常 · 5 个工具 · 2 个来源")).toBeVisible({
     timeout: 20_000,
   });
-  await page.screenshot({ path: ".work/screenshots/mcp-light.png" });
+  await page.getByRole("tab", { name: "ChatGPT", exact: true }).click();
+  await page.screenshot({
+    animations: "disabled",
+    path: ".work/screenshots/mcp-light.png",
+  });
+  await page.getByRole("button", { name: "确定", exact: true }).click();
+  await expect(dialog).toHaveCount(0);
+  await expect(page.getByRole("searchbox", { name: "搜索图标" })).toHaveValue(
+    "搜索",
+  );
+  for (const close of ["取消", "关闭 MCP 配置", "Escape"]) {
+    await page.getByRole("button", { name: "MCP 连接", exact: true }).click();
+    await expect(dialog).toBeVisible();
+    if (close === "Escape") await page.keyboard.press("Escape");
+    else await page.getByRole("button", { name: close, exact: true }).click();
+    await expect(dialog).toHaveCount(0);
+  }
   expect(errors).toEqual([]);
 });
 test("Themes, settings forms and 960px layout remain usable", async () => {
@@ -209,6 +246,30 @@ test("Themes, settings forms and 960px layout remain usable", async () => {
   await page.getByRole("button", { name: "保存设置" }).click();
   await expect(page.getByText("模型设置已保存")).toBeVisible();
   await page.screenshot({ path: ".work/screenshots/model-dark.png" });
+  await page.getByRole("button", { name: "MCP 连接", exact: true }).click();
+  const mcpDialog = page.getByRole("dialog", { name: "MCP 配置" });
+  await expect(mcpDialog).toBeVisible();
+  const bounds = await mcpDialog.boundingBox();
+  expect(bounds!.width).toBe(640);
+  expect(bounds!.x).toBeGreaterThanOrEqual(0);
+  await page
+    .getByRole("button", { name: "复制 Codex 命令", exact: true })
+    .click();
+  await page.screenshot({
+    animations: "disabled",
+    path: ".work/screenshots/mcp-dark-narrow.png",
+  });
+  await page.getByRole("tab", { name: "其他", exact: true }).click();
+  await expect(mcpDialog.locator(".mcp-code pre:visible")).toContainText(
+    '"mcpServers"',
+  );
+  await page.screenshot({
+    animations: "disabled",
+    path: ".work/screenshots/mcp-json-dark-narrow.png",
+  });
+  await page
+    .getByRole("button", { name: "关闭 MCP 配置", exact: true })
+    .click();
   await page.keyboard.press("Meta+k");
   await expect(page.getByRole("searchbox", { name: "搜索图标" })).toBeFocused();
 });

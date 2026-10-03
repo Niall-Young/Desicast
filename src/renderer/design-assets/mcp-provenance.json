@@ -1,0 +1,43 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "nodeId": "2018:13310",
+  "retrievedAt": "2026-10-03",
+  "assets": {
+    "mcp-close": {
+      "figmaAsset": "dafcd.svg",
+      "sha256": "2887ff71f8b27b80b9312d787d70c8cc0b55e8e652f1016b3fa7cc903e630dd9",
+      "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
+      "nodeId": "I2018:13310;31:9237;30:3178"
+    },
+    "mcp-chatgpt": {
+      "figmaAsset": "732de.svg",
+      "sha256": "93d1c4c5f4a3fd8249076d1d09702b9271a5aea47ee6e287c674d2e4d0937ac2",
+      "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
+      "nodeId": "I2018:13310;31:9239;2018:13430;32:10231;2018:13448;32:9819"
+    },
+    "mcp-claude": {
+      "figmaAsset": "3a0bc.svg",
+      "sha256": "a36cd9af8c4f251c94f68ad1e4d9da209604b8006da339d542b9bccbe7d30d9e",
+      "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
+      "nodeId": "I2018:13310;31:9239;2018:13430;32:10231;2018:13449;32:9839"
+    },
+    "mcp-other": {
+      "figmaAsset": "ec9db.svg",
+      "sha256": "1d6164ed1bfb680845efa32f51496353d0c61c568b25393ba35e7d3e5346c877",
+      "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
+      "nodeId": "I2018:13310;31:9239;2018:13430;32:10231;2018:13450;32:9839"
+    },
+    "mcp-copy": {
+      "figmaAsset": "3b639.svg",
+      "sha256": "356242b20f30e31cf8b31f2a2fade7ede255a66e62b5f444736872d3860e7ca7",
+      "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
+      "nodeId": "I2018:13310;31:9239;2018:13511;30:3178"
+    },
+    "mcp-status": {
+      "figmaAsset": "3b863.svg",
+      "sha256": "7d0b2247f77b1b0b7eb8edda8b835ed1f0de136c001726fbb2346dc080ef7d16",
+      "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"16\" height=\"16\" viewBox=\"0 0 16 16\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">",
+      "nodeId": "I2018:13310;31:9289;2018:13539;31:7470"
+    }
+  }
+}

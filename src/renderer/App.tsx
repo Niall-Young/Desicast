@@ -1,3 +1,4 @@
+import { MCPSettings } from "./MCPSettings";
 import { LibraryFilterMenu } from "./LibraryFilterMenu";
 import { filterLibraries, type LibraryFilter } from "./library-filter";
 import { LibraryContextMenu } from "./LibraryContextMenu";
@@ -71,11 +72,10 @@ import {
   initialSettings,
   svgUrl,
   isMonochrome,
-  type MCPInfo,
 } from "./api";
 
 type Page =
-  "home" | "library" | "repositories" | "model" | "mcp" | "appearance";
+  "home" | "library" | "repositories" | "model" | "appearance";
 const publicLibraryOrigins: Record<string, string> = {
   lucide: "https://lucide.dev",
   tabler: "https://tabler.io/icons",
@@ -196,6 +196,7 @@ export function App() {
   }
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [mcpOpen, setMcpOpen] = useState(false);
   const [libraryFilter, setLibraryFilter] = useState("");
   const [filterOpen, setFilterOpen] = useState(false);
   const [libraryOptions, setLibraryOptions] = useState<LibraryFilter>({
@@ -540,7 +541,6 @@ export function App() {
     library: heading,
     repositories: "团队仓库",
     model: "视觉模型",
-    mcp: "MCP 连接",
     appearance: "外观",
   };
   return (
@@ -800,7 +800,7 @@ export function App() {
               kind="plain"
               className="mcp-badge"
               aria-label="MCP 连接"
-              onClick={() => navigate("mcp")}
+              onClick={() => setMcpOpen(true)}
             >
               <DesignIcon name="check" />
               <span>MCP</span>
@@ -1310,8 +1310,6 @@ export function App() {
                   onError={report}
                   onNotice={flash}
                 />
-              ) : page === "mcp" ? (
-                <MCPSettings onError={report} onNotice={flash} />
               ) : (
                 <div className="settings-content">
                   <div className="settings-intro">
@@ -1348,6 +1346,13 @@ export function App() {
           )}
         </main>
       </div>
+      {mcpOpen && (
+        <MCPSettings
+          onClose={() => setMcpOpen(false)}
+          onError={report}
+          onNotice={flash}
+        />
+      )}
       {removeLibrary && (
         <RemoveLibraryDialog
           name={removeLibrary.name}
@@ -1915,142 +1920,6 @@ function ModelSettings({
         搜索会先提取关键词，再比对候选图标。结果是相似匹配，不保证找到原图标。
         <br />
         支持 PNG、JPEG、WebP，单张不超过 8 MB。
-      </div>
-    </div>
-  );
-}
-
-function MCPSettings({
-  onError,
-  onNotice,
-}: {
-  onError: (err: unknown) => void;
-  onNotice: (message: string) => void;
-}) {
-  const [info, setInfo] = useState<MCPInfo>(),
-    [busy, setBusy] = useState(false),
-    [status, setStatus] = useState<string>();
-  useEffect(() => {
-    api<MCPInfo>("mcpInfo").then(setInfo).catch(onError);
-  }, []);
-  async function copy(value: string) {
-    try {
-      await api("copy", value);
-      onNotice("连接配置已复制");
-    } catch (err) {
-      onError(err);
-    }
-  }
-  return (
-    <div className="settings-content">
-      <div className="settings-intro">
-        <div className="mcp-symbol">
-          <LinkRegular size={28} />
-        </div>
-        <h1>把图标交给你的 Agent</h1>
-        <p>
-          连接 Codex、Claude Code 或其他 MCP
-          客户端，在项目中搜索并使用同一份图库。
-        </p>
-      </div>
-      <div className="connection-summary">
-        <StatusIndicator color="positive">本地 stdio 服务</StatusIndicator>
-        <span>退出桌面应用后仍可连接</span>
-      </div>
-      <h2 className="settings-subheading">连接 Codex</h2>
-      <p className="hint">
-        复制命令到终端执行，随后在新的 Codex 会话中使用 DesiCast。
-      </p>
-      <div className="config-code">
-        <pre>{info?.codexCommand ?? "正在读取…"}</pre>
-        <IconButton
-          size="sm"
-          kind="plain"
-          aria-label="复制 Codex 命令"
-          disabled={!info}
-          onClick={() => copy(info!.codexCommand)}
-        >
-          <CopyRegular size={16} />
-        </IconButton>
-      </div>
-      <h2 className="settings-subheading">连接 Claude Code</h2>
-      <p className="hint">
-        复制命令到终端执行，为当前用户的所有项目添加 DesiCast。随后在新的 Claude
-        Code 会话中输入 /mcp 查看连接状态。
-      </p>
-      <div className="config-code">
-        <pre>{info?.claudeCommand ?? "正在读取…"}</pre>
-        <IconButton
-          size="sm"
-          kind="plain"
-          aria-label="复制 Claude Code 命令"
-          disabled={!info}
-          onClick={() => copy(info!.claudeCommand)}
-        >
-          <CopyRegular size={16} />
-        </IconButton>
-      </div>
-      <h2 className="settings-subheading">其他 MCP 客户端</h2>
-      <p className="hint">
-        将以下配置合并到客户端的 MCP 配置中，然后重新连接。
-      </p>
-      <div className="config-code">
-        <pre>{info?.configuration ?? "正在读取…"}</pre>
-        <IconButton
-          size="sm"
-          kind="plain"
-          aria-label="复制 MCP JSON"
-          disabled={!info}
-          onClick={() => copy(info!.configuration)}
-        >
-          <CopyRegular size={16} />
-        </IconButton>
-      </div>
-      <div className="tool-list">
-        <span>可用工具</span>
-        {[
-          "list_sources",
-          "search_icons",
-          "search_icons_by_image",
-          "get_icon",
-          "sync_repository",
-        ].map((tool) => (
-          <code key={tool}>{tool}</code>
-        ))}
-      </div>
-      <p className="hint">
-        视觉搜索可能耗时较长。Codex 可在现有 [mcp_servers.desicast] 配置中设置
-        tool_timeout_sec = 240；其他客户端请调整工具超时。
-      </p>
-      <div className="form-actions">
-        <Button
-          kind="ghost"
-          loading={busy}
-          onClick={async () => {
-            setBusy(true);
-            try {
-              const value = await api<{ tools: number; sourceCount: number }>(
-                "mcpCheck",
-              );
-              setStatus(
-                `连接正常 · ${value.tools} 个工具 · ${value.sourceCount} 个来源`,
-              );
-              onNotice("独立 MCP 进程自检通过");
-            } catch (err) {
-              onError(err);
-            } finally {
-              setBusy(false);
-            }
-          }}
-        >
-          检查 MCP 连接
-        </Button>
-      </div>
-      {status && <p className="positive-message">{status}</p>}
-      <div className="settings-note">
-        Agent 获取独立代码或资源包，放进项目后无需 DesiCast 常驻。
-        <br />
-        示例：“用团队图库的搜索图标完成这个 Vue 页面。”
       </div>
     </div>
   );
