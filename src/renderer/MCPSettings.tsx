@@ -106,56 +106,12 @@ export function MCPSettings({
           </IconButton>
         </ModalHeader>
         <ModalBody>
-          <Tabs defaultValue="codex" className="mcp-clients">
-            <TabsList aria-label="MCP 客户端">
-              {clients.map((client) => (
-                <TabsTrigger key={client.id} value={client.id}>
-                  <img src={client.icon} className="mcp-icon" alt="" />
-                  {client.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            {clients.map((client) => (
-              <TabsContent
-                key={client.id}
-                value={client.id}
-                className="mcp-panel"
-              >
-                <ModalDescription>
-                  {client.id === "other"
-                    ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接。"
-                    : client.id === "claude"
-                      ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP。"
-                      : "请复制下方内容在终端中执行，连接 Codex 的 MCP。"}
-                </ModalDescription>
-                <div className="mcp-code">
-                  <div className="mcp-code-header">
-                    <span>{client.id === "other" ? "JSON" : "Bash"}</span>
-                    <IconButton
-                      kind="plain"
-                      size="sm"
-                      aria-label={client.copyLabel}
-                      disabled={!info}
-                      onClick={async () => {
-                        try {
-                          await api("copy", info![client.field]);
-                          onNotice("连接配置已复制");
-                        } catch (error) {
-                          onError(error);
-                        }
-                      }}
-                    >
-                      <img src={copyIcon} className="mcp-icon" alt="" />
-                    </IconButton>
-                  </div>
-                  <pre>
-                    {info?.[client.field] ??
-                      (loadError ? "配置暂不可用" : "正在读取…")}
-                  </pre>
-                </div>
-              </TabsContent>
-            ))}
-          </Tabs>
+          <MCPClientPanel
+            info={info}
+            loadError={loadError}
+            onError={onError}
+            onNotice={onNotice}
+          />
         </ModalBody>
         <ModalFooter
           additionItem={
@@ -185,5 +141,66 @@ export function MCPSettings({
         </ModalFooter>
       </ModalContent>
     </Modal>
+  );
+}
+
+export function MCPClientPanel({
+  info,
+  loadError = "",
+  onError,
+  onNotice,
+}: {
+  info?: MCPInfo;
+  loadError?: string;
+  onError: (error: unknown) => void;
+  onNotice: (message: string) => void;
+}) {
+  return (
+    <Tabs defaultValue="codex" className="mcp-clients">
+      <TabsList aria-label="MCP 客户端">
+        {clients.map((client) => (
+          <TabsTrigger key={client.id} value={client.id}>
+            <img src={client.icon} className="mcp-icon" alt="" />
+            {client.label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+      {clients.map((client) => (
+        <TabsContent key={client.id} value={client.id} className="mcp-panel">
+          <ModalDescription>
+            {client.id === "other"
+              ? "请将下方 JSON 合并到客户端的 MCP 配置中，然后重新连接。"
+              : client.id === "claude"
+                ? "请复制下方内容在终端中执行，连接 Claude Code 的 MCP。"
+                : "请复制下方内容在终端中执行，连接 Codex 的 MCP。"}
+          </ModalDescription>
+          <div className="mcp-code">
+            <div className="mcp-code-header">
+              <span>{client.id === "other" ? "JSON" : "Bash"}</span>
+              <IconButton
+                kind="plain"
+                size="sm"
+                aria-label={client.copyLabel}
+                disabled={!info}
+                onClick={async () => {
+                  try {
+                    await api("copy", info![client.field]);
+                    onNotice("连接配置已复制");
+                  } catch (error) {
+                    onError(error);
+                  }
+                }}
+              >
+                <img src={copyIcon} className="mcp-icon" alt="" />
+              </IconButton>
+            </div>
+            <pre>
+              {info?.[client.field] ??
+                (loadError ? "配置暂不可用" : "正在读取…")}
+            </pre>
+          </div>
+        </TabsContent>
+      ))}
+    </Tabs>
   );
 }

@@ -1,0 +1,65 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "nodeId": "2018:13544",
+  "retrievedAt": "2026-10-03",
+  "assets": {
+    "general": {
+      "asset": "2c5bd.svg",
+      "sha256": "a135158691c17f9aa65208ff600b51a4d7329ec7e1790cce9707e815d1c5ed0e",
+      "width": "16",
+      "height": "16"
+    },
+    "appearance": {
+      "asset": "f2a21.svg",
+      "sha256": "c27dd1e3629879363a2aa1d277f32a864751e7ec26a422d19e6d8dd4ee7aa0ba",
+      "width": "16",
+      "height": "16"
+    },
+    "connector": {
+      "asset": "aa10d.svg",
+      "sha256": "29819b53c80bc92255018a0a7740c1073ced7f49bcd73e9335b36c4daafd47fd",
+      "width": "16",
+      "height": "16"
+    },
+    "model": {
+      "asset": "88197.svg",
+      "sha256": "41a9a6b6dc456448945dc2139eae8cd7fbfed4cc99bfd6084c09e29af22de10f",
+      "width": "16",
+      "height": "16"
+    },
+    "library": {
+      "asset": "04b0b.svg",
+      "sha256": "9f06efcd9775d5e2a2b2a619bcde3b13a01f79587cf468ecb6b6e96a6900c860",
+      "width": "16",
+      "height": "16"
+    },
+    "mcp-chatgpt": {
+      "asset": "732de.svg",
+      "localFile": "mcp-chatgpt.svg",
+      "sha256": "93d1c4c5f4a3fd8249076d1d09702b9271a5aea47ee6e287c674d2e4d0937ac2",
+      "width": "16",
+      "height": "16"
+    },
+    "mcp-claude": {
+      "asset": "3a0bc.svg",
+      "localFile": "mcp-claude.svg",
+      "sha256": "a36cd9af8c4f251c94f68ad1e4d9da209604b8006da339d542b9bccbe7d30d9e",
+      "width": "16",
+      "height": "16"
+    },
+    "mcp-other": {
+      "asset": "ec9db.svg",
+      "localFile": "mcp-other.svg",
+      "sha256": "1d6164ed1bfb680845efa32f51496353d0c61c568b25393ba35e7d3e5346c877",
+      "width": "16",
+      "height": "16"
+    },
+    "mcp-copy": {
+      "asset": "3b639.svg",
+      "localFile": "mcp-copy.svg",
+      "sha256": "356242b20f30e31cf8b31f2a2fade7ede255a66e62b5f444736872d3860e7ca7",
+      "width": "16",
+      "height": "16"
+    }
+  }
+}

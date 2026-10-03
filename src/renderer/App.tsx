@@ -1,4 +1,5 @@
 import { AddLibraryDialog } from "./AddLibraryDialog";
+import { SettingsDialog } from "./SettingsDialog";
 import { MCPSettings } from "./MCPSettings";
 import { LibraryFilterMenu } from "./LibraryFilterMenu";
 import {
@@ -755,38 +756,13 @@ export function App() {
             )}
           </div>
           <div className="sidebar-foot">
-            <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
-              <PopoverTrigger
-                render={<IconButton kind="plain" aria-label="设置" />}
-              >
-                <DesignIcon name="settings" />
-              </PopoverTrigger>
-              <PopoverContent
-                className="navigation-popup"
-                side="top"
-                align="start"
-              >
-                <Button kind="plain" onClick={() => navigate("home")}>
-                  首页
-                </Button>
-                <Button
-                  kind="plain"
-                  onClick={() => {
-                    setEditRepository(undefined);
-                    setRepositoryEditRevision((value) => value + 1);
-                    navigate("repositories");
-                  }}
-                >
-                  仓库管理
-                </Button>
-                <Button kind="plain" onClick={() => navigate("model")}>
-                  视觉模型
-                </Button>
-                <Button kind="plain" onClick={() => navigate("appearance")}>
-                  外观设置
-                </Button>
-              </PopoverContent>
-            </Popover>
+            <IconButton
+              kind="plain"
+              aria-label="设置"
+              onClick={() => setSettingsOpen(true)}
+            >
+              <DesignIcon name="settings" />
+            </IconButton>
             <Button
               kind="plain"
               className="mcp-badge"
@@ -1318,6 +1294,43 @@ export function App() {
           )}
         </main>
       </div>
+      {settingsOpen && (
+        <SettingsDialog
+          settings={settings}
+          onSettings={setSettings}
+          onClose={() => setSettingsOpen(false)}
+          onHome={() => navigate("home")}
+          onError={report}
+          onNotice={flash}
+          modelContent={
+            <ModelSettings
+              settings={settings}
+              onSettings={setSettings}
+              onError={report}
+              onNotice={flash}
+            />
+          }
+          libraryContent={
+            <RepositorySettings
+              sources={teams}
+              onRemove={(source) =>
+                setRemoveLibrary({
+                  id: source.id,
+                  name: source.name,
+                  public: false,
+                })
+              }
+              onRefresh={() => {
+                refreshSources();
+                setRevision((value) => value + 1);
+              }}
+              onSync={sync}
+              onError={report}
+              onNotice={flash}
+            />
+          }
+        />
+      )}
       {mcpOpen && (
         <MCPSettings
           onClose={() => setMcpOpen(false)}
@@ -1496,6 +1509,13 @@ function RepositorySettings({
           添加仓库
         </Button>
       </div>
+      <Button
+        className="settings-library-add"
+        kind="ghost"
+        onClick={() => edit()}
+      >
+        添加仓库
+      </Button>
       {showForm && (
         <AddLibraryDialog
           source={editing}

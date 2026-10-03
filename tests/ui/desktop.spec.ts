@@ -15,8 +15,25 @@ import type { Icon, Source } from "../../src/core/types";
 
 let app: ElectronApplication, directory: string;
 async function openSettings(page: Page, name: string) {
+  const dialog = page.getByRole("dialog", { name: "设置", exact: true });
+  await expect(page.locator(".settings-dialog[data-ending-style]")).toHaveCount(
+    0,
+  );
+  if (await dialog.count())
+    await dialog.getByRole("button", { name: "关闭设置" }).click();
   await page.getByRole("button", { name: "设置", exact: true }).click();
-  await page.getByRole("button", { name, exact: true }).click();
+  if (name === "首页") {
+    await dialog.getByRole("button", { name: "首页", exact: true }).click();
+    return;
+  }
+  const labels: Record<string, string> = {
+    外观设置: "外观",
+    仓库管理: "图标库",
+    视觉模型: "模型配置",
+  };
+  await dialog
+    .getByRole("button", { name: labels[name] ?? name, exact: true })
+    .click();
 }
 const svg =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="m15 15 6 6" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>';
@@ -226,6 +243,13 @@ test("Themes, settings forms and 960px layout remain usable", async () => {
   const page = await app.firstWindow();
   await openSettings(page, "外观设置");
   await page.getByLabel("外观主题").selectOption("dark");
+  await page
+    .getByRole("dialog", { name: "设置", exact: true })
+    .getByRole("button", { name: "确定", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "设置", exact: true }),
+  ).toHaveCount(0);
   await expect(page.locator("html")).toHaveClass("dark");
   await page
     .locator(".sidebar")
@@ -247,6 +271,7 @@ test("Themes, settings forms and 960px layout remain usable", async () => {
   await page.getByLabel("模型名称", { exact: true }).fill("vision-model");
   await page.getByLabel("允许发送图片到模型").click();
   await page.getByRole("button", { name: "保存设置" }).click();
+  await page.getByRole("button", { name: "关闭设置", exact: true }).click();
   await expect(page.getByText("模型设置已保存")).toBeVisible();
   await page.screenshot({ path: ".work/screenshots/model-dark.png" });
   await page.getByRole("button", { name: "MCP 连接", exact: true }).click();
@@ -317,7 +342,9 @@ test("Image search uses the configured local vision endpoint and Gendesign crop 
     await page.getByLabel("模型名称", { exact: true }).fill("fixture-vision");
     await page.getByLabel("允许发送图片到模型").click();
     await page.getByRole("button", { name: "保存设置" }).click();
+    await page.getByRole("button", { name: "关闭设置", exact: true }).click();
     await page
+      .locator(".sidebar")
       .getByRole("button", { name: "Design team", exact: false })
       .click();
     await expect(page.getByTestId("icon-card")).toHaveCount(48);
@@ -375,6 +402,13 @@ test("Default libraries show bundled design SVG assets, totals, theme variants a
   for (const theme of ["dark", "light"]) {
     await openSettings(page, "外观设置");
     await page.getByLabel("外观主题").selectOption(theme);
+    await page
+      .getByRole("dialog", { name: "设置", exact: true })
+      .getByRole("button", { name: "确定", exact: true })
+      .click();
+    await expect(
+      page.getByRole("dialog", { name: "设置", exact: true }),
+    ).toHaveCount(0);
     await remix.click();
     await expect(page.getByTestId("icon-card")).toHaveAttribute(
       "title",
@@ -493,6 +527,13 @@ test("Figma home opens existing libraries and preserves global search, settings 
   for (const theme of ["light", "dark"]) {
     await openSettings(page, "外观设置");
     await page.getByLabel("外观主题").selectOption(theme);
+    await page
+      .getByRole("dialog", { name: "设置", exact: true })
+      .getByRole("button", { name: "确定", exact: true })
+      .click();
+    await expect(
+      page.getByRole("dialog", { name: "设置", exact: true }),
+    ).toHaveCount(0);
     await openSettings(page, "首页");
     await expect(page.locator(".home-library-card")).toHaveCount(7);
     await expect
@@ -605,6 +646,13 @@ test("Icon workspace reflows between grid, list and export details while retaini
   await openSettings(page, "外观设置");
   await page.getByLabel("外观主题").selectOption("dark");
   await page
+    .getByRole("dialog", { name: "设置", exact: true })
+    .getByRole("button", { name: "确定", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "设置", exact: true }),
+  ).toHaveCount(0);
+  await page
     .locator(".sidebar")
     .getByRole("button", { name: "Design team", exact: false })
     .click();
@@ -645,6 +693,13 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
   for (const theme of ["light", "dark"]) {
     await openSettings(page, "外观设置");
     await page.getByLabel("外观主题").selectOption(theme);
+    await page
+      .getByRole("dialog", { name: "设置", exact: true })
+      .getByRole("button", { name: "确定", exact: true })
+      .click();
+    await expect(
+      page.getByRole("dialog", { name: "设置", exact: true }),
+    ).toHaveCount(0);
     await page
       .locator(".sidebar")
       .getByRole("button", { name: "Design team", exact: false })
@@ -726,6 +781,8 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
     "test-only-token",
   );
   store.close();
+  if (await page.getByRole("dialog", { name: "设置", exact: true }).count())
+    await page.getByRole("button", { name: "关闭设置", exact: true }).click();
   await page.getByTestId("library-tabler").click({ button: "right" });
   await page.getByRole("menuitem", { name: "移除图标库", exact: true }).click();
   await page
@@ -741,4 +798,66 @@ test("Add library matches Figma modal geometry, masks tokens, dismisses and pres
     page.getByRole("dialog", { name: "添加图标库", exact: true }),
   ).toHaveCount(0);
   await expect(page.getByTestId("library-tabler")).toBeVisible();
+});
+
+test("Figma settings navigation, theme cancellation and connector copy stay usable", async () => {
+  const page = await app.firstWindow();
+  await page.getByRole("button", { name: "设置", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "设置", exact: true });
+  await expect(dialog).toBeVisible();
+  await expect(dialog.locator(".settings-menu-item")).toHaveCount(5);
+  const assets = await dialog.locator(".settings-icon").evaluateAll((images) =>
+    images.map((image) => ({
+      width: image.getBoundingClientRect().width,
+      height: image.getBoundingClientRect().height,
+      loaded:
+        (image as HTMLImageElement).complete &&
+        (image as HTMLImageElement).naturalWidth > 0,
+    })),
+  );
+  expect(
+    assets.every(
+      (asset) => asset.loaded && asset.width === 16 && asset.height === 16,
+    ),
+  ).toBe(true);
+  await page.screenshot({
+    path: ".work/screenshots/settings-light.png",
+    animations: "disabled",
+  });
+  const originalTheme = await page.locator("html").getAttribute("class");
+  await dialog.getByRole("button", { name: "外观", exact: true }).click();
+  await dialog.getByLabel("外观主题").selectOption("dark");
+  await dialog.getByRole("button", { name: "取消", exact: true }).click();
+  await expect
+    .poll(() => page.locator("html").getAttribute("class"))
+    .toBe(originalTheme);
+  await expect(dialog).toHaveCount(0);
+  await openSettings(page, "外观设置");
+  await page.getByLabel("外观主题").selectOption("dark");
+  await page
+    .getByRole("dialog", { name: "设置", exact: true })
+    .getByRole("button", { name: "确定", exact: true })
+    .click();
+  await expect(
+    page.getByRole("dialog", { name: "设置", exact: true }),
+  ).toHaveCount(0);
+  await expect(page.locator("html")).toHaveClass("dark");
+  const window = await app.browserWindow(page);
+  await window.evaluate((window) => window.setSize(960, 640));
+  await openSettings(page, "连接器");
+  await dialog.getByRole("tab", { name: "其他", exact: true }).click();
+  await dialog
+    .getByRole("button", { name: "复制 MCP JSON", exact: true })
+    .click();
+  const copied = await app.evaluate(({ clipboard }) => clipboard.readText());
+  expect(JSON.parse(copied).mcpServers.desicast).toBeTruthy();
+  await page.screenshot({
+    path: ".work/screenshots/settings-dark-narrow.png",
+    animations: "disabled",
+  });
+  await expect(
+    dialog.getByRole("button", { name: "取消", exact: true }),
+  ).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(dialog).toHaveCount(0);
 });
