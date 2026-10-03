@@ -350,34 +350,62 @@ export class IconService {
       settings.model,
       await this.secrets.get(this.modelSecret(settings.model)),
     );
-    const description = await model.describe(input.dataUrl),
-      candidates: Icon[] = [];
-    for (const keyword of description.keywords.slice(0, 4)) {
-      const result = await this.searchIcons(
-        {
-          query: keyword,
-          sourceId: input.sourceId,
-          collection: input.collection,
-          limit: 12,
-        },
-        true,
-      );
-      candidates.push(
-        ...result.icons.filter(
-          (icon) => this.store.source(icon.sourceId)?.allowVision,
-        ),
-      );
-    }
-    const distinct = [
-      ...new Map(candidates.map((icon) => [icon.id, icon])).values(),
+    const description = await model.describe(input.dataUrl);
+    const keywords = description.keywords;
+    // Combine the subject with its modifiers: "ad circle" finds ad-circle,
+    // whereas separate searches for "ad" and "circle" bury it in generic hits.
+    const queries = [
+      ...new Set([
+        ...keywords.slice(1).map((keyword) => `${keywords[0]} ${keyword}`),
+        ...keywords,
+      ]),
     ];
+    const groups: Icon[][] = [];
+    const warnings = new Set<string>();
+    for (let start = 0; start < queries.length; start += 3) {
+      const batch = await Promise.all(
+        queries.slice(start, start + 3).map(async (query) => {
+          const result = await this.searchIcons(
+            {
+              query,
+              sourceId: input.sourceId,
+              collection: input.collection,
+              limit: 12,
+            },
+            true,
+          );
+          if (result.warning) warnings.add(result.warning);
+          return result.icons.filter(
+            (icon) => this.store.source(icon.sourceId)?.allowVision,
+          );
+        }),
+      );
+      groups.push(...batch);
+    }
+    // Interleave groups before applying the sheet limit so later shape queries
+    // are represented instead of being discarded after the first two keywords.
+    const distinct: Icon[] = [];
+    const seen = new Set<string>();
+    for (let index = 0; index < 12 && distinct.length < 48; index++) {
+      for (const group of groups) {
+        const icon = group[index];
+        if (!icon || seen.has(icon.id)) continue;
+        seen.add(icon.id);
+        distinct.push(icon);
+        if (distinct.length === 48) break;
+      }
+    }
     const results = await model.rank(input.dataUrl, distinct, description);
     return {
       icons: results.slice(0, input.limit ?? 12),
       total: results.length,
-      warning: !results.length
-        ? "没有找到足够相似的候选，可尝试裁剪图标或改用关键词"
-        : undefined,
+      warning:
+        [
+          ...warnings,
+          ...(!results.length
+            ? ["没有找到足够相似的候选，可尝试裁剪图标或改用关键词"]
+            : []),
+        ].join("；") || undefined,
     };
   }
   async testModel(draft?: { baseUrl: string; model: string; apiKey?: string }) {

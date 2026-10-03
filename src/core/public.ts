@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Store } from "./store";
 import { sanitizeSvg } from "./svg";
+import { getIconData, iconToSVG } from "@iconify/utils";
 import type { Collection, Icon } from "./types";
 
 export const aliases: Record<string, string> = {
@@ -94,6 +95,66 @@ export class PublicLibrary {
     private baseUrl = "https://api.iconify.design",
   ) {}
   private directoryRequest?: Promise<Collection[]>;
+  private async prefetch(ids: string[]) {
+    const collections = await this.collections();
+    const groups = new Map<string, string[]>();
+    for (const id of ids) {
+      if (!/^public:[a-z0-9-]+:[a-z0-9-]+$/.test(id)) continue;
+      const [, prefix, name] = id.split(":");
+      const metadata = collections.find((item) => item.id === prefix);
+      const cached = this.store.icon(id);
+      if (
+        !metadata ||
+        (cached && cached.publicRevision === this.publicRevision(metadata))
+      )
+        continue;
+      groups.set(prefix, [...(groups.get(prefix) ?? []), name]);
+    }
+    // One icon-set payload replaces many SVG requests, including aliases and
+    // transforms through Iconify's renderer. Existing SVG retrieval is fallback.
+    for (const [prefix, names] of groups) {
+      try {
+        const response = await this.fetcher(
+          `${this.baseUrl}/${prefix}.json?${new URLSearchParams({ icons: [...new Set(names)].join(",") })}`,
+          { signal: AbortSignal.timeout(15_000) },
+        );
+        if (!response.ok) continue;
+        const data = (await response.json()) as Parameters<
+          typeof getIconData
+        >[0];
+        if (data.prefix !== prefix) continue;
+        const metadata = collections.find((item) => item.id === prefix)!;
+        for (const name of names) {
+          const artwork = getIconData(data, name);
+          if (!artwork) continue;
+          const rendered = iconToSVG(artwork);
+          const attributes = Object.entries(rendered.attributes)
+            .map(([key, value]) => `${key}="${value}"`)
+            .join(" ");
+          const svg = sanitizeSvg(
+            `<svg xmlns="http://www.w3.org/2000/svg" ${attributes}>${rendered.body}</svg>`,
+          );
+          this.store.cache([
+            {
+              id: `public:${prefix}:${name}`,
+              name,
+              sourceId: "public",
+              collection: prefix,
+              svg,
+              publicRevision: this.publicRevision(metadata),
+              sourceUrl:
+                metadata.authorUrl ??
+                `https://icon-sets.iconify.design/${prefix}/${name}/`,
+              license: metadata.license,
+              licenseUrl: metadata.licenseUrl,
+            },
+          ]);
+        }
+      } catch {
+        /* Keep individual SVG retrieval and cached fallback available. */
+      }
+    }
+  }
   collections(force = false): Promise<Collection[]> {
     if (this.directoryRequest) return this.directoryRequest;
     this.directoryRequest = this.loadCollections(force).finally(() => {
@@ -308,6 +369,7 @@ export class PublicLibrary {
     }
     const page = ids.slice(offset, offset + limit),
       icons: Icon[] = [];
+    if (page.length) await this.prefetch(page).catch(() => {});
     for (let start = 0; start < page.length; start += 12) {
       const batch = await Promise.allSettled(
         page.slice(start, start + 12).map((id) => this.get(id)),

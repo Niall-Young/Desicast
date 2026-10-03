@@ -772,3 +772,233 @@ test("Truncated vision output reports output exhaustion instead of a configurati
     /输出达到长度上限/,
   );
 });
+
+test("Vision recalls compound subject/shape names and includes later keyword groups in the ranking sheet", async (t) =>
+  temporary(async (directory) => {
+    const service = new IconService(directory, new MemorySecrets());
+    try {
+      await service.saveSettings({
+        theme: "system",
+        model: {
+          baseUrl: "https://model.example/v1",
+          model: "fixture",
+          consent: true,
+        },
+      });
+      t.mock.method(VisionModel.prototype, "describe", async () => ({
+        keywords: [
+          "ad",
+          "letters",
+          "badge",
+          "circle",
+          "outline",
+          "advertisement",
+        ],
+        shape: "AD in a circle",
+        style: "outline",
+      }));
+      const queries: string[] = [];
+      const target = {
+        ...icon,
+        id: "public:mingcute:ad-circle-line",
+        name: "ad-circle-line",
+        sourceId: "public",
+      };
+      const late = {
+        ...icon,
+        id: "public:ri:advertisement-line",
+        name: "advertisement-line",
+        sourceId: "public",
+      };
+      let active = 0,
+        peak = 0;
+      t.mock.method(service.publicLibrary, "search", async (query: string) => {
+        queries.push(query);
+        active++;
+        peak = Math.max(peak, active);
+        await new Promise((resolve) => setTimeout(resolve, 1));
+        active--;
+        const icons = Array.from({ length: 12 }, (_, index) => ({
+          ...icon,
+          id: `public:fixture:${query.replaceAll(" ", "-")}-${index}`,
+          name: `${query}-${index}`,
+          sourceId: "public",
+        }));
+        if (query === "ad circle") icons[2] = target;
+        if (query === "advertisement") icons[0] = late;
+        return { icons, total: icons.length };
+      });
+      t.mock.method(
+        VisionModel.prototype,
+        "rank",
+        async (_data: string, candidates: Icon[]) => {
+          assert.ok(candidates.length <= 48);
+          assert.ok(candidates.some((candidate) => candidate.id === target.id));
+          assert.ok(candidates.some((candidate) => candidate.id === late.id));
+          assert.equal(
+            new Set(candidates.map((candidate) => candidate.id)).size,
+            candidates.length,
+          );
+          return [target];
+        },
+      );
+      const result = await service.vision({
+        dataUrl: "data:image/png;base64,aGVsbG8=",
+      });
+      assert.equal(result.icons[0].id, target.id);
+      assert.ok(queries.includes("ad circle"));
+      assert.ok(queries.includes("advertisement"));
+      assert.ok(peak <= 3);
+    } finally {
+      service.close();
+    }
+  }));
+
+test("Visual ranking can select a candidate beyond the former 24-icon cutoff", async () => {
+  const sharp = (await import("sharp")).default;
+  const input = await sharp(Buffer.from(mono)).png().toBuffer();
+  const icons = Array.from({ length: 48 }, (_, index) => ({
+    ...icon,
+    id: `team:icon-${index}`,
+    svg: mono,
+  }));
+  const target = icons[47];
+  const model = new VisionModel(
+    { baseUrl: "https://model.example/v1", model: "fixture", consent: true },
+    undefined,
+    async (_url, options) => {
+      const request = JSON.parse(String(options?.body));
+      assert.match(request.messages[0].content[0].text, /48: team:icon-47/);
+      return Response.json({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                matches: [{ id: target.id, reason: "相似轮廓" }],
+              }),
+            },
+          },
+        ],
+      });
+    },
+  );
+  assert.equal(
+    (
+      await model.rank(
+        `data:image/png;base64,${input.toString("base64")}`,
+        icons,
+        {},
+      )
+    )[0].id,
+    target.id,
+  );
+});
+
+test("Public search batches icon data, resolves aliases, and preserves provenance without per-icon SVG requests", async () =>
+  temporary(async (directory) => {
+    const store = new Store(directory);
+    try {
+      store.saveSetting("collections", {
+        time: Date.now(),
+        items: [
+          {
+            id: "fixture",
+            name: "Fixture",
+            total: 2,
+            license: "MIT",
+            authorUrl: "https://example.com/icons",
+          },
+        ],
+      });
+      const requests: string[] = [];
+      const library = new PublicLibrary(
+        store,
+        async (url) => {
+          const address = String(url);
+          requests.push(address);
+          if (address.includes("/search?"))
+            return Response.json({
+              icons: ["fixture:ad-circle", "fixture:ad-circle-alias"],
+              total: 2,
+            });
+          if (address.includes("/fixture.json?"))
+            return Response.json({
+              prefix: "fixture",
+              width: 24,
+              height: 24,
+              icons: {
+                "ad-circle": {
+                  body: '<path d="M2 12h20" fill="none" stroke="currentColor"/>',
+                },
+              },
+              aliases: {
+                "ad-circle-alias": { parent: "ad-circle", rotate: 1 },
+              },
+            });
+          return new Response("rate limited", { status: 429 });
+        },
+        "https://fixture.example",
+      );
+      const result = await library.search("ad circle");
+      assert.equal(result.icons.length, 2);
+      assert.equal(requests.length, 2);
+      assert.ok(requests.every((url) => !url.includes(".svg")));
+      assert.match(result.icons[1].svg, /transform/);
+      assert.equal(result.icons[0].license, "MIT");
+      assert.equal(result.icons[0].sourceUrl, "https://example.com/icons");
+      assert.equal(
+        (await library.get(result.icons[0].id)).id,
+        result.icons[0].id,
+      );
+      assert.equal(requests.length, 2);
+    } finally {
+      store.close();
+    }
+  }));
+
+test("Vision maps printed candidate numbers and full IDs without accepting invalid or duplicate matches", async () => {
+  const sharp = (await import("sharp")).default;
+  const input = await sharp(Buffer.from(mono)).png().toBuffer();
+  const icons = [
+    { ...icon, id: "public:mingcute:ad-circle-line" },
+    { ...icon, id: "public:tabler:ad-circle" },
+  ];
+  const model = new VisionModel(
+    { baseUrl: "https://model.example/v1", model: "fixture", consent: true },
+    undefined,
+    async () =>
+      Response.json({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                matches: [
+                  { id: "1", reason: "圆形 AD 图标。" },
+                  { id: icons[0].id, reason: "重复" },
+                  { id: icons[1].id, reason: "圆形轮廓." },
+                  { id: "2", reason: "重复编号" },
+                  ...["0", "3", "-1", "1.5", "1x", "invented"].map((id) => ({
+                    id,
+                    reason: "无效",
+                  })),
+                ],
+              }),
+            },
+          },
+        ],
+      }),
+  );
+  const result = await model.rank(
+    `data:image/png;base64,${input.toString("base64")}`,
+    icons,
+    {},
+  );
+  assert.deepEqual(
+    result.map((icon) => icon.id),
+    icons.map((icon) => icon.id),
+  );
+  assert.deepEqual(
+    result.map((icon) => icon.reason),
+    ["圆形 AD 图标", "圆形轮廓"],
+  );
+});

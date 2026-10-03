@@ -22,6 +22,7 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
+    "@iconify/utils": "^3.1.7",
     "@mingcute/react": "^3.0.2",
     "@modelcontextprotocol/sdk": "^1.27.1",
     "@xmldom/xmldom": "^0.8.11",

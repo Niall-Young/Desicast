@@ -102,6 +102,8 @@ npm run dev
 
 连接官方 DeepSeek API 时，图片识别与排序会关闭默认思考模式，为 JSON 结果保留输出预算；输出被截断时会明确提示长度上限。
 
+视觉检索同时召回单关键词与主题/形状组合词（例如 `ad circle`），最多并行 3 组检索，交错选取最多 48 个候选供视觉排序。排序支持候选编号与完整图标 ID；公共预览优先按图标集批量获取，减少逐个 SVG 请求，并保留公共图库网络失败提示。
+
 参考图和允许的候选图标预览会发送到该服务；团队仓库默认禁止模型图片搜索，可按仓库单独开启。图片限 PNG、JPEG、WebP 格式（最大 8 MB），模型处理上限 1600 万像素。搜索基于关键词召回和视觉排序，不保证找到原图标。
 
 默认数据目录为 `~/Library/Application Support/DesiCast`。SQLite 启用 WAL 模式；已缓存图标可完全离线使用。凭据严格安全保存在 macOS Keychain 中。Git 使用临时、限定仓库主机的凭据助手，严禁将令牌写入 URL 或普通配置文件。
@@ -241,6 +243,8 @@ The icon workspace supports grid and list views. Select an icon to open its sepa
 Vision similarity search connects to OpenAI-compatible Chat Completions endpoints supporting image inputs. Click "Add Provider" in model settings to enter the API base URL (typically ending in `/v1`), model name, and optional API key in a 640px dialog. "Test Connection" sends an image request using the draft without saving it; "Confirm" saves and activates the model. Saved providers appear in a radio list; selecting one saves immediately and uses it for desktop and MCP visual search, with no separate vision-capability switch. Click the delete button on each row, then confirm in the dialog to remove the provider and its Keychain credential. Removing the active provider activates the first remaining provider; removing the last restores the empty state. API keys are stored separately per provider in Keychain, and legacy single-model settings and keys are preserved. Both HTTPS and local HTTP services are supported.
 
 Image description and ranking disable default thinking on the official DeepSeek API to preserve the output budget for JSON results. Truncated output reports an explicit length-limit error.
+
+Visual retrieval uses both individual keywords and subject/shape combinations (for example, `ad circle`), runs up to three retrieval groups concurrently, and interleaves up to 48 candidates for visual ranking. Ranking accepts printed candidate numbers and full icon IDs. Public previews are fetched in icon-set batches before individual SVG fallback, reducing per-icon requests; public-library network warnings are preserved.
 
 Reference images and permitted candidate previews are transmitted to the configured endpoint. Team repositories disable vision data sharing by default and can be opted-in per repository. Reference images accept PNG, JPEG, and WebP (up to 8 MB), with model processing capped at 16 megapixels. Keyword retrieval followed by visual ranking does not guarantee finding exact original icons.
 
