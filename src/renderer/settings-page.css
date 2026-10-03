@@ -10,11 +10,6 @@
   width: 100%;
   justify-content: flex-start;
 }
-.settings-sidebar h1 {
-  font-size: 18px;
-  font-weight: var(--nico-font-weight-medium);
-  margin: 24px 10px 16px;
-}
 .settings-page .settings-sections {
   overflow-y: auto;
   padding: 24px 32px;

@@ -81,7 +81,6 @@ export function SettingsPage({
         >
           返回
         </Button>
-        <h1>设置</h1>
         <nav className="settings-menu" aria-label="设置分类">
           {sections.map((section) => (
             <div key={section.id}>
