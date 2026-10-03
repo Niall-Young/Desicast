@@ -1110,14 +1110,24 @@ pre {
 .library-heading {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 12px;
   padding: 12px 14px 12px 20px;
   color: var(--nico-color-text-subtlest);
   height: 52px;
   flex-shrink: 0;
 }
-.sidebar-filter {
-  padding: 0 8px 8px;
+.library-heading-title,
+.library-heading-search {
+  flex: 1;
+  min-width: 0;
+}
+.library-heading-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.library-heading-actions {
+  flex-shrink: 0;
 }
 .navigation-popup {
   width: 200px;

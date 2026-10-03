@@ -200,7 +200,8 @@ export function App() {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [mcpOpen, setMcpOpen] = useState(false);
   const [libraryFilter, setLibraryFilter] = useState("");
-  const [filterOpen, setFilterOpen] = useState(false);
+  const [librarySearchOpen, setLibrarySearchOpen] = useState(false);
+  const librarySearchButton = useRef<HTMLButtonElement>(null);
   const [libraryOptions, setLibraryOptions] =
     useState<LibraryFilter>(defaultLibraryFilter);
   const [previousPage, setPreviousPage] = useState<Page>();
@@ -751,17 +752,43 @@ export function App() {
                 </Button>
               </div>
               <div className="library-heading">
-                <span>图标库</span>
-                <div className="library-heading-actions">
-                  <IconButton
-                    kind="plain"
+                {librarySearchOpen ? (
+                  <SearchBox
                     size="sm"
-                    aria-label="筛选图标库"
-                    aria-expanded={filterOpen}
-                    onClick={() => setFilterOpen((value) => !value)}
-                  >
-                    <DesignIcon name="library-search" />
-                  </IconButton>
+                    wrapperClassName="library-heading-search"
+                    aria-label="搜索图标库"
+                    placeholder="搜索图标库"
+                    autoFocus
+                    value={libraryFilter}
+                    onValueChange={setLibraryFilter}
+                    onBlur={() => {
+                      if (!libraryFilter) setLibrarySearchOpen(false);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key !== "Escape") return;
+                      event.preventDefault();
+                      setLibraryFilter("");
+                      setLibrarySearchOpen(false);
+                      requestAnimationFrame(() =>
+                        librarySearchButton.current?.focus(),
+                      );
+                    }}
+                  />
+                ) : (
+                  <span className="library-heading-title">图标库</span>
+                )}
+                <div className="library-heading-actions">
+                  {!librarySearchOpen && (
+                    <IconButton
+                      ref={librarySearchButton}
+                      kind="plain"
+                      size="sm"
+                      aria-label="搜索图标库"
+                      onClick={() => setLibrarySearchOpen(true)}
+                    >
+                      <DesignIcon name="library-search" />
+                    </IconButton>
+                  )}
                   <LibraryFilterMenu
                     value={libraryOptions}
                     onChange={setLibraryOptions}
@@ -776,16 +803,6 @@ export function App() {
                   </IconButton>
                 </div>
               </div>
-              {filterOpen && (
-                <div className="sidebar-filter">
-                  <SearchBox
-                    aria-label="筛选图标库"
-                    placeholder="搜索图标库"
-                    value={libraryFilter}
-                    onValueChange={setLibraryFilter}
-                  />
-                </div>
-              )}
               <div className="library-navigation">
                 {visibleLibraries.map((entry) => {
                   const library = entry.library;
