@@ -82,8 +82,6 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
-  border: 1px solid var(--nico-color-border);
-  border-radius: var(--nico-border-radius-md);
 }
 .model-provider-field {
   display: flex;
