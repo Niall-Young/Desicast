@@ -1,4 +1,6 @@
 import { flushSync } from "react-dom";
+import { Button as TagButton } from "@base-ui/react/button";
+import imageTagClose from "./design-assets/image-tag/close.svg?url";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
 import { ModelSettings } from "./ModelSettings";
 import { AddLibraryDialog } from "./AddLibraryDialog";
@@ -967,11 +969,13 @@ export function App() {
                       prefix={
                         visionEnabled && reference ? (
                           <span className="reference-tag">
-                            <img src={reference} alt="图片搜索参考" />
-                            <span>参考图</span>
-                            <IconButton
-                              size="sm"
-                              kind="plain"
+                            <img
+                              className="reference-tag-thumbnail"
+                              src={reference}
+                              alt="图片搜索参考"
+                            />
+                            <TagButton
+                              className="reference-tag-remove"
                               aria-label="移除参考图"
                               onClick={() => {
                                 generation.current++;
@@ -982,8 +986,13 @@ export function App() {
                                 searchInput.current?.focus();
                               }}
                             >
-                              <CloseRegular size={16} />
-                            </IconButton>
+                              <img
+                                src={imageTagClose}
+                                alt=""
+                                width={16}
+                                height={16}
+                              />
+                            </TagButton>
                           </span>
                         ) : undefined
                       }

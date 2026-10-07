@@ -853,27 +853,51 @@ pre {
   font-size: 11px;
   color: var(--nico-color-text-positive);
 }
+/* Application input surfaces follow the owner-requested Nico surface token. */
+[data-slot="input-wrapper"],
+[data-slot="textarea"],
+[data-slot="select-trigger"] {
+  --nico-color-background-input: var(--nico-color-surface);
+  --nico-color-background-input-hover: var(--nico-color-surface);
+}
 .reference-tag {
   display: inline-flex;
   flex-shrink: 0;
   align-items: center;
-  gap: 6px;
-  height: 28px;
-  padding-left: 4px;
-  border: 1px solid var(--nico-color-border);
+  gap: 4px;
+  width: 56px;
+  height: 32px;
+  padding: 4px 8px 4px 4px;
   border-radius: var(--nico-border-radius-sm);
-  background: var(--nico-color-surface-raised);
-  color: var(--nico-color-text-subtle);
-  font-size: 12px;
-  line-height: 16px;
-  white-space: nowrap;
+  background: var(--nico-color-background-neutral-subtle);
 }
-.reference-tag img {
-  width: 20px;
-  height: 20px;
+.reference-tag-thumbnail {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
   object-fit: contain;
-  border-radius: 2px;
+  border-radius: var(--nico-border-radius-xs);
   background: var(--nico-color-surface);
+}
+.reference-tag-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--nico-border-radius-xs);
+  background: transparent;
+  cursor: pointer;
+}
+.reference-tag-remove:hover {
+  background: var(--nico-color-background-neutral-subtle-hover);
+}
+.reference-tag-remove:focus-visible {
+  outline: none;
+  box-shadow: var(--nico-effect-focused-input);
 }
 .modal-backdrop {
   position: fixed;

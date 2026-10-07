@@ -1,0 +1,14 @@
+{
+  "fileKey": "wgJXbHgcZbicP1mCiLbxND",
+  "nodeId": "2037:2797",
+  "retrievedAt": "2026-10-07",
+  "assets": {
+    "close": {
+      "localFile": "close.svg",
+      "nodeId": "2037:2813",
+      "sha256": "e85408ab5858b310596df53732672f2725d45f73a5dedd59b66292d6e9c511ab",
+      "width": 16,
+      "height": 16
+    }
+  }
+}
