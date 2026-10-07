@@ -357,6 +357,18 @@ async function bootstrap() {
   if (!app.requestSingleInstanceLock()) {
     app.quit();
   } else {
+    if (
+      !app.isPackaged &&
+      process.env.DESICAST_DEV_SESSION &&
+      process.env.DESICAST_DEV_SESSION_FILE
+    )
+      await writeFile(
+        process.env.DESICAST_DEV_SESSION_FILE,
+        JSON.stringify({
+          pid: process.pid,
+          session: process.env.DESICAST_DEV_SESSION,
+        }),
+      );
     service = new IconService(
       dataDirectory,
       testMode ? new MemorySecrets() : new KeychainSecrets(),

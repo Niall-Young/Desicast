@@ -89,6 +89,8 @@ npm run dev
 
 开发模式下修改主进程或共享核心后需重启；界面通过 Vite 热更新。
 
+macOS 上 `npm run dev` 会在 `~/Library/Caches/DesiCast/dev/` 准备经过临时签名的 `DesiCast Dev.app`（独立标识 `com.niallyoung.desicast.dev`），通过 LaunchServices 启动，避免菜单栏图标继承终端或 Orca 的应用归属。该开发运行时不安装到 Applications，也不生成发布包；Vite 热更新和现有数据目录保持不变。首次启动需要复制 Electron 运行时，后续启动复用缓存；主进程日志位于 `.work/dev/main.stdout.log` 与 `.work/dev/main.stderr.log`。若系统禁止显示，可在系统设置的「菜单栏」中为 DesiCast Dev 单独开启权限。
+
 使用 `VITE_UPDATE_MESSAGE_PREVIEW=1 npm run dev` 可预览「更新了 199 个图标」的假数据通知，底部按钮可重复触发；此预览不会标记真实图库已读，生产构建不显示预览入口。
 
 ### 使用方法
@@ -244,6 +246,8 @@ npm run dev
 The development server prefers port 5173. If it is occupied, it selects an available port and passes the actual address to Electron and the hot-reload connection.
 
 Restart the development server after modifying the main process or shared core; the renderer UI updates via Vite hot module replacement (HMR).
+
+On macOS, `npm run dev` prepares an ad-hoc signed `DesiCast Dev.app` in `~/Library/Caches/DesiCast/dev/`, with the independent identifier `com.niallyoung.desicast.dev`, and launches it through LaunchServices to prevent menu bar ownership from following the terminal or Orca. This development runtime is not installed in Applications and does not create release packages; Vite HMR and the existing data directory are retained. The first launch copies the Electron runtime; subsequent launches reuse the cache. Main-process logs are saved to `.work/dev/main.stdout.log` and `.work/dev/main.stderr.log`. If macOS blocks its menu bar icon, allow DesiCast Dev separately in System Settings > Menu Bar.
 
 Use `VITE_UPDATE_MESSAGE_PREVIEW=1 npm run dev` to preview a mock notification for 199 updated icons. The bottom button can replay it; the preview never acknowledges real library changes and is absent from production builds.
 
