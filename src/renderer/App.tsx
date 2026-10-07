@@ -14,6 +14,7 @@ import {
 import { LibraryContextMenu } from "./LibraryContextMenu";
 import { RemoveLibraryDialog } from "./RemoveLibraryDialog";
 import { RepositoryEmptyState } from "./RepositoryEmptyState";
+import { LibraryUpdateMessage } from "./LibraryUpdateMessage";
 import type {
   LibraryPreferences,
   LibraryPreference,
@@ -916,15 +917,11 @@ export function App() {
           </aside>
           <main className="workspace">
             {page === "library" && activeChanges && (
-              <div className="library-change-notice" role="status">
-                <span>
-                  {heading}：{changeDescription(activeChanges)}
-                  {collection ? "（目录变更）" : ""}
-                </span>
-                <Button kind="plain" size="sm" onClick={acknowledgeChanges}>
-                  标记已读
-                </Button>
-              </div>
+              <LibraryUpdateMessage
+                key={`${collection ? `public:${collection}` : sourceId}:${activeChanges.revision}`}
+                changes={activeChanges}
+                onAcknowledge={acknowledgeChanges}
+              />
             )}
             {page !== "home" && page !== "library" && (
               <div className="page-heading">

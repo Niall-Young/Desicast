@@ -1025,15 +1025,43 @@ pre {
   color: var(--nico-color-text-accent-orange);
   background: var(--nico-color-background-accent-orange);
 }
-.library-change-notice {
+.library-update-viewport {
+  position: fixed;
+  inset-inline: 16px;
+  bottom: 80px;
+  z-index: 100;
   display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+.library-update-message {
+  display: flex;
+  max-width: 100%;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 20px;
-  border-bottom: 1px solid var(--nico-color-border);
-  color: var(--nico-color-text-subtle);
-  font-size: 12px;
+  gap: 24px;
+  padding: 9px 9px 9px 16px;
+  border: var(--nico-border-weight-base) solid var(--nico-color-border);
+  border-radius: var(--nico-border-radius-md);
+  background: var(--nico-color-surface-raised);
+  box-shadow: var(--nico-effect-shadow-medium);
+  color: var(--nico-color-text);
+  font-size: var(--nico-font-size-sm);
+  line-height: var(--nico-line-height-sm);
+  pointer-events: auto;
+}
+.library-update-message[data-ending-style] {
+  display: none;
+}
+.library-update-content {
+  display: flex;
+  min-width: 0;
+  align-items: flex-start;
+  gap: 8px;
+  overflow-wrap: anywhere;
+}
+.library-update-content img {
+  flex-shrink: 0;
+  margin-top: 3px;
 }
 
 .repository-access-row {
