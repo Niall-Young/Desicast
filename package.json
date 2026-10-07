@@ -2,6 +2,7 @@
   "name": "desicast",
   "version": "0.1.0",
   "private": true,
+  "license": "MIT",
   "description": "Team SVG libraries and public icons for people and agents",
   "author": "Niall Young",
   "type": "module",
