@@ -47,6 +47,8 @@
 
 ## 中文
 
+通用设置的「菜单栏中显示」默认关闭，开启后立即显示菜单栏图标，关闭窗口后继续运行，可从菜单栏打开 DesiCast 或退出应用；关闭开关立即移除图标，设置在重启后保留
+
 > 🌐 **语言切换 / Language**: [English Version](#-english) &nbsp;|&nbsp; [回到顶部 / Back to Top](#readme-top)
 
 ### 项目简介
@@ -200,6 +202,8 @@ MCP stdout 仅用于标准 JSON-RPC 协议消息。可用工具列表：
 <a id="en"></a>
 
 ## English
+
+The General settings “Show in menu bar” switch is off by default. Enabling it shows a menu bar icon immediately and keeps DesiCast running after its window closes. Use the menu to reopen DesiCast or quit. Disabling the switch removes the icon immediately; the preference persists across restarts.
 
 > 🌐 **Language / 语言切换**: [简体中文](#-简体中文) &nbsp;|&nbsp; [Back to Top / 回到顶部](#readme-top)
 

@@ -1,4 +1,5 @@
 import { build } from "esbuild";
+import { copyFile } from "node:fs/promises";
 import { build as viteBuild } from "vite";
 await viteBuild();
 await build({
@@ -11,6 +12,8 @@ await build({
   external: ["electron", "sharp"],
   banner: { js: "// DesiCast desktop main process" },
 });
+await copyFile("assets/trayTemplate.png", "dist/electron/trayTemplate.png");
+await copyFile("assets/trayTemplate@2x.png", "dist/electron/trayTemplate@2x.png");
 await build({
   entryPoints: ["src/electron/preload.ts"],
   outfile: "dist/electron/preload.cjs",

@@ -31,6 +31,7 @@ export const repositorySchema = z.object({
   allowVision: z.boolean().default(true),
 });
 export const settingsSchema = z.object({
+  showInMenuBar: z.boolean().optional(),
   theme: z.enum(["system", "light", "dark"]),
   brandColor: z.enum(brandColors).optional(),
   zoom: z

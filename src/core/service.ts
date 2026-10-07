@@ -97,6 +97,7 @@ export class IconService {
       else await this.secrets.delete(this.modelSecret(model));
     }
     this.store.saveSetting("preferences", {
+      showInMenuBar: settings.showInMenuBar ?? previous.showInMenuBar ?? false,
       theme: settings.theme,
       brandColor: settings.brandColor ?? previous.brandColor ?? "grey",
       zoom: settings.zoom ?? previous.zoom ?? 100,

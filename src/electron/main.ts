@@ -6,6 +6,9 @@ import {
   clipboard,
   shell,
   nativeTheme,
+  Tray,
+  Menu,
+  nativeImage,
 } from "electron";
 import { join, resolve, sep } from "node:path";
 import { mkdir, writeFile } from "node:fs/promises";
@@ -29,12 +32,44 @@ import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
 import { readClipboardImage } from "./clipboard-image";
+import { MenuBarController } from "./menu-bar";
+import { menuBarLabels } from "../shared/menu-bar";
 
 app.setName("DesiCast");
 const dataDirectory =
   process.env.DESICAST_DATA_DIR || join(app.getPath("appData"), "DesiCast");
 app.setPath("userData", dataDirectory);
 let service: IconService, window: BrowserWindow | undefined;
+const menuBar = new MenuBarController(() => {
+  const image = nativeImage.createFromPath(join(__dirname, "trayTemplate.png"));
+  image.setTemplateImage(true);
+  const tray = new Tray(image);
+  tray.setToolTip("DesiCast");
+  return {
+    destroy: () => tray.destroy(),
+    setMenu: (labels) =>
+      tray.setContextMenu(
+        Menu.buildFromTemplate([
+          { label: labels.open, click: showWindow },
+          { type: "separator" },
+          { label: labels.quit, click: () => app.quit() },
+        ]),
+      ),
+  };
+});
+function updateMenuBar() {
+  const settings = service.store.settings();
+  menuBar.update(
+    settings.showInMenuBar ?? false,
+    menuBarLabels(settings, app.getPreferredSystemLanguages()),
+  );
+}
+function showWindow() {
+  if (!window) createWindow();
+  if (window!.isMinimized()) window!.restore();
+  window!.show();
+  window!.focus();
+}
 const testMode = process.env.DESICAST_TEST_MODE === "1" && !app.isPackaged;
 function mcpInfo() {
   const command = app.isPackaged
@@ -128,6 +163,7 @@ async function call(method: string, input: unknown) {
         .object({ settings: settingsSchema, apiKey: z.string().optional() })
         .parse(input);
       const saved = await service.saveSettings(value.settings, value.apiKey);
+      updateMenuBar();
       window?.webContents.setZoomFactor((saved.zoom ?? 100) / 100);
       return saved;
     }
@@ -326,20 +362,25 @@ async function bootstrap() {
       }
     });
     createWindow();
+    updateMenuBar();
     if (!testMode)
       for (const source of service.store
         .sources()
         .filter((source) => source.kind === "repository"))
         service.sync(source.id).catch(() => {});
     app.on("activate", () => {
-      if (!window) createWindow();
+      showWindow();
     });
     app.on("second-instance", () => {
-      window?.show();
-      window?.focus();
+      showWindow();
     });
-    app.on("window-all-closed", () => app.quit());
-    app.on("will-quit", () => service.close());
+    app.on("window-all-closed", () => {
+      if (!menuBar.enabled) app.quit();
+    });
+    app.on("will-quit", () => {
+      menuBar.destroy();
+      service.close();
+    });
   }
 }
 bootstrap().catch((error) => {

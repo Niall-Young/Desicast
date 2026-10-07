@@ -8,6 +8,7 @@ export const defaults: Settings = {
   theme: "system",
   brandColor: "grey",
   zoom: 100,
+  showInMenuBar: false,
   model: { baseUrl: "https://api.openai.com/v1", model: "", consent: false },
 };
 

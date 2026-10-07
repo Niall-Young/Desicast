@@ -108,6 +108,7 @@ export interface Settings {
   theme: "system" | "light" | "dark";
   brandColor?: BrandColor;
   zoom?: InterfaceZoom;
+  showInMenuBar?: boolean;
   model: ModelSettings;
   modelProviders?: (ModelSettings & { id: string })[];
 }

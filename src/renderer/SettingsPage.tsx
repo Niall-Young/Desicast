@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "./Select";
+import { Switch } from "@/components/ui/switch";
+import { menuBarLabels } from "../shared/menu-bar";
 import { brandColors, interfaceZooms, type Settings } from "../core/types";
 import { brandColorLabels, verifyAppearanceSave } from "./appearance";
 import { api, type MCPInfo } from "./api";
@@ -107,13 +109,20 @@ export function SettingsPage({
     };
   }, []);
   async function saveAppearance(
-    patch: Partial<Pick<Settings, "theme" | "brandColor" | "zoom">>,
+    patch: Partial<
+      Pick<Settings, "theme" | "brandColor" | "zoom" | "showInMenuBar">
+    >,
   ) {
     setBusy(true);
     const next = { ...settings, ...patch };
     onSettings(next);
     try {
       const saved = await api<Settings>("saveSettings", { settings: next });
+      if (
+        patch.showInMenuBar !== undefined &&
+        saved.showInMenuBar !== patch.showInMenuBar
+      )
+        throw new Error("菜单栏设置未保存，请重启 DesiCast 后重试");
       verifyAppearanceSave(saved, patch);
       onSettings(saved);
     } catch (error) {
@@ -123,6 +132,7 @@ export function SettingsPage({
       setBusy(false);
     }
   }
+  const menuBar = menuBarLabels(settings, navigator.languages);
   return (
     <div className="shell settings-page">
       <aside className="settings-sidebar" aria-label="设置导航">
@@ -168,6 +178,23 @@ export function SettingsPage({
                 <p className="settings-cell-description">当前界面语言</p>
               </div>
               <span>简体中文</span>
+            </div>
+            <div className="settings-cell">
+              <div>
+                <p>{menuBar.setting}</p>
+                <p className="settings-cell-description">
+                  {menuBar.description}
+                </p>
+              </div>
+              <Switch
+                size="lg"
+                aria-label={menuBar.setting}
+                checked={settings.showInMenuBar ?? false}
+                disabled={busy}
+                onCheckedChange={(checked) =>
+                  saveAppearance({ showInMenuBar: checked })
+                }
+              />
             </div>
           </div>
         </section>

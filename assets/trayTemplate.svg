@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="210 180 604 650">
+  <!-- Monochrome menu bar adaptation of Desicast.icon/Assets/devil.svg -->
+  <g fill="black">
+    <path d="M274 397C259 339 265 269 288 221C294 208 308 211 313 225C335 278 378 300 406 327Z"/>
+    <path d="M750 397C765 339 759 269 736 221C730 208 716 211 711 225C689 278 646 300 618 327Z"/>
+    <path fill-rule="evenodd" d="M800 532a288 288 0 1 1-576 0 288 288 0 1 1 576 0ZM370 505a35 48 0 1 0 70 0 35 48 0 1 0-70 0ZM584 505a35 48 0 1 0 70 0 35 48 0 1 0-70 0Z"/>
+  </g>
+</svg>
