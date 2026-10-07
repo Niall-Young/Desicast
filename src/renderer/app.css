@@ -1604,6 +1604,7 @@ pre {
 .removed-public-libraries h2 { font-size: var(--nico-font-size-md); margin-bottom: 12px; }
 
 /* Navigation selection stays neutral while other controls retain brand tokens */
-.sidebar {
+.sidebar,
+.library-window-heading > button {
   --nico-color-interaction-selected-brand: var(--nico-color-interaction-selected);
 }
