@@ -854,7 +854,7 @@ pre {
   color: var(--nico-color-text-positive);
 }
 /* Application input surfaces follow the owner-requested Nico surface token. */
-[data-slot="input-wrapper"],
+[data-slot="input-wrapper"]:not(.main-search),
 [data-slot="textarea"],
 [data-slot="select-trigger"] {
   --nico-color-background-input: var(--nico-color-surface);

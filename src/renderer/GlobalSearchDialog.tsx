@@ -51,6 +51,7 @@ export function GlobalSearchDialog({
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
+  const pasteVersion = useRef(0);
   const rows = useRef<(HTMLElement | null)[]>([]);
   const scope = JSON.stringify(libraries);
   const hasQuery = Boolean(query.trim());
@@ -75,6 +76,28 @@ export function GlobalSearchDialog({
   const count =
     matchingLibraries.length + visibleIcons.length + Number(showMore);
   const waiting = busy && filter !== "libraries";
+  useEffect(
+    () => () => {
+      pasteVersion.current++;
+    },
+    [],
+  );
+  async function readNativeImage(version: number) {
+    try {
+      const dataUrl = await api<string | null>("clipboardImage");
+      if (
+        version !== pasteVersion.current ||
+        document.activeElement !== input.current
+      )
+        return;
+      if (dataUrl) onImage(dataUrl);
+    } catch (error) {
+      if (version === pasteVersion.current)
+        setWarning(
+          error instanceof Error ? error.message : "剪贴板图片读取失败",
+        );
+    }
+  }
   useEffect(() => {
     let alive = true;
     setIcons([]);
@@ -177,11 +200,19 @@ export function GlobalSearchDialog({
             ref={input}
             type="search"
             aria-label="搜索图标关键词"
-            onPaste={(event) => {
-              if (!imageEnabled) return;
+            onPasteCapture={(event) => {
+              const version = ++pasteVersion.current;
               const file = clipboardImage(event.clipboardData);
-              if (!file) return;
+              if (!file) {
+                if (imageEnabled && !event.clipboardData.getData("text/plain"))
+                  void readNativeImage(version);
+                return;
+              }
               event.preventDefault();
+              if (!imageEnabled) {
+                setWarning("请先开启图标库的视觉搜索");
+                return;
+              }
               loadImage(file);
             }}
             placeholder="搜索图标关键词"
@@ -201,6 +232,17 @@ export function GlobalSearchDialog({
             }
             onKeyDown={(event) => {
               if (event.nativeEvent.isComposing) return;
+              if (
+                (event.metaKey || event.ctrlKey) &&
+                !event.altKey &&
+                !event.shiftKey &&
+                event.key.toLowerCase() === "v" &&
+                imageEnabled
+              ) {
+                // Native image paste may not produce a DOM paste event on macOS.
+                // A delivered paste event invalidates this fallback to avoid duplicates.
+                void readNativeImage(++pasteVersion.current);
+              }
               if (
                 (event.key === "ArrowDown" || event.key === "ArrowUp") &&
                 count

@@ -28,6 +28,8 @@ import type { ExportResult } from "../core/types";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
 
+import { readClipboardImage } from "./clipboard-image";
+
 app.setName("DesiCast");
 const dataDirectory =
   process.env.DESICAST_DATA_DIR || join(app.getPath("appData"), "DesiCast");
@@ -246,6 +248,8 @@ async function call(method: string, input: unknown) {
         await client.close();
       }
     }
+    case "clipboardImage":
+      return readClipboardImage(await clipboard.read());
     case "copy":
       clipboard.writeText(z.string().max(2_000_000).parse(input));
       return true;
