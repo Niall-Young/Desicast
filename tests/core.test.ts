@@ -356,7 +356,14 @@ test("Global vision excludes disabled libraries before limiting candidates", asy
       t.mock.method(service.publicLibrary, "search", async () => {
         publicSearches++;
         return {
-          icons: [{ ...icon, id: "public:fixture:search", sourceId: "public" }],
+          icons: [
+            {
+              ...icon,
+              id: "public:lucide:search",
+              sourceId: "public",
+              collection: "lucide",
+            },
+          ],
           total: 1,
         };
       });
@@ -364,9 +371,9 @@ test("Global vision excludes disabled libraries before limiting candidates", asy
       const result = await service.vision({ dataUrl });
       assert.deepEqual(
         result.icons.map((candidate) => candidate.id),
-        ["enabled:search", "public:fixture:search"],
+        ["enabled:search", "public:lucide:search"],
       );
-      assert.deepEqual(ranked[0], ["enabled:search", "public:fixture:search"]);
+      assert.deepEqual(ranked[0], ["enabled:search", "public:lucide:search"]);
       assert.equal(publicSearches, 1);
       service.store.saveSource({
         ...service.store.source("public")!,
@@ -803,12 +810,14 @@ test("Vision recalls compound subject/shape names and includes later keyword gro
         id: "public:mingcute:ad-circle-line",
         name: "ad-circle-line",
         sourceId: "public",
+        collection: "mingcute",
       };
       const late = {
         ...icon,
-        id: "public:ri:advertisement-line",
+        id: "public:eva:advertisement-line",
         name: "advertisement-line",
         sourceId: "public",
+        collection: "eva",
       };
       let active = 0,
         peak = 0;
@@ -820,9 +829,10 @@ test("Vision recalls compound subject/shape names and includes later keyword gro
         active--;
         const icons = Array.from({ length: 12 }, (_, index) => ({
           ...icon,
-          id: `public:fixture:${query.replaceAll(" ", "-")}-${index}`,
+          id: `public:lucide:${query.replaceAll(" ", "-")}-${index}`,
           name: `${query}-${index}`,
           sourceId: "public",
+          collection: "lucide",
         }));
         if (query === "ad circle") icons[2] = target;
         if (query === "advertisement") icons[0] = late;
@@ -939,7 +949,7 @@ test("Public search batches icon data, resolves aliases, and preserves provenanc
         },
         "https://fixture.example",
       );
-      const result = await library.search("ad circle");
+      const result = await library.search("ad circle", "fixture");
       assert.equal(result.icons.length, 2);
       assert.equal(requests.length, 2);
       assert.ok(requests.every((url) => !url.includes(".svg")));

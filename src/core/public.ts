@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Store } from "./store";
 import { sanitizeSvg } from "./svg";
 import { getIconData, iconToSVG } from "@iconify/utils";
+import { publicSearchCollections } from "./search-scope";
 import type { Collection, Icon } from "./types";
 
 export const aliases: Record<string, string> = {
@@ -319,7 +320,9 @@ export class PublicLibrary {
     collection?: string,
     limit = 48,
     offset = 0,
+    prefixes: readonly string[] = publicSearchCollections,
   ): Promise<{ icons: Icon[]; total: number }> {
+    if (!collection && !prefixes.length) return { icons: [], total: 0 };
     let ids: string[], total: number;
     if (!query.trim() && !collection) {
       ids = featured.map((name) => `public:lucide:${name}`);
@@ -356,6 +359,7 @@ export class PublicLibrary {
         limit: String(Math.min(999, offset + limit)),
       });
       if (collection) params.set("prefix", collection);
+      else params.set("prefixes", prefixes.join(","));
       const response = await this.fetcher(`${this.baseUrl}/search?${params}`, {
         signal: AbortSignal.timeout(20_000),
       });
@@ -364,8 +368,16 @@ export class PublicLibrary {
         icons: string[];
         total?: number;
       };
-      ids = data.icons.map((id) => `public:${id}`);
-      total = Math.min(data.total ?? ids.length, 999);
+      ids = data.icons
+        .filter((id) =>
+          collection
+            ? id.split(":")[0] === collection
+            : prefixes.includes(id.split(":")[0]),
+        )
+        .map((id) => `public:${id}`);
+      total =
+        Math.min(data.total ?? data.icons.length, 999) -
+        (data.icons.length - ids.length);
     }
     const page = ids.slice(offset, offset + limit),
       icons: Icon[] = [];

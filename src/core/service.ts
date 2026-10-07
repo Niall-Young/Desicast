@@ -8,6 +8,8 @@ import {
 } from "./repositories";
 import { VisionModel, modelEndpoint, imageBuffer } from "./model";
 import { exportIcon } from "./svg";
+import { publicSearchCollections } from "./search-scope";
+import { libraryPreferences } from "./library-management";
 import type {
   SecretStore,
   RepositoryInput,
@@ -281,6 +283,17 @@ export class IconService {
       offset = Math.max(0, input.offset ?? 0);
     if (input.sourceId && !this.store.source(input.sourceId))
       throw new Error("图标来源不存在");
+    const preferences = libraryPreferences(this.store);
+    const publicCollections = publicSearchCollections.filter(
+      (id) => !preferences[id]?.hidden,
+    );
+    const isEligible = (icon: Icon) => {
+      const source = this.store.source(icon.sourceId);
+      if (!source || (visionOnly && !source.allowVision)) return false;
+      return icon.sourceId === "public"
+        ? publicCollections.some((id) => id === icon.collection)
+        : source.kind === "repository" && !preferences[source.id]?.hidden;
+    };
     const translated = translateQuery(query),
       local = this.store.local(query, input.sourceId, input.collection);
     const expanded =
@@ -298,12 +311,13 @@ export class IconService {
               ].map((icon) => [icon.id, icon]),
             ).values(),
           ];
-    const eligible = visionOnly
-      ? expanded.filter((icon) => this.store.source(icon.sourceId)?.allowVision)
-      : expanded;
+    const eligible = expanded.filter(isEligible);
     const team = eligible.filter((icon) => icon.sourceId !== "public");
     if (
       (input.sourceId && input.sourceId !== "public") ||
+      !publicCollections.length ||
+      (input.collection &&
+        !publicCollections.some((id) => id === input.collection)) ||
       (visionOnly && !this.store.source("public")?.allowVision)
     )
       return { icons: team.slice(offset, offset + limit), total: team.length };
@@ -317,9 +331,10 @@ export class IconService {
         input.collection,
         limit - teamPage.length,
         publicOffset,
+        publicCollections,
       );
       return {
-        icons: [...teamPage, ...result.icons],
+        icons: [...teamPage, ...result.icons.filter(isEligible)],
         total: team.length + result.total,
       };
     } catch {
