@@ -37,6 +37,7 @@ export function GlobalSearchDialog({
   onIcon: (icon: Icon) => void;
 }) {
   const [query, setQuery] = useState("");
+  const [queryInput, setQueryInput] = useState("");
   const [icons, setIcons] = useState<Icon[]>([]);
   const [filter, setFilter] = useState<Filter>("all");
   const [expanded, setExpanded] = useState(false);
@@ -157,9 +158,9 @@ export function GlobalSearchDialog({
             type="search"
             aria-label="搜索图标关键词"
             placeholder="搜索图标关键词"
-            value={query}
+            value={queryInput}
             onValueChange={(value) => {
-              setQuery(value);
+              setQueryInput(value);
               setActive(0);
             }}
             role="combobox"
@@ -172,7 +173,12 @@ export function GlobalSearchDialog({
                 : undefined
             }
             onKeyDown={(event) => {
-              if (event.nativeEvent.isComposing) return;
+              if (
+                event.nativeEvent.isComposing ||
+                event.nativeEvent.keyCode === 229
+              ) {
+                return;
+              }
               if (
                 (event.key === "ArrowDown" || event.key === "ArrowUp") &&
                 count
@@ -186,7 +192,11 @@ export function GlobalSearchDialog({
               }
               if (event.key === "Enter") {
                 event.preventDefault();
-                open(active);
+                if (queryInput.trim() !== query) {
+                  setQuery(queryInput.trim());
+                } else if (!waiting) {
+                  open(active);
+                }
               }
             }}
           />

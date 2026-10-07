@@ -222,6 +222,7 @@ export function App() {
   const [sourceId, setSourceId] = useState(""),
     [collection, setCollection] = useState(""),
     [query, setQuery] = useState(""),
+    [queryInput, setQueryInput] = useState(""),
     [offset, setOffset] = useState(0),
     [result, setResult] = useState<SearchResult>({ icons: [], total: 0 }),
     [selected, setSelected] = useState<Icon>(),
@@ -436,6 +437,7 @@ export function App() {
     setCollection("");
     setOffset(0);
     setQuery("");
+    setQueryInput("");
     navigate("library");
   }
   async function acknowledgeChanges() {
@@ -1057,10 +1059,20 @@ export function App() {
                         void loadFile(file);
                       }}
                       placeholder="搜索图标名称"
-                      value={query}
-                      onValueChange={(value) => {
-                        setQuery(value);
+                      value={queryInput}
+                      onValueChange={setQueryInput}
+                      onKeyDown={(event) => {
+                        if (
+                          event.key !== "Enter" ||
+                          event.nativeEvent.isComposing ||
+                          event.nativeEvent.keyCode === 229
+                        ) {
+                          return;
+                        }
+                        event.preventDefault();
+                        setQuery(queryInput.trim());
                         setOffset(0);
+                        setRevision((value) => value + 1);
                       }}
                     />
                     <div className="grid-toolbar-actions">
@@ -1502,6 +1514,7 @@ export function App() {
             pendingSearchIcon.current = icon;
             setRevision((value) => value + 1);
             setQuery(icon.name);
+            setQueryInput(icon.name);
             setSelected(icon);
             setDetailOpen(true);
             setGlobalSearchOpen(false);
