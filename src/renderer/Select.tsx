@@ -74,7 +74,11 @@ export function Select({
         >
           <SelectPrimitive.Value
             placeholder={placeholder}
-            className="min-w-0 flex-1 truncate data-placeholder:text-(--nico-color-text-disabled)"
+            className={
+              !multiple && items.some((item) => item.value === value)
+                ? "min-w-0 flex-1 truncate"
+                : "min-w-0 flex-1 truncate data-placeholder:text-(--nico-color-text-disabled)"
+            }
           >
             {multiple
               ? () =>

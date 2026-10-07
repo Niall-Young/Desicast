@@ -1319,7 +1319,8 @@ pre {
   flex: 1;
   min-width: 0;
   height: 52px;
-  padding: 0 14px 0 16px;
+  /* 6px inset + the plain Button's 14px content inset aligns with the grid's 20px */
+  padding: 0 14px 0 6px;
   display: flex;
   align-items: center;
   justify-content: space-between;
