@@ -450,14 +450,25 @@ export function App() {
       report(err);
     }
   }
+  const [libraryRefreshing, setLibraryRefreshing] = useState(false);
+  const libraryRefreshPending = useRef(false);
   async function refreshLibrary() {
-    if (activeSource?.kind === "repository") return sync(activeSource);
+    if (libraryRefreshPending.current) return;
+    libraryRefreshPending.current = true;
+    setLibraryRefreshing(true);
     try {
+      if (activeSource?.kind === "repository") {
+        await sync(activeSource);
+        return;
+      }
       await refreshCollections(true);
       setRevision((value) => value + 1);
       flash("图库目录已更新");
     } catch (err) {
       report(err);
+    } finally {
+      libraryRefreshPending.current = false;
+      setLibraryRefreshing(false);
     }
   }
   async function sync(source: Source) {
@@ -1033,7 +1044,10 @@ export function App() {
                         <IconButton
                           kind="plain"
                           size="md"
-                          aria-label="刷新图库"
+                          aria-label={
+                            libraryRefreshing ? "正在刷新图库" : "刷新图库"
+                          }
+                          loading={libraryRefreshing}
                           onClick={refreshLibrary}
                         >
                           <DesignIcon name="refresh-library" />
