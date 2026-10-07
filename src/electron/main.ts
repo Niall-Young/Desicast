@@ -42,6 +42,8 @@ app.setPath("userData", dataDirectory);
 let service: IconService, window: BrowserWindow | undefined;
 const menuBar = new MenuBarController(() => {
   const image = nativeImage.createFromPath(join(__dirname, "trayTemplate.png"));
+  if (image.isEmpty())
+    throw new Error("菜单栏图标加载失败，请重新构建并重启 DesiCast");
   image.setTemplateImage(true);
   const tray = new Tray(image);
   tray.setToolTip("DesiCast");
@@ -57,8 +59,7 @@ const menuBar = new MenuBarController(() => {
       ),
   };
 });
-function updateMenuBar() {
-  const settings = service.store.settings();
+function updateMenuBar(settings = service.store.settings()) {
   menuBar.update(
     settings.showInMenuBar ?? false,
     menuBarLabels(settings, app.getPreferredSystemLanguages()),
@@ -162,8 +163,20 @@ async function call(method: string, input: unknown) {
       const value = z
         .object({ settings: settingsSchema, apiKey: z.string().optional() })
         .parse(input);
-      const saved = await service.saveSettings(value.settings, value.apiKey);
-      updateMenuBar();
+      const previous = service.store.settings();
+      let saved;
+      try {
+        // Confirm the native item exists before persisting an enabled preference
+        updateMenuBar({
+          ...value.settings,
+          language: value.settings.language ?? previous.language,
+          showInMenuBar: value.settings.showInMenuBar ?? previous.showInMenuBar,
+        });
+        saved = await service.saveSettings(value.settings, value.apiKey);
+      } catch (error) {
+        updateMenuBar(previous);
+        throw error;
+      }
       window?.webContents.setZoomFactor((saved.zoom ?? 100) / 100);
       return saved;
     }

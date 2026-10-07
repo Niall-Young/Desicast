@@ -1,5 +1,5 @@
 import { build } from "esbuild";
-import { copyFile } from "node:fs/promises";
+import { copyTrayAssets } from "./tray-assets.mjs";
 import { build as viteBuild } from "vite";
 await viteBuild();
 await build({
@@ -12,8 +12,7 @@ await build({
   external: ["electron", "sharp"],
   banner: { js: "// DesiCast desktop main process" },
 });
-await copyFile("assets/trayTemplate.png", "dist/electron/trayTemplate.png");
-await copyFile("assets/trayTemplate@2x.png", "dist/electron/trayTemplate@2x.png");
+await copyTrayAssets();
 await build({
   entryPoints: ["src/electron/preload.ts"],
   outfile: "dist/electron/preload.cjs",

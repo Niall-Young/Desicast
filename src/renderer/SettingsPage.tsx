@@ -54,6 +54,7 @@ export function SettingsPage({
 }) {
   const [active, setActive] = useState("general");
   const [busy, setBusy] = useState(false);
+  const saving = useRef(false);
   const [info, setInfo] = useState<MCPInfo>();
   const [loadError, setLoadError] = useState("");
   const content = useRef<HTMLDivElement>(null);
@@ -113,6 +114,8 @@ export function SettingsPage({
       Pick<Settings, "theme" | "brandColor" | "zoom" | "showInMenuBar">
     >,
   ) {
+    if (saving.current) return;
+    saving.current = true;
     setBusy(true);
     const next = { ...settings, ...patch };
     onSettings(next);
@@ -129,6 +132,7 @@ export function SettingsPage({
       onSettings(settings);
       onError(error);
     } finally {
+      saving.current = false;
       setBusy(false);
     }
   }
@@ -190,10 +194,16 @@ export function SettingsPage({
                 size="lg"
                 aria-label={menuBar.setting}
                 checked={settings.showInMenuBar ?? false}
-                disabled={busy}
-                onCheckedChange={(checked) =>
-                  saveAppearance({ showInMenuBar: checked })
-                }
+                aria-disabled={busy}
+                aria-busy={busy}
+                onCheckedChange={(checked, details) => {
+                  // Native disabled/readOnly states suppress upstream motion
+                  if (saving.current) {
+                    details.cancel();
+                    return;
+                  }
+                  void saveAppearance({ showInMenuBar: checked });
+                }}
               />
             </div>
           </div>

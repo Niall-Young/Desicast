@@ -84,3 +84,30 @@ test("menu bar preference defaults off, survives reopening, and is preserved by 
     await rm(directory, { recursive: true, force: true });
   }
 });
+
+test("menu bar initialization failures leave no enabled item and allow retry", () => {
+  let failCreate = true;
+  let failMenu = true;
+  let destroyed = 0;
+  const bar = new MenuBarController(() => {
+    if (failCreate) throw new Error("Missing image");
+    return {
+      destroy: () => destroyed++,
+      setMenu: () => {
+        if (failMenu) throw new Error("Menu unavailable");
+      },
+    };
+  });
+  const labels = menuBarLabels({ theme: "system" });
+  assert.throws(() => bar.update(true, labels), /Missing image/);
+  assert.equal(bar.enabled, false);
+  failCreate = false;
+  assert.throws(() => bar.update(true, labels), /Menu unavailable/);
+  assert.equal(bar.enabled, false);
+  assert.equal(destroyed, 1);
+  failMenu = false;
+  bar.update(true, labels);
+  assert.equal(bar.enabled, true);
+  bar.destroy();
+  assert.equal(destroyed, 2);
+});

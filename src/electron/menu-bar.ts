@@ -18,8 +18,18 @@ export class MenuBarController {
       this.destroy();
       return;
     }
-    this.item ??= this.create();
-    this.item.setMenu(labels);
+    if (this.item) {
+      this.item.setMenu(labels);
+      return;
+    }
+    const item = this.create();
+    try {
+      item.setMenu(labels);
+      this.item = item;
+    } catch (error) {
+      item.destroy();
+      throw error;
+    }
   }
   destroy() {
     this.item?.destroy();

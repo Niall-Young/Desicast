@@ -1,6 +1,7 @@
 import { build } from "esbuild";
 import { createServer } from "vite";
 import { spawn } from "node:child_process";
+import { copyTrayAssets } from "./tray-assets.mjs";
 import electron from "electron";
 await build({
   entryPoints: ["src/electron/main.ts"],
@@ -11,6 +12,7 @@ await build({
   target: "node24",
   external: ["electron", "sharp"],
 });
+await copyTrayAssets();
 await build({
   entryPoints: ["src/electron/preload.ts"],
   outfile: "dist/electron/preload.cjs",
