@@ -1,3 +1,4 @@
+import { flushSync } from "react-dom";
 import { GlobalSearchDialog } from "./GlobalSearchDialog";
 import { ModelSettings } from "./ModelSettings";
 import { AddLibraryDialog } from "./AddLibraryDialog";
@@ -61,7 +62,6 @@ import {
   ModalHeader,
   ModalTitle,
   ModalBody,
-  ModalDescription,
   ModalFooter,
 } from "@/components/ui/modal";
 
@@ -238,8 +238,7 @@ export function App() {
   const [view, setView] = useState<"grid" | "list">("grid");
   const [viewDirection, setViewDirection] = useState<"forward" | "backward">();
   const [reference, setReference] = useState<string>(),
-    [visionResult, setVisionResult] = useState(false),
-    [cropOpen, setCropOpen] = useState(false);
+    [visionResult, setVisionResult] = useState(false);
   const fileInput = useRef<HTMLInputElement>(null),
     generation = useRef(0),
     pendingSearchIcon = useRef<Icon | undefined>(undefined),
@@ -329,9 +328,6 @@ export function App() {
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {
         event.preventDefault();
         setGlobalSearchOpen((open) => !open);
-      }
-      if (event.key === "Escape") {
-        setCropOpen(false);
       }
     };
     window.addEventListener("keydown", handler);
@@ -485,16 +481,19 @@ export function App() {
     }
     const reader = new FileReader();
     reader.onload = () => {
-      if (page === "home") chooseSource("");
-      setReference(String(reader.result));
-      setCropOpen(true);
+      void searchImage(String(reader.result), page === "home");
     };
+    reader.onerror = () => flash("图片读取失败，请重新选择");
     reader.readAsDataURL(file);
   }
-  async function searchImage(dataUrl: string) {
-    if (!visionEnabled) return;
+  async function searchImage(dataUrl: string, global = false) {
+    if (global ? !sources.some((source) => source.allowVision) : !visionEnabled)
+      return;
+    if (global) {
+      // Settle navigation before starting the request in its new scope.
+      flushSync(() => chooseSource(""));
+    }
     setReference(dataUrl);
-    setCropOpen(false);
     if (!settings.model.model || !settings.model.consent) {
       setPage("model");
       flash("请先配置视觉模型并确认图片发送范围");
@@ -505,8 +504,8 @@ export function App() {
     try {
       const value = await api<SearchResult>("vision", {
         dataUrl,
-        sourceId: sourceId || undefined,
-        collection: collection || undefined,
+        sourceId: global ? undefined : sourceId || undefined,
+        collection: global ? undefined : collection || undefined,
       });
       if (current !== generation.current) return;
       setResult(value);
@@ -624,15 +623,6 @@ export function App() {
       onDrop={(event) => {
         event.preventDefault();
         if (event.dataTransfer.files[0]) loadFile(event.dataTransfer.files[0]);
-      }}
-      onPasteCapture={(event) => {
-        if (globalSearchOpen || settingsOpen || cropOpen || !visionEnabled)
-          return;
-        const file = clipboardImage(event.clipboardData);
-        if (file) {
-          event.preventDefault();
-          loadFile(file);
-        }
       }}
     >
       <header className="titlebar">
@@ -977,15 +967,8 @@ export function App() {
                       prefix={
                         visionEnabled && reference ? (
                           <span className="reference-tag">
-                            <IconButton
-                              size="sm"
-                              kind="plain"
-                              aria-label="裁剪参考图并重新搜索"
-                              title="裁剪参考图并重新搜索"
-                              onClick={() => setCropOpen(true)}
-                            >
-                              <img src={reference} alt="图片搜索参考" />
-                            </IconButton>
+                            <img src={reference} alt="图片搜索参考" />
+                            <span>参考图</span>
                             <IconButton
                               size="sm"
                               kind="plain"
@@ -995,7 +978,6 @@ export function App() {
                                 setBusy(false);
                                 setVisionResult(false);
                                 setReference(undefined);
-                                setCropOpen(false);
                                 setRevision((value) => value + 1);
                                 searchInput.current?.focus();
                               }}
@@ -1007,6 +989,13 @@ export function App() {
                       }
                       size="md"
                       aria-label="搜索图标"
+                      onPaste={(event) => {
+                        if (!visionEnabled) return;
+                        const file = clipboardImage(event.clipboardData);
+                        if (!file) return;
+                        event.preventDefault();
+                        void loadFile(file);
+                      }}
                       placeholder="搜索图标名称"
                       value={query}
                       onValueChange={(value) => {
@@ -1484,10 +1473,8 @@ export function App() {
           libraries={searchLibraries}
           imageEnabled={sources.some((source) => source.allowVision)}
           onImage={(dataUrl) => {
-            chooseSource("");
-            setReference(dataUrl);
-            setCropOpen(true);
             setGlobalSearchOpen(false);
+            void searchImage(dataUrl, true);
           }}
           onClose={() => setGlobalSearchOpen(false)}
           onLibrary={(library) => {
@@ -1542,13 +1529,6 @@ export function App() {
             </div>
           )}
         </AddLibraryDialog>
-      )}
-      {visionEnabled && cropOpen && reference && (
-        <CropDialog
-          image={reference}
-          onClose={() => setCropOpen(false)}
-          onSearch={searchImage}
-        />
       )}
     </div>
   );
@@ -1670,118 +1650,5 @@ function RepositorySettings({
         子模块。
       </div>
     </div>
-  );
-}
-
-function CropDialog({
-  image,
-  onClose,
-  onSearch,
-}: {
-  image: string;
-  onClose: () => void;
-  onSearch: (value: string) => void;
-}) {
-  const img = useRef<HTMLImageElement>(null),
-    surface = useRef<HTMLDivElement>(null),
-    start = useRef<{ x: number; y: number } | undefined>(undefined),
-    [crop, setCrop] = useState<{
-      x: number;
-      y: number;
-      w: number;
-      h: number;
-    }>();
-  function point(event: React.PointerEvent) {
-    const rect = surface.current!.getBoundingClientRect();
-    return {
-      x: Math.max(0, Math.min(1, (event.clientX - rect.left) / rect.width)),
-      y: Math.max(0, Math.min(1, (event.clientY - rect.top) / rect.height)),
-    };
-  }
-  function submit() {
-    if (!crop || crop.w < 0.01 || crop.h < 0.01) {
-      onSearch(image);
-      return;
-    }
-    const element = img.current!,
-      canvas = document.createElement("canvas");
-    canvas.width = Math.round(element.naturalWidth * crop.w);
-    canvas.height = Math.round(element.naturalHeight * crop.h);
-    canvas
-      .getContext("2d")!
-      .drawImage(
-        element,
-        element.naturalWidth * crop.x,
-        element.naturalHeight * crop.y,
-        canvas.width,
-        canvas.height,
-        0,
-        0,
-        canvas.width,
-        canvas.height,
-      );
-    onSearch(canvas.toDataURL("image/png"));
-  }
-  return (
-    <Modal
-      open
-      onOpenChange={(open) => {
-        if (!open) onClose();
-      }}
-    >
-      <ModalContent className="w-[560px]">
-        <ModalHeader closeLabel="关闭图片裁剪">
-          <ModalTitle>用图片寻找相似图标</ModalTitle>
-        </ModalHeader>
-        <ModalBody>
-          <ModalDescription>
-            拖动选择图标区域，也可以直接使用整张图片
-          </ModalDescription>
-          <div
-            ref={surface}
-            className="crop-surface"
-            onPointerDown={(event) => {
-              start.current = point(event);
-              setCrop(undefined);
-              event.currentTarget.setPointerCapture(event.pointerId);
-            }}
-            onPointerMove={(event) => {
-              if (!start.current) return;
-              const end = point(event);
-              setCrop({
-                x: Math.min(start.current.x, end.x),
-                y: Math.min(start.current.y, end.y),
-                w: Math.abs(end.x - start.current.x),
-                h: Math.abs(end.y - start.current.y),
-              });
-            }}
-            onPointerUp={() => {
-              start.current = undefined;
-            }}
-          >
-            <img ref={img} src={image} alt="待裁剪的参考图" draggable={false} />
-            {crop && (
-              <div
-                className="crop-selection"
-                style={{
-                  left: `${crop.x * 100}%`,
-                  top: `${crop.y * 100}%`,
-                  width: `${crop.w * 100}%`,
-                  height: `${crop.h * 100}%`,
-                }}
-              />
-            )}
-          </div>
-        </ModalBody>
-        <ModalFooter>
-          <Button kind="plain" onClick={() => setCrop(undefined)}>
-            重置裁剪
-          </Button>
-          <Button onClick={submit} leftIcon={<SearchRegular size={16} />}>
-            搜索相似图标
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
   );
 }

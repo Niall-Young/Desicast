@@ -169,17 +169,7 @@ export function GlobalSearchDialog({
         <ModalDescription className="sr-only">
           搜索已添加的图标库，使用上下方向键选择，按回车打开
         </ModalDescription>
-        <div
-          className="global-search-input"
-          onPasteCapture={(event) => {
-            if (!imageEnabled) return;
-            const file = clipboardImage(event.clipboardData);
-            if (!file) return;
-            event.preventDefault();
-            event.stopPropagation();
-            loadImage(file);
-          }}
-        >
+        <div className="global-search-input">
           <span className="global-search-control-mark" aria-hidden="true">
             <img src={searchMark} alt="" />
           </span>
@@ -187,6 +177,13 @@ export function GlobalSearchDialog({
             ref={input}
             type="search"
             aria-label="搜索图标关键词"
+            onPaste={(event) => {
+              if (!imageEnabled) return;
+              const file = clipboardImage(event.clipboardData);
+              if (!file) return;
+              event.preventDefault();
+              loadImage(file);
+            }}
             placeholder="搜索图标关键词"
             value={query}
             onValueChange={(value) => {

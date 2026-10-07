@@ -308,7 +308,7 @@ test("Themes, settings forms and 960px layout remain usable", async () => {
   await expect(page.getByRole("searchbox", { name: "搜索图标" })).toBeFocused();
 });
 
-test("Image search uses the configured local vision endpoint and Gendesign crop modal", async () => {
+test("Image upload searches directly using the configured local vision endpoint", async () => {
   let requests = 0;
   const server = createServer(async (request, response) => {
     const chunks: Buffer[] = [];
@@ -364,12 +364,11 @@ test("Image search uses the configured local vision endpoint and Gendesign crop 
     await page
       .locator("input[type=file]")
       .setInputFiles({ name: "reference.png", mimeType: "image/png", buffer });
+    await expect(page.locator(".reference-tag img")).toBeVisible();
+    await expect(page.getByRole("button", { name: "移除参考图" })).toBeVisible();
     await expect(
       page.getByRole("dialog", { name: "用图片寻找相似图标" }),
-    ).toBeVisible();
-    await page
-      .getByRole("button", { name: "搜索相似图标", exact: true })
-      .click();
+    ).toHaveCount(0);
     await expect(page.getByText("按形状与风格匹配")).toBeVisible();
     await expect(page.getByTestId("icon-card")).toHaveCount(1);
     await expect(page.getByText("轮廓和线条接近")).toBeVisible();
