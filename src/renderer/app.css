@@ -1338,18 +1338,11 @@ pre {
 .library-window-heading > button {
   -webkit-app-region: no-drag;
 }
-.window-library-title {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+.window-library-select {
+  width: 240px;
+  max-width: calc(100% - 44px);
   min-width: 0;
-  font-size: var(--nico-font-size-sm);
-  line-height: var(--nico-line-height-sm);
-}
-.window-library-title > span:last-child {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-app-region: no-drag;
 }
 .library-view .workspace {
   background: transparent;

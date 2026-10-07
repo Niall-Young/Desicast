@@ -694,28 +694,49 @@ export function App() {
         </div>
         {page === "library" && !settingsOpen ? (
           <div className="library-window-heading">
-            <span className="window-library-title">
-              {!sourceId && !collection ? (
-                <ClassifyRegular size={16} aria-hidden="true" />
-              ) : collection === "lucide" ? (
-                <DesignIcon name="lucide-heading" />
-              ) : defaultLibraries.find(
-                  (library) => library.id === collection,
-                ) ? (
-                <LibraryMark
-                  library={defaultLibraries.find(
-                    (library) => library.id === collection,
-                  )!}
-                />
-              ) : (
-                <DesignIcon
-                  name={
-                    activeSource?.kind === "repository" ? "book-row" : "search"
-                  }
-                />
-              )}
-              <span>{heading}</span>
-            </span>
+            <div className="window-library-select">
+              <Select
+                aria-label="选择图标库"
+                value={
+                  collection
+                    ? `public:${collection}`
+                    : sourceId
+                      ? `source:${sourceId}`
+                      : ""
+                }
+                items={[
+                  {
+                    value: "",
+                    label: "全部图标",
+                    leading: <ClassifyRegular size={16} aria-hidden="true" />,
+                  },
+                  ...searchLibraries.map((library) => ({
+                    value: `${library.public ? "public" : "source"}:${library.id}`,
+                    label: library.name,
+                    leading: library.public ? (
+                      <LibraryMark
+                        library={availablePublicLibraries.find(
+                          (item) => item.id === library.id,
+                        )!}
+                      />
+                    ) : (
+                      <DesignIcon name="book-row" />
+                    ),
+                  })),
+                ]}
+                onValueChange={(value) => {
+                  const library = searchLibraries.find(
+                    (item) =>
+                      `${item.public ? "public" : "source"}:${item.id}` ===
+                      value,
+                  );
+                  chooseSource(
+                    library ? (library.public ? "public" : library.id) : "",
+                  );
+                  if (library?.public) setCollection(library.id);
+                }}
+              />
+            </div>
             <IconButton
               kind="plain"
               size="sm"
