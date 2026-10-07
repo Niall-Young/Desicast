@@ -26,6 +26,8 @@
 }
 
 .pinned-library-row:hover .nav-count,
-.pinned-library-row:focus-within .nav-count {
+.pinned-library-row:focus-within .nav-count,
+.pinned-library-row:hover .library-change-dot,
+.pinned-library-row:focus-within .library-change-dot {
   visibility: hidden;
 }
