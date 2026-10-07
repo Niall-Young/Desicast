@@ -35,6 +35,7 @@ import { defaultLibraries, changeDescription } from "./libraries";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   SearchRegular,
+  ClassifyRegular,
   Settings1Regular,
   FolderRegular,
   CopyRegular,
@@ -794,8 +795,8 @@ export function App() {
                   kind="plain"
                   onClick={() => setGlobalSearchOpen(true)}
                 >
-                  <DesignIcon name="search" />
-                  <span>全局搜索</span>
+                  <ClassifyRegular size={16} aria-hidden="true" />
+                  <span>全部图标</span>
                 </Button>
               </div>
               <div className="library-heading">
