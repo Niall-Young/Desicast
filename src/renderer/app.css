@@ -48,6 +48,8 @@ input {
   content: "";
   position: absolute;
   left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   height: 24px;
   border-left: 1px solid var(--nico-color-border);
 }
@@ -1077,6 +1079,8 @@ pre {
   height: 100%;
   padding: 0 14px 0 20px;
   width: var(--sidebar-width);
+  flex-shrink: 0;
+  transition: width var(--panel-duration-in) var(--panel-ease);
 }
 .native-controls-space {
   width: 52px;
@@ -1102,6 +1106,11 @@ pre {
 }
 .app.sidebar-collapsed .sidebar {
   width: 0;
+  transition-duration: var(--panel-duration-out);
+}
+.app.sidebar-collapsed .window-navigation {
+  /* Insets (20 + 14), native controls (52), gap (24), three 28px buttons + two 4px gaps. */
+  width: 202px;
   transition-duration: var(--panel-duration-out);
 }
 .app.sidebar-collapsed .sidebar-inner {
@@ -1314,7 +1323,7 @@ pre {
   flex: 1;
   min-width: 0;
   height: 52px;
-  padding: 14px 14px 10px 16px;
+  padding: 0 14px 0 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1325,6 +1334,8 @@ pre {
   content: "";
   position: absolute;
   left: 0;
+  top: 50%;
+  transform: translateY(-50%);
   height: 24px;
   border-left: 1px solid var(--nico-color-border);
 }
