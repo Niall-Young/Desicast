@@ -53,7 +53,8 @@ export function SettingsPage({
   libraryContent: ReactNode;
 }) {
   const [active, setActive] = useState("general");
-  const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState<"appearance" | "menuBar" | null>(null);
+  const busy = pending === "appearance";
   const saving = useRef(false);
   const [info, setInfo] = useState<MCPInfo>();
   const [loadError, setLoadError] = useState("");
@@ -116,7 +117,7 @@ export function SettingsPage({
   ) {
     if (saving.current) return;
     saving.current = true;
-    setBusy(true);
+    setPending(patch.showInMenuBar === undefined ? "appearance" : "menuBar");
     const next = { ...settings, ...patch };
     onSettings(next);
     try {
@@ -133,7 +134,7 @@ export function SettingsPage({
       onError(error);
     } finally {
       saving.current = false;
-      setBusy(false);
+      setPending(null);
     }
   }
   const menuBar = menuBarLabels(settings, navigator.languages);
@@ -194,8 +195,8 @@ export function SettingsPage({
                 size="lg"
                 aria-label={menuBar.setting}
                 checked={settings.showInMenuBar ?? false}
-                aria-disabled={busy}
-                aria-busy={busy}
+                aria-disabled={pending !== null}
+                aria-busy={pending !== null}
                 onCheckedChange={(checked, details) => {
                   // Native disabled/readOnly states suppress upstream motion
                   if (saving.current) {

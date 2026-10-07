@@ -177,7 +177,9 @@ async function call(method: string, input: unknown) {
         updateMenuBar(previous);
         throw error;
       }
-      window?.webContents.setZoomFactor((saved.zoom ?? 100) / 100);
+      const zoomFactor = (saved.zoom ?? 100) / 100;
+      if (window && window.webContents.getZoomFactor() !== zoomFactor)
+        window.webContents.setZoomFactor(zoomFactor);
       return saved;
     }
     case "search":
