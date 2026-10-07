@@ -12,6 +12,7 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import type { Icon, SearchResult } from "../core/types";
 import { api, svgUrl, isMonochrome } from "./api";
+import { clipboardImage } from "./clipboard-image";
 import { defaultLibraries } from "./libraries";
 import { DesignIcon, LibraryMark, designNames } from "./design";
 import { Segmented, SegmentedList, SegmentedItem } from "./Segmented";
@@ -168,7 +169,17 @@ export function GlobalSearchDialog({
         <ModalDescription className="sr-only">
           搜索已添加的图标库，使用上下方向键选择，按回车打开
         </ModalDescription>
-        <div className="global-search-input">
+        <div
+          className="global-search-input"
+          onPasteCapture={(event) => {
+            if (!imageEnabled) return;
+            const file = clipboardImage(event.clipboardData);
+            if (!file) return;
+            event.preventDefault();
+            event.stopPropagation();
+            loadImage(file);
+          }}
+        >
           <span className="global-search-control-mark" aria-hidden="true">
             <img src={searchMark} alt="" />
           </span>

@@ -76,6 +76,7 @@ import type {
   Target,
 } from "../core/types";
 import { api, initialSettings, svgUrl, isMonochrome } from "./api";
+import { clipboardImage } from "./clipboard-image";
 
 type Page = "home" | "library" | "repositories" | "model" | "appearance";
 const publicLibraryOrigins: Record<string, string> = {
@@ -624,10 +625,10 @@ export function App() {
         event.preventDefault();
         if (event.dataTransfer.files[0]) loadFile(event.dataTransfer.files[0]);
       }}
-      onPaste={(event) => {
-        const file = Array.from(event.clipboardData.items)
-          .find((item) => item.type.startsWith("image/"))
-          ?.getAsFile();
+      onPasteCapture={(event) => {
+        if (globalSearchOpen || settingsOpen || cropOpen || !visionEnabled)
+          return;
+        const file = clipboardImage(event.clipboardData);
         if (file) {
           event.preventDefault();
           loadFile(file);
