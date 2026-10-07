@@ -696,6 +696,7 @@ export function App() {
           <div className="library-window-heading">
             <div className="window-library-select">
               <Select
+                appearance="button"
                 aria-label="选择图标库"
                 value={
                   collection

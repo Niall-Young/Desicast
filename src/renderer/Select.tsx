@@ -3,6 +3,7 @@ import { Select as SelectPrimitive } from "@base-ui/react/select";
 import { CheckRegular, DownRegular } from "@mingcute/react/core-regular";
 
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import {
   selectTriggerClass,
   selectIconClass,
@@ -14,6 +15,7 @@ type SelectProps = {
   items: { value: string; label: string; leading?: ReactNode }[];
   disabled?: boolean;
   placeholder?: string;
+  appearance?: "input" | "button";
   "aria-label": string;
 } & (
   | {
@@ -28,7 +30,7 @@ type SelectProps = {
     }
 );
 
-// Application composition: Base UI selection with the upstream Nico Input appearance.
+// Base UI selection with Nico Input or an upstream plain Button trigger.
 export function Select({
   items,
   value,
@@ -36,10 +38,16 @@ export function Select({
   onValueChange,
   disabled,
   placeholder,
+  appearance = "input",
   "aria-label": label,
 }: SelectProps) {
   return (
-    <div data-slot="select-wrapper" className="w-full min-w-0">
+    <div
+      data-slot="select-wrapper"
+      className={
+        appearance === "button" ? "w-fit max-w-full min-w-0" : "w-full min-w-0"
+      }
+    >
       <SelectPrimitive.Root
         items={items}
         multiple={multiple}
@@ -55,7 +63,14 @@ export function Select({
         <SelectPrimitive.Trigger
           aria-label={label}
           data-slot="select-trigger"
-          className={`${selectTriggerClass} h-8`}
+          render={
+            appearance === "button" ? (
+              <Button kind="plain" className="min-w-0 max-w-full gap-2" />
+            ) : undefined
+          }
+          className={
+            appearance === "button" ? undefined : `${selectTriggerClass} h-8`
+          }
         >
           <SelectPrimitive.Value
             placeholder={placeholder}
@@ -100,7 +115,11 @@ export function Select({
           >
             <SelectPrimitive.Popup
               data-slot="select-popup"
-              className={selectPopupClass}
+              className={
+                appearance === "button"
+                  ? `${selectPopupClass} min-w-60`
+                  : selectPopupClass
+              }
             >
               <SelectPrimitive.List>
                 {items.map((item) => (
