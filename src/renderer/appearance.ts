@@ -30,7 +30,6 @@ export function brandColorTokens(
     "--nico-color-background-brand-intense-hover": palette(hover),
     "--nico-color-background-brand-subtle": palette(dark ? 800 : 100),
     "--nico-color-background-brand-subtle-hover": palette(dark ? 700 : 200),
-    "--nico-color-interaction-selected": palette(dark ? 800 : 100),
   };
 }
 
@@ -39,6 +38,8 @@ export function applyBrandColor(
   color: BrandColor,
   dark: boolean,
 ) {
+  // Clear the previous version's inline override, including during hot updates
+  root.style.removeProperty("--nico-color-interaction-selected");
   for (const [token, value] of Object.entries(brandColorTokens(color, dark))) {
     if (color === "grey") root.style.removeProperty(token);
     else root.style.setProperty(token, value);

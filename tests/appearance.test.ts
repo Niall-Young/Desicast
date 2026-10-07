@@ -14,7 +14,9 @@ import {
 } from "../src/renderer/appearance";
 
 test("Brand palette follows light/dark shades and grey restores upstream tokens", () => {
-  const values = new Map<string, string>();
+  const values = new Map<string, string>([
+    ["--nico-color-interaction-selected", "var(--nico-color-blue-100)"],
+  ]);
   const root = {
     style: {
       setProperty: (key: string, value: string) => values.set(key, value),
@@ -32,10 +34,7 @@ test("Brand palette follows light/dark shades and grey restores upstream tokens"
         values.get("--nico-color-background-brand-intense-hover"),
         `var(--nico-color-${color}-${dark ? 300 : 600})`,
       );
-      assert.equal(
-        values.get("--nico-color-interaction-selected"),
-        `var(--nico-color-${color}-${dark ? 800 : 100})`,
-      );
+      assert.equal(values.has("--nico-color-interaction-selected"), false);
       assert.equal(
         values.get("--nico-color-text-brand"),
         brandColorTokens(color, dark)["--nico-color-background-brand-intense"],

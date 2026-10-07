@@ -318,8 +318,8 @@ input {
   background: var(--nico-color-interaction-hover);
 }
 .icon-card.selected {
-  border-color: var(--nico-color-border-brand);
-  background: var(--nico-color-interaction-selected-brand);
+  border-color: var(--nico-color-border-intense);
+  background: var(--nico-color-interaction-selected);
 }
 .card-art {
   height: 48px;
@@ -1440,8 +1440,8 @@ pre {
   background: var(--nico-color-background-neutral-subtle-hover);
 }
 .library-view .icon-card.selected[aria-pressed="true"] {
-  border-color: var(--nico-color-border-brand);
-  background: var(--nico-color-interaction-selected-brand);
+  border-color: var(--nico-color-border-intense);
+  background: var(--nico-color-interaction-selected);
 }
 .library-view .icon-card.selected[aria-pressed="false"] {
   border-color: transparent;
@@ -1609,3 +1609,8 @@ pre {
 .remove-library-dialog [data-slot="dialog-description"] { color: var(--nico-color-text); }
 .removed-public-libraries { padding: 24px 32px 0; }
 .removed-public-libraries h2 { font-size: var(--nico-font-size-md); margin-bottom: 12px; }
+
+/* Navigation selection stays neutral while other controls retain brand tokens */
+.sidebar {
+  --nico-color-interaction-selected-brand: var(--nico-color-interaction-selected);
+}
