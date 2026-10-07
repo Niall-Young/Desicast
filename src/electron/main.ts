@@ -34,6 +34,7 @@ import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 import { readClipboardImage } from "./clipboard-image";
 import { MenuBarController } from "./menu-bar";
 import { menuBarLabels } from "../shared/menu-bar";
+import { readMcpConnections } from "../mcp/connections";
 
 app.setName("DesiCast");
 const dataDirectory =
@@ -49,14 +50,33 @@ const menuBar = new MenuBarController(() => {
   tray.setToolTip("DesiCast");
   return {
     destroy: () => tray.destroy(),
-    setMenu: (labels) =>
+    setMenu: (labels) => {
+      let connections;
+      try {
+        connections = readMcpConnections(dataDirectory);
+      } catch {}
       tray.setContextMenu(
         Menu.buildFromTemplate([
+          { label: labels.mcp, enabled: false },
+          {
+            label: connections
+              ? connections.length
+                ? labels.connected(connections.length)
+                : labels.disconnected
+              : labels.unavailable,
+            enabled: false,
+          },
+          ...(connections ?? []).map((client) => ({
+            label: `${client.name}${client.version ? ` (${client.version})` : ""}`,
+            enabled: false,
+          })),
+          { type: "separator" },
           { label: labels.open, click: showWindow },
           { type: "separator" },
           { label: labels.quit, click: () => app.quit() },
         ]),
-      ),
+      );
+    },
   };
 });
 function updateMenuBar(settings = service.store.settings()) {
@@ -390,6 +410,10 @@ async function bootstrap() {
     });
     createWindow();
     updateMenuBar();
+    const menuBarRefresh = setInterval(() => {
+      if (menuBar.enabled) updateMenuBar();
+    }, 2_000);
+    menuBarRefresh.unref();
     if (!testMode)
       for (const source of service.store
         .sources()
@@ -405,6 +429,7 @@ async function bootstrap() {
       if (!menuBar.enabled) app.quit();
     });
     app.on("will-quit", () => {
+      clearInterval(menuBarRefresh);
       menuBar.destroy();
       service.close();
     });

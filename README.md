@@ -47,7 +47,7 @@
 
 ## 中文
 
-通用设置的「菜单栏中显示」默认关闭，开启后立即显示菜单栏图标，关闭窗口后继续运行，可从菜单栏打开 DesiCast 或退出应用；关闭开关立即移除图标，设置在重启后保留
+通用设置的「菜单栏中显示」默认关闭，开启后立即显示菜单栏图标，关闭窗口后继续运行，菜单顶部显示实际已连接的 MCP 客户端名称、版本与连接数量，没有客户端时显示「未连接」；连接状态约每 2 秒刷新，异常退出的会话通过进程检查和心跳过期过滤，应用内的临时连接测试不计入；可从菜单栏打开 DesiCast 或退出应用；关闭开关立即移除图标，设置在重启后保留
 
 > 🌐 **语言切换 / Language**: [English Version](#-english) &nbsp;|&nbsp; [回到顶部 / Back to Top](#readme-top)
 
@@ -205,7 +205,7 @@ MCP stdout 仅用于标准 JSON-RPC 协议消息。可用工具列表：
 
 ## English
 
-The General settings “Show in menu bar” switch is off by default. Enabling it shows a menu bar icon immediately and keeps DesiCast running after its window closes. Use the menu to reopen DesiCast or quit. Disabling the switch removes the icon immediately; the preference persists across restarts.
+The General settings “Show in menu bar” switch is off by default. Enabling it shows a menu bar icon immediately and keeps DesiCast running after its window closes. The top of the menu shows connected MCP client names, versions, and the connection count, or “Not connected” when none are connected. Status refreshes approximately every 2 seconds; process checks and heartbeat expiry filter out sessions that exit unexpectedly, and the in-app temporary connection test is excluded. Use the menu to reopen DesiCast or quit. Disabling the switch removes the icon immediately; the preference persists across restarts.
 
 > 🌐 **Language / 语言切换**: [简体中文](#-简体中文) &nbsp;|&nbsp; [Back to Top / 回到顶部](#readme-top)
 

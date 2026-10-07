@@ -8,6 +8,7 @@ import { IconService } from "../core/service";
 import { KeychainSecrets } from "../core/secrets";
 import { searchSchema, exportSchema } from "../core/contracts";
 import type { SearchResult, ExportResult } from "../core/types";
+import { trackMcpConnection } from "./connections";
 
 const args = process.argv.slice(2),
   dirIndex = args.indexOf("--data-dir");
@@ -181,8 +182,16 @@ server.registerTool(
     }
   },
 );
+let disconnect = () => {};
+server.server.oninitialized = () => {
+  disconnect();
+  const client = server.server.getClientVersion();
+  if (client) disconnect = trackMcpConnection(resolve(directory), client);
+};
+server.server.onclose = () => disconnect();
 await server.connect(new StdioServerTransport());
 const close = () => {
+  disconnect();
   service.close();
   process.exit(0);
 };
