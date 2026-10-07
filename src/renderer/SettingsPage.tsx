@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "./Select";
 import { brandColors, interfaceZooms, type Settings } from "../core/types";
-import { brandColorLabels } from "./appearance";
+import { brandColorLabels, verifyAppearanceSave } from "./appearance";
 import { api, type MCPInfo } from "./api";
 import { MCPClientPanel } from "./MCPSettings";
 import "./settings-page.css";
@@ -110,13 +110,14 @@ export function SettingsPage({
     patch: Partial<Pick<Settings, "theme" | "brandColor" | "zoom">>,
   ) {
     setBusy(true);
+    const next = { ...settings, ...patch };
+    onSettings(next);
     try {
-      onSettings(
-        await api<Settings>("saveSettings", {
-          settings: { ...settings, ...patch },
-        }),
-      );
+      const saved = await api<Settings>("saveSettings", { settings: next });
+      verifyAppearanceSave(saved, patch);
+      onSettings(saved);
     } catch (error) {
+      onSettings(settings);
       onError(error);
     } finally {
       setBusy(false);
@@ -203,6 +204,18 @@ export function SettingsPage({
                 items={brandColors.map((value) => ({
                   value,
                   label: brandColorLabels[value],
+                  leading: (
+                    <span
+                      aria-hidden="true"
+                      className="size-3 shrink-0 rounded-full"
+                      style={{
+                        backgroundColor:
+                          value === "grey"
+                            ? "var(--nico-color-text)"
+                            : `var(--nico-color-icon-accent-${value})`,
+                      }}
+                    />
+                  ),
                 }))}
                 value={settings.brandColor ?? "grey"}
                 disabled={busy}

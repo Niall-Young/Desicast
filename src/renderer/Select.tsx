@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Select as SelectPrimitive } from "@base-ui/react/select";
 import { CheckRegular, DownRegular } from "@mingcute/react/core-regular";
 
@@ -10,7 +11,7 @@ import {
 } from "@/lib/select-styles";
 
 type SelectProps = {
-  items: { value: string; label: string }[];
+  items: { value: string; label: string; leading?: ReactNode }[];
   disabled?: boolean;
   placeholder?: string;
   "aria-label": string;
@@ -68,7 +69,19 @@ export function Select({
                         items.find((item) => item.value === key)?.label ?? key,
                     )
                     .join(", ") || placeholder
-              : undefined}
+              : items.some((item) => item.leading)
+                ? () => {
+                    const item = items.find((item) => item.value === value);
+                    return item ? (
+                      <span className="flex min-w-0 items-center gap-2">
+                        {item.leading}
+                        <span className="truncate">{item.label}</span>
+                      </span>
+                    ) : (
+                      placeholder
+                    );
+                  }
+                : undefined}
           </SelectPrimitive.Value>
           <SelectPrimitive.Icon
             data-slot="select-icon"
@@ -105,6 +118,7 @@ export function Select({
                         className="pointer-events-none"
                       />
                     )}
+                    {item.leading}
                     <SelectPrimitive.ItemText className="min-w-0 flex-1 truncate">
                       {item.label}
                     </SelectPrimitive.ItemText>

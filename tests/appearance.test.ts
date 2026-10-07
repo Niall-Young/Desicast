@@ -7,7 +7,11 @@ import { IconService } from "../src/core/service";
 import { MemorySecrets } from "../src/core/secrets";
 import { settingsSchema } from "../src/core/contracts";
 import { brandColors, interfaceZooms } from "../src/core/types";
-import { applyBrandColor, brandColorTokens } from "../src/renderer/appearance";
+import {
+  applyBrandColor,
+  brandColorTokens,
+  verifyAppearanceSave,
+} from "../src/renderer/appearance";
 
 test("Brand palette follows light/dark shades and grey restores upstream tokens", () => {
   const values = new Map<string, string>();
@@ -27,6 +31,10 @@ test("Brand palette follows light/dark shades and grey restores upstream tokens"
       assert.equal(
         values.get("--nico-color-background-brand-intense-hover"),
         `var(--nico-color-${color}-${dark ? 300 : 600})`,
+      );
+      assert.equal(
+        values.get("--nico-color-interaction-selected"),
+        `var(--nico-color-${color}-${dark ? 800 : 100})`,
       );
       assert.equal(
         values.get("--nico-color-text-brand"),
@@ -80,4 +88,25 @@ test("Appearance survives reopening, legacy saves and model provider updates", a
     service.close();
     await rm(directory, { recursive: true, force: true });
   }
+});
+
+test("Appearance save detects a stale main process instead of silently resetting the choice", () => {
+  const saved = {
+    theme: "system" as const,
+    model: { baseUrl: "https://example.com/v1", model: "", consent: false },
+  };
+  assert.throws(
+    () => verifyAppearanceSave(saved, { brandColor: "blue" }),
+    /重启/,
+  );
+  assert.throws(
+    () => verifyAppearanceSave({ ...saved, zoom: 100 }, { zoom: 150 }),
+    /重启/,
+  );
+  assert.doesNotThrow(() =>
+    verifyAppearanceSave(
+      { ...saved, brandColor: "blue", zoom: 150 },
+      { brandColor: "blue", zoom: 150 },
+    ),
+  );
 });
