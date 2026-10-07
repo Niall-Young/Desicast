@@ -1078,7 +1078,7 @@ export function App() {
                   </div>
                   <div
                     className="filter-toolbar"
-                    hidden={Boolean(sourceId) && !visionResult}
+                    hidden={!sourceId || !visionResult}
                   >
                     <div className="filter-left">
                       <Select
