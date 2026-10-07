@@ -1361,7 +1361,8 @@ pre {
 }
 .library-view .library-layout {
   gap: 8px;
-  --detail-width: calc((100% - 16px) / 3);
+  /* Reserve the expanded sidebar width so toggling it only resizes the grid. */
+  --detail-width: calc((100vw - var(--sidebar-width) - 24px) / 3);
 }
 .library-view .library-main {
   background: var(--nico-color-surface);
