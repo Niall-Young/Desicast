@@ -791,9 +791,9 @@ export function App() {
                 </Button>
                 <Button
                   className="nav-item"
-                  selected={globalSearchOpen}
+                  selected={page === "library" && !sourceId && !collection}
                   kind="plain"
-                  onClick={() => setGlobalSearchOpen(true)}
+                  onClick={() => chooseSource("")}
                 >
                   <ClassifyRegular size={16} aria-hidden="true" />
                   <span>全部图标</span>
