@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import { Input } from "@base-ui/react/input";
 import { Button as ResultButton } from "@base-ui/react/button";
 import { Button } from "@/components/ui/button";
-import { IconButton } from "@/components/ui/icon-button";
 import {
   Modal,
   ModalContent,
@@ -12,7 +11,6 @@ import {
 import { Spinner } from "@/components/ui/spinner";
 import type { Icon, SearchResult } from "../core/types";
 import { api, svgUrl, isMonochrome } from "./api";
-import { clipboardImage } from "./clipboard-image";
 import { defaultLibraries } from "./libraries";
 import { DesignIcon, LibraryMark, designNames } from "./design";
 import { Segmented, SegmentedList, SegmentedItem } from "./Segmented";
@@ -32,15 +30,11 @@ export function GlobalSearchDialog({
   onClose,
   onLibrary,
   onIcon,
-  onImage,
-  imageEnabled,
 }: {
   libraries: SearchLibrary[];
   onClose: () => void;
   onLibrary: (library: SearchLibrary) => void;
   onIcon: (icon: Icon) => void;
-  onImage: (dataUrl: string) => void;
-  imageEnabled: boolean;
 }) {
   const [query, setQuery] = useState("");
   const [icons, setIcons] = useState<Icon[]>([]);
@@ -50,8 +44,6 @@ export function GlobalSearchDialog({
   const [warning, setWarning] = useState("");
   const [active, setActive] = useState(0);
   const input = useRef<HTMLInputElement>(null);
-  const fileInput = useRef<HTMLInputElement>(null);
-  const pasteVersion = useRef(0);
   const rows = useRef<(HTMLElement | null)[]>([]);
   const scope = JSON.stringify(libraries);
   const hasQuery = Boolean(query.trim());
@@ -76,28 +68,6 @@ export function GlobalSearchDialog({
   const count =
     matchingLibraries.length + visibleIcons.length + Number(showMore);
   const waiting = busy && filter !== "libraries";
-  useEffect(
-    () => () => {
-      pasteVersion.current++;
-    },
-    [],
-  );
-  async function readNativeImage(version: number) {
-    try {
-      const dataUrl = await api<string | null>("clipboardImage");
-      if (
-        version !== pasteVersion.current ||
-        document.activeElement !== input.current
-      )
-        return;
-      if (dataUrl) onImage(dataUrl);
-    } catch (error) {
-      if (version === pasteVersion.current)
-        setWarning(
-          error instanceof Error ? error.message : "剪贴板图片读取失败",
-        );
-    }
-  }
   useEffect(() => {
     let alive = true;
     setIcons([]);
@@ -166,20 +136,6 @@ export function GlobalSearchDialog({
       onClick: () => open(index),
     };
   }
-  function loadImage(file: File) {
-    if (!imageEnabled) return;
-    if (
-      !["image/png", "image/jpeg", "image/webp"].includes(file.type) ||
-      file.size > 8 * 1024 * 1024
-    ) {
-      setWarning("请选择小于 8 MB 的 PNG、JPEG 或 WebP");
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => onImage(String(reader.result));
-    reader.onerror = () => setWarning("图片读取失败，请重新选择");
-    reader.readAsDataURL(file);
-  }
   return (
     <Modal
       open
@@ -200,21 +156,6 @@ export function GlobalSearchDialog({
             ref={input}
             type="search"
             aria-label="搜索图标关键词"
-            onPasteCapture={(event) => {
-              const version = ++pasteVersion.current;
-              const file = clipboardImage(event.clipboardData);
-              if (!file) {
-                if (imageEnabled && !event.clipboardData.getData("text/plain"))
-                  void readNativeImage(version);
-                return;
-              }
-              event.preventDefault();
-              if (!imageEnabled) {
-                setWarning("请先开启图标库的视觉搜索");
-                return;
-              }
-              loadImage(file);
-            }}
             placeholder="搜索图标关键词"
             value={query}
             onValueChange={(value) => {
@@ -233,17 +174,6 @@ export function GlobalSearchDialog({
             onKeyDown={(event) => {
               if (event.nativeEvent.isComposing) return;
               if (
-                (event.metaKey || event.ctrlKey) &&
-                !event.altKey &&
-                !event.shiftKey &&
-                event.key.toLowerCase() === "v" &&
-                imageEnabled
-              ) {
-                // Native image paste may not produce a DOM paste event on macOS.
-                // A delivered paste event invalidates this fallback to avoid duplicates.
-                void readNativeImage(++pasteVersion.current);
-              }
-              if (
                 (event.key === "ArrowDown" || event.key === "ArrowUp") &&
                 count
               ) {
@@ -258,25 +188,6 @@ export function GlobalSearchDialog({
                 event.preventDefault();
                 open(active);
               }
-            }}
-          />
-          <IconButton
-            kind="tonal"
-            aria-label="以图搜图"
-            title={imageEnabled ? "以图搜图" : "请先开启图标库的视觉搜索"}
-            disabled={!imageEnabled}
-            onClick={() => fileInput.current?.click()}
-          >
-            <DesignIcon name="image-search" />
-          </IconButton>
-          <input
-            ref={fileInput}
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-            hidden
-            onChange={(event) => {
-              if (event.target.files?.[0]) loadImage(event.target.files[0]);
-              event.target.value = "";
             }}
           />
         </div>

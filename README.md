@@ -93,7 +93,7 @@ npm run dev
 
 外观设置提供系统、浅色和深色模式；主题色默认灰色，可切换 Nico 的红、橙、黄、青柠、绿、青绿、天蓝、蓝、紫、粉色。彩色在浅色模式使用 500、悬停使用 600，深色模式使用 400、悬停使用 300；灰色保留原有中性色映射。全局缩放支持 100%（默认）、110%、125%、150%、200%，作用于整个界面。主题色下拉选项和当前选中值显示颜色圆点预览，侧边菜单与图标卡片选中状态使用中性色，按钮等品牌控件随主题色变化。设置立即保存并在重启后保留；开发模式下更新外观保存逻辑后需重启主进程，若保存结果不匹配会提示重新启动。
 
-全局搜索通过侧栏或 ⌘K 打开弹窗，不再使用独立搜索页面；仅检索保留的默认公共图库和已添加的团队图库，已移除的图库不参与检索。输入框固定在窗口上方，加载、空结果和结果数量变化不会改变其位置；长列表在弹窗内滚动。弹窗宽度为 640px，顶部为 48px 搜索栏，结果行高为 40px。未输入时可直接打开图库，输入后按图标库和图标分组显示匹配结果；底部「全部 / 图标库 / 图标」可筛选结果类型，「查看全部」展开更多已加载的图标。右上角「以图搜图」选择上传图片后直接搜索整张图片；仅聚焦全局搜索框时可粘贴图片，图片会放入图标页面搜索框并直接执行全局图片搜索，文字粘贴保留原生输入行为。支持 ↑↓ 选择、Enter 打开及 Esc 或「退出」关闭。图标集下拉也仅显示保留的默认图库，“全部图标集”打开全局搜索弹窗。
+全局搜索通过侧栏或 ⌘K 打开弹窗，不再使用独立搜索页面；仅检索保留的默认公共图库和已添加的团队图库，已移除的图库不参与检索。输入框固定在窗口上方，加载、空结果和结果数量变化不会改变其位置；长列表在弹窗内滚动。弹窗宽度为 640px，顶部为 48px 搜索栏，结果行高为 40px。未输入时可直接打开图库，输入后按图标库和图标分组显示匹配结果；底部「全部 / 图标库 / 图标」可筛选结果类型，「查看全部」展开更多已加载的图标。全局搜索仅支持关键词输入和文字粘贴，不提供图片上传或图片粘贴搜索。支持 ↑↓ 选择、Enter 打开及 Esc 或「退出」关闭。图标集下拉也仅显示保留的默认图库，“全部图标集”打开全局搜索弹窗。
 
 图标页面支持网格/列表切换，两种视图都在图标名称下方显示所属库名，点击图标打开独立详情面板，顶部代码按钮可收起详情。搜索框右侧提供独立的以图搜图与刷新按钮，图片搜索入口使用 MingCute `attachment_3_regular`；参考图片以包含缩略图和移除按钮的紧凑标签显示在搜索框内；仅聚焦搜索框时可粘贴图片，上传或粘贴后直接搜索整张图片，删除标签后恢复关键词搜索，网格/列表切换按设计使用 32px 分段控件；详情可复制名称、通过 32px 等宽 Segmented 切换导出格式和导出文件，单色图标默认跟随使用处的颜色，尺寸在项目中调整；来源与许可保留在复制的代码和导出的资源中。
 
@@ -102,7 +102,7 @@ npm run dev
 3. **图库同步**：添加仓库后立即同步，应用启动时检查更新，也可手动同步。移除图库只删除本地索引和凭据。
 4. **复制代码与导出**：选择图标和目标技术，复制代码或导出文件。导出会创建新的子目录，不静默覆盖现有资源。
 5. **多端集成**：React 输出要求 React 18+；Vue 输出要求 Vue 3.5+。SwiftUI 将导出的 `.imageset` 拖入 `Assets.xcassets`，再使用返回的 `Image` 代码。
-6. **视觉搜索与快捷键**：<kbd>⌘</kbd> + <kbd>K</kbd> 打开全局搜索弹窗。图片支持上传、拖入或在聚焦图标库或全局搜索框后粘贴，直接搜索整张图片，无需裁剪；搜索框外粘贴不会触发图片搜索。
+6. **视觉搜索与快捷键**：<kbd>⌘</kbd> + <kbd>K</kbd> 打开全局搜索弹窗。图片支持上传、拖入或在聚焦图标库搜索框后粘贴，直接搜索整张图片，无需裁剪；搜索框外粘贴不会触发图片搜索。
 
 ### 配置说明
 
@@ -243,7 +243,7 @@ Use `VITE_UPDATE_MESSAGE_PREVIEW=1 npm run dev` to preview a mock notification f
 
 Appearance settings offer system, light and dark modes. The theme color defaults to grey, with Nico red, orange, yellow, lime, green, teal, sky, blue, purple and pink options. Colors use shade 500 with 600 on hover in light mode, and 400 with 300 on hover in dark mode; grey retains the original neutral mapping. Global zoom scales the entire interface at 100% (default), 110%, 125%, 150% or 200%. Theme options and the selected value show color dot previews, sidebar and icon card selection stays neutral, while brand controls such as buttons follow the theme color. Changes save immediately and persist across restarts. In development, restart the main process after appearance persistence changes; a mismatched save result prompts a restart.
 
-Global search opens a modal from the sidebar or ⌘K instead of a dedicated search page. It searches retained default public libraries and added team libraries, excluding removed libraries. The input stays anchored near the top of the window through loading, empty results and changes in result count; long lists scroll within the modal. The dialog is 640px wide with a 48px search header and 40px result rows. With an empty query, open a library directly; typing groups matching libraries and icons. The All / Libraries / Icons footer filters result types, and Show all expands more loaded icons. The image-search action uploads and searches the full image directly. Pasting an image is supported only in the focused global search input; it closes the modal, places the image in the workspace search field and runs global image search directly. Text pastes retain native input behavior. Use ↑↓ to select, Enter to open, and Esc or Exit to close. The collection dropdown also lists only retained default libraries; “All collections” opens global search.
+Global search opens a modal from the sidebar or ⌘K instead of a dedicated search page. It searches retained default public libraries and added team libraries, excluding removed libraries. The input stays anchored near the top of the window through loading, empty results and changes in result count; long lists scroll within the modal. The dialog is 640px wide with a 48px search header and 40px result rows. With an empty query, open a library directly; typing groups matching libraries and icons. The All / Libraries / Icons footer filters result types, and Show all expands more loaded icons. Global search accepts keywords and text pastes only; image upload and image paste search are unavailable. Use ↑↓ to select, Enter to open, and Esc or Exit to close. The collection dropdown also lists only retained default libraries; “All collections” opens global search.
 
 The icon workspace supports grid and list views, both showing the library name below each icon name. Select an icon to open its separate detail panel, and use the code button in the title bar to collapse it. Separate image search and refresh buttons sit beside the search field, followed by a 32px segmented grid/list control matching the design. The image-search action uses MingCute `attachment_3_regular`. A compact tag with a thumbnail and remove button appears inside the search field. Image paste is accepted only in the focused search input; uploads and pastes search the full image directly. Remove the tag to return to keyword search. Details provide name copying, a 32px equal-width Segmented control for export formats, and file export. Monochrome icons inherit the color at their point of use, and size is adjusted in the project. Copied code and exported resources retain source and license information.
 
@@ -252,7 +252,7 @@ The icon workspace supports grid and list views, both showing the library name b
 3. **Synchronize Libraries**: Repositories synchronize immediately upon addition and check for updates on desktop launch. Manual synchronization is always available. Removing a source deletes only local cache indexes and credentials.
 4. **Copy & Export**: Select an icon and target technology, then copy code or export files. File exports create dedicated subdirectories to avoid silent overwrites.
 5. **Multi-Target Integration**: React output targets React 18+; Vue output targets Vue 3.5+. For SwiftUI, drag the exported `.imageset` into `Assets.xcassets`, then use the generated `Image` code.
-6. **Visual Search & Shortcuts**: Press <kbd>⌘</kbd> + <kbd>K</kbd> to open the global search modal. Reference images can be uploaded, dragged, or pasted into a focused library or global search input to search the full image directly, without cropping. Pasting outside a search input does not trigger image search.
+6. **Visual Search & Shortcuts**: Press <kbd>⌘</kbd> + <kbd>K</kbd> to open the global search modal. Reference images can be uploaded, dragged, or pasted into a focused library search input to search the full image directly, without cropping. Pasting outside a search input does not trigger image search.
 
 ### Configuration
 

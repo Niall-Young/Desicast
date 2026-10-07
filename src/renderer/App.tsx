@@ -1500,11 +1500,6 @@ export function App() {
       {globalSearchOpen && (
         <GlobalSearchDialog
           libraries={searchLibraries}
-          imageEnabled={sources.some((source) => source.allowVision)}
-          onImage={(dataUrl) => {
-            setGlobalSearchOpen(false);
-            void searchImage(dataUrl, true);
-          }}
           onClose={() => setGlobalSearchOpen(false)}
           onLibrary={(library) => {
             chooseSource(library.public ? "public" : library.id);
