@@ -112,7 +112,7 @@ npm run dev
 
 连接官方 DeepSeek API 时，图片识别与排序会关闭默认思考模式，为 JSON 结果保留输出预算；输出被截断时会明确提示长度上限。
 
-视觉检索同时召回单关键词与主题/形状组合词（例如 `ad circle`），最多并行 3 组检索，交错选取最多 48 个候选供视觉排序。排序支持候选编号与完整图标 ID；公共预览优先按图标集批量获取，减少逐个 SVG 请求，并保留公共图库网络失败提示。
+视觉检索同时召回单关键词与主题/形状组合词（例如 `ad circle`），最多并行 3 组检索，交错选取最多 48 个候选供视觉排序。排序支持候选编号与完整图标 ID；公共预览优先按图标集批量获取，减少逐个 SVG 请求，公共图库检索提示区分部分失败与全部失败，部分失败提示结果可能不完整，全部失败才说明使用本地缓存候选。
 
 参考图和允许的候选图标预览会发送到该服务；团队仓库默认禁止模型图片搜索，可按仓库单独开启。图片限 PNG、JPEG、WebP 格式（最大 8 MB），模型处理上限 1600 万像素。搜索基于关键词召回和视觉排序，不保证找到原图标。
 
@@ -264,7 +264,7 @@ Vision similarity search connects to OpenAI-compatible Chat Completions endpoint
 
 Image description and ranking disable default thinking on the official DeepSeek API to preserve the output budget for JSON results. Truncated output reports an explicit length-limit error.
 
-Visual retrieval uses both individual keywords and subject/shape combinations (for example, `ad circle`), runs up to three retrieval groups concurrently, and interleaves up to 48 candidates for visual ranking. Ranking accepts printed candidate numbers and full icon IDs. Public previews are fetched in icon-set batches before individual SVG fallback, reducing per-icon requests; public-library network warnings are preserved.
+Visual retrieval uses both individual keywords and subject/shape combinations (for example, `ad circle`), runs up to three retrieval groups concurrently, and interleaves up to 48 candidates for visual ranking. Ranking accepts printed candidate numbers and full icon IDs. Public previews are fetched in icon-set batches before individual SVG fallback, reducing per-icon requests; public retrieval warnings distinguish partial failures from all queries failing: partial failures report potentially incomplete results, while all failures report cached candidates.
 
 Reference images and permitted candidate previews are transmitted to the configured endpoint. Team repositories disable vision data sharing by default and can be opted-in per repository. Reference images accept PNG, JPEG, and WebP (up to 8 MB), with model processing capped at 16 megapixels. Keyword retrieval followed by visual ranking does not guarantee finding exact original icons.
 

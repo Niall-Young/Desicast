@@ -369,7 +369,7 @@ test("Image upload searches directly using the configured local vision endpoint"
     await expect(
       page.getByRole("dialog", { name: "用图片寻找相似图标" }),
     ).toHaveCount(0);
-    await expect(page.getByText("按形状与风格匹配")).toBeVisible();
+    await expect(page.locator(".filter-toolbar")).toHaveCount(0);
     await expect(page.getByTestId("icon-card")).toHaveCount(1);
     await expect(page.getByText("轮廓和线条接近")).toBeVisible();
     expect(requests).toBe(2);

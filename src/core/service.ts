@@ -341,7 +341,9 @@ export class IconService {
       return {
         icons: eligible.slice(offset, offset + limit),
         total: eligible.length,
-        warning: "公共图库暂时无法连接，当前显示本地缓存",
+        warning: eligible.length
+          ? "公共图库检索失败，当前显示匹配的本地缓存"
+          : "公共图库检索失败，暂时无法获取结果",
       };
     }
   }
@@ -378,7 +380,7 @@ export class IconService {
       ]),
     ];
     const groups: Icon[][] = [];
-    const warnings = new Set<string>();
+    let failedQueries = 0;
     for (let start = 0; start < queries.length; start += 3) {
       const batch = await Promise.all(
         queries.slice(start, start + 3).map(async (query) => {
@@ -391,7 +393,7 @@ export class IconService {
             },
             true,
           );
-          if (result.warning) warnings.add(result.warning);
+          if (result.warning) failedQueries++;
           return result.icons.filter(
             (icon) => this.store.source(icon.sourceId)?.allowVision,
           );
@@ -418,7 +420,15 @@ export class IconService {
       total: results.length,
       warning:
         [
-          ...warnings,
+          ...(failedQueries
+            ? [
+                failedQueries < queries.length
+                  ? "部分公共图库检索失败，结果可能不完整"
+                  : distinct.length
+                    ? "公共图库检索失败，当前仅使用本地缓存候选"
+                    : "公共图库检索失败，未获取到候选图标",
+              ]
+            : []),
           ...(!results.length
             ? ["没有找到足够相似的候选，可尝试裁剪图标或改用关键词"]
             : []),

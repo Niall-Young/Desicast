@@ -57,7 +57,6 @@ import { SearchBox } from "@/components/ui/search-box";
 import { Select } from "./Select";
 import { Pagination } from "@/components/ui/pagination";
 import { Segmented, SegmentedList, SegmentedItem } from "./Segmented";
-import { Spinner } from "@/components/ui/spinner";
 import { StatusIndicator } from "@/components/ui/status-indicator";
 import {
   Modal,
@@ -1075,51 +1074,6 @@ export function App() {
                         event.target.value = "";
                       }}
                     />
-                  </div>
-                  <div
-                    className="filter-toolbar"
-                    hidden={!sourceId || !visionResult}
-                  >
-                    <div className="filter-left">
-                      <Select
-                        aria-label="图标集"
-                        items={[
-                          { value: "", label: "全部图标集" },
-                          ...availablePublicLibraries.map((item) => ({
-                            value: item.id,
-                            label: item.name,
-                          })),
-                        ]}
-                        value={collection}
-                        onValueChange={(value) => {
-                          if (value === undefined) return;
-                          if (!value) {
-                            setGlobalSearchOpen(true);
-                            return;
-                          }
-                          setCollection(value);
-                          setOffset(0);
-                        }}
-                        disabled={Boolean(activeSource?.kind === "repository")}
-                      />
-                      {visionResult ? (
-                        <span className="filter-hint">按形状与风格匹配</span>
-                      ) : (
-                        <span className="filter-hint">
-                          {query ? "搜索结果" : "探索常用图标"}
-                        </span>
-                      )}
-                    </div>
-                    <span className="result-count">
-                      {busy ? (
-                        <>
-                          <Spinner />
-                          搜索中
-                        </>
-                      ) : (
-                        `${result.total.toLocaleString()} 个图标`
-                      )}
-                    </span>
                   </div>
                   {result.warning && (
                     <div className="inline-warning" role="status">
