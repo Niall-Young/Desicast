@@ -91,6 +91,8 @@ npm run dev
 
 ### 使用方法
 
+图标区域的搜索、刷新、同步和分页加载使用居中的 raised 浮层与三个点依次放大的动画，保留图标网格原有的变浅效果；加载状态至少显示 2 秒，较慢请求持续显示到完成，系统减少动态效果时停用动画。
+
 外观设置提供系统、浅色和深色模式；主题色默认灰色，可切换 Nico 的红、橙、黄、青柠、绿、青绿、天蓝、蓝、紫、粉色。彩色在浅色模式使用 500、悬停使用 600，深色模式使用 400、悬停使用 300；灰色保留原有中性色映射。全局缩放支持 100%（默认）、110%、125%、150%、200%，作用于整个界面。主题色下拉选项和当前选中值显示颜色圆点预览，侧边菜单与图标卡片选中状态使用中性色，按钮等品牌控件随主题色变化。设置立即保存并在重启后保留；开发模式下更新外观保存逻辑后需重启主进程，若保存结果不匹配会提示重新启动。
 
 侧栏「全部图标」直接展示跨图库的图标网格，支持关键词搜索、网格/列表切换和分页；入口使用 MingCute classify 图标。顶部图库按钮默认无背景，图标与文字对齐下方内容，悬停背景向外延伸，点击展开菜单，可切换全部图标与保留的公共或团队图库，并与侧栏导航同步。全局搜索通过 ⌘K 打开弹窗，不再使用独立搜索页面；仅检索保留的默认公共图库和已添加的团队图库，已移除的图库不参与检索。输入框固定在窗口上方，加载、空结果和结果数量变化不会改变其位置；长列表在弹窗内滚动。弹窗宽度为 640px，顶部为 48px 搜索栏，结果行高为 40px。未输入时可直接打开图库，输入关键词并按回车后，按图标库和图标分组显示匹配结果；底部「全部 / 图标库 / 图标」可筛选结果类型，「查看全部」展开更多已加载的图标。全局搜索仅支持关键词输入和文字粘贴，不提供图片上传或图片粘贴搜索。支持 ↑↓ 选择、搜索完成后 Enter 打开及 Esc 或「退出」关闭。图标集下拉也仅显示保留的默认图库，“全部图标集”打开全局搜索弹窗。
@@ -242,6 +244,8 @@ Restart the development server after modifying the main process or shared core; 
 Use `VITE_UPDATE_MESSAGE_PREVIEW=1 npm run dev` to preview a mock notification for 199 updated icons. The bottom button can replay it; the preview never acknowledges real library changes and is absent from production builds.
 
 ### Usage
+
+Search, refresh, synchronization and pagination in the icon area use a centered raised surface with three dots that enlarge in sequence, retaining the existing faded grid treatment. The loading status stays visible for at least 2 seconds and until slower requests finish; reduced motion disables the animation.
 
 Appearance settings offer system, light and dark modes. The theme color defaults to grey, with Nico red, orange, yellow, lime, green, teal, sky, blue, purple and pink options. Colors use shade 500 with 600 on hover in light mode, and 400 with 300 on hover in dark mode; grey retains the original neutral mapping. Global zoom scales the entire interface at 100% (default), 110%, 125%, 150% or 200%. Theme options and the selected value show color dot previews, sidebar and icon card selection stays neutral, while brand controls such as buttons follow the theme color. Changes save immediately and persist across restarts. In development, restart the main process after appearance persistence changes; a mismatched save result prompts a restart.
 

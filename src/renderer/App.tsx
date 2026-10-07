@@ -5,6 +5,8 @@ import { GlobalSearchDialog } from "./GlobalSearchDialog";
 import { ModelSettings } from "./ModelSettings";
 import { AddLibraryDialog } from "./AddLibraryDialog";
 import { IconViewSwitch } from "./IconViewSwitch";
+import { IconLoading } from "./IconLoading";
+import { useMinimumLoading } from "./use-minimum-loading";
 import { HomeLibraryPager } from "./HomeLibraryPager";
 import { SettingsPage } from "./SettingsPage";
 import { applyBrandColor } from "./appearance";
@@ -454,6 +456,12 @@ export function App() {
     }
   }
   const [libraryRefreshing, setLibraryRefreshing] = useState(false);
+  const [syncingLibraryIds, setSyncingLibraryIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const iconsLoading = useMinimumLoading(
+    busy || libraryRefreshing || syncingLibraryIds.has(sourceId),
+  );
   const libraryRefreshPending = useRef(false);
   async function refreshLibrary() {
     if (libraryRefreshPending.current) return;
@@ -477,6 +485,7 @@ export function App() {
   async function sync(source: Source) {
     if (syncing.current.has(source.id)) return;
     syncing.current.add(source.id);
+    setSyncingLibraryIds(new Set(syncing.current));
     flash(`正在同步 ${source.name}`);
     try {
       await api("sync", source.id);
@@ -486,6 +495,7 @@ export function App() {
       report(err);
     } finally {
       syncing.current.delete(source.id);
+      setSyncingLibraryIds(new Set(syncing.current));
       refreshSources();
     }
   }
@@ -1127,90 +1137,87 @@ export function App() {
                       {result.warning}
                     </div>
                   )}
-                  <div
-                    className={`grid-scroll ${busy ? "is-loading" : ""}`}
-                    aria-busy={busy}
-                  >
-                    {result.icons.length ? (
-                      <div
-                        key={view}
-                        className={`icon-grid ${view === "list" ? "icon-list" : ""} ${viewDirection ? `code-slide-${viewDirection}` : ""}`}
-                        onAnimationEnd={() => setViewDirection(undefined)}
-                      >
-                        {result.icons.map((icon) => (
-                          <button
-                            key={icon.id}
-                            data-testid="icon-card"
-                            className={`icon-card ${selected?.id === icon.id ? "selected" : ""}`}
-                            aria-pressed={
-                              selected?.id === icon.id && detailOpen
-                            }
-                            onClick={() => {
-                              setSelected(icon);
-                              setDetailOpen(true);
-                            }}
-                            title={`${icon.name} · ${iconLibraryNames.get(icon.sourceId === "public" ? icon.collection : icon.sourceId) ?? designNames[icon.collection] ?? icon.collection}`}
-                          >
-                            <div className="card-art">
-                              <img
-                                className={
-                                  isMonochrome(icon.svg) ? "monochrome" : ""
-                                }
-                                src={svgUrl(icon.svg)}
-                                alt=""
-                                width="48"
-                                height="48"
-                              />
-                            </div>
-                            <span className="card-labels">
-                              <span className="card-name">{icon.name}</span>
-                              <span className="card-source">
-                                {iconLibraryNames.get(
-                                  icon.sourceId === "public"
-                                    ? icon.collection
-                                    : icon.sourceId,
-                                ) ??
-                                  designNames[icon.collection] ??
-                                  icon.collection}
+                  <div className="icon-results-region" aria-busy={iconsLoading}>
+                    <div
+                      className={`grid-scroll ${iconsLoading ? "is-loading" : ""}`}
+                      inert={iconsLoading}
+                    >
+                      {result.icons.length ? (
+                        <div
+                          key={view}
+                          className={`icon-grid ${view === "list" ? "icon-list" : ""} ${viewDirection ? `code-slide-${viewDirection}` : ""}`}
+                          onAnimationEnd={() => setViewDirection(undefined)}
+                        >
+                          {result.icons.map((icon) => (
+                            <button
+                              key={icon.id}
+                              data-testid="icon-card"
+                              className={`icon-card ${selected?.id === icon.id ? "selected" : ""}`}
+                              aria-pressed={
+                                selected?.id === icon.id && detailOpen
+                              }
+                              onClick={() => {
+                                setSelected(icon);
+                                setDetailOpen(true);
+                              }}
+                              title={`${icon.name} · ${iconLibraryNames.get(icon.sourceId === "public" ? icon.collection : icon.sourceId) ?? designNames[icon.collection] ?? icon.collection}`}
+                            >
+                              <div className="card-art">
+                                <img
+                                  className={
+                                    isMonochrome(icon.svg) ? "monochrome" : ""
+                                  }
+                                  src={svgUrl(icon.svg)}
+                                  alt=""
+                                  width="48"
+                                  height="48"
+                                />
+                              </div>
+                              <span className="card-labels">
+                                <span className="card-name">{icon.name}</span>
+                                <span className="card-source">
+                                  {iconLibraryNames.get(
+                                    icon.sourceId === "public"
+                                      ? icon.collection
+                                      : icon.sourceId,
+                                  ) ??
+                                    designNames[icon.collection] ??
+                                    icon.collection}
+                                </span>
                               </span>
-                            </span>
-                            {icon.sourceId !== "public" && (
-                              <span className="team-mark" title="团队图标" />
-                            )}
-                          </button>
-                        ))}
-                      </div>
-                    ) : busy ? (
-                      <div className="skeleton-grid">
-                        {Array.from({ length: 36 }, (_, index) => (
-                          <div className="skeleton-card" key={index} />
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="empty-state">
-                        <Glyph>
-                          <SearchRegular />
-                        </Glyph>
-                        <h2>
-                          {activeSource?.kind === "repository"
-                            ? "这个仓库还没有匹配的图标"
-                            : "没有找到图标"}
-                        </h2>
-                        <p>
-                          {activeSource?.kind === "repository"
-                            ? "同步仓库或试试其他关键词"
-                            : "试试英文关键词，或检查网络连接"}
-                        </p>
-                        {activeSource?.kind === "repository" && (
-                          <Button
-                            kind="ghost"
-                            onClick={() => sync(activeSource)}
-                          >
-                            同步仓库
-                          </Button>
-                        )}
-                      </div>
-                    )}
+                              {icon.sourceId !== "public" && (
+                                <span className="team-mark" title="团队图标" />
+                              )}
+                            </button>
+                          ))}
+                        </div>
+                      ) : iconsLoading ? null : (
+                        <div className="empty-state">
+                          <Glyph>
+                            <SearchRegular />
+                          </Glyph>
+                          <h2>
+                            {activeSource?.kind === "repository"
+                              ? "这个仓库还没有匹配的图标"
+                              : "没有找到图标"}
+                          </h2>
+                          <p>
+                            {activeSource?.kind === "repository"
+                              ? "同步仓库或试试其他关键词"
+                              : "试试英文关键词，或检查网络连接"}
+                          </p>
+                          {activeSource?.kind === "repository" && (
+                            <Button
+                              kind="ghost"
+                              onClick={() => sync(activeSource)}
+                            >
+                              同步仓库
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                    {iconsLoading && <IconLoading />}
                   </div>
                   <footer
                     className="grid-footer"
@@ -1225,7 +1232,7 @@ export function App() {
                       size="sm"
                       count={Math.ceil(result.total / 48)}
                       page={Math.floor(offset / 48) + 1}
-                      disabled={busy || visionResult}
+                      disabled={iconsLoading || visionResult}
                       onPageChange={(value) => setOffset((value - 1) * 48)}
                     />
                   </footer>

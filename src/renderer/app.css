@@ -281,6 +281,12 @@ input {
   gap: 5px;
   align-items: center;
 }
+.icon-results-region {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
 .grid-scroll {
   flex: 1;
   overflow: auto;
@@ -291,6 +297,57 @@ input {
 .grid-scroll.is-loading .icon-grid {
   opacity: 0.5;
   pointer-events: none;
+}
+.icon-loading-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+.icon-loading-pop {
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 56px;
+  border: 1px solid var(--nico-color-border);
+  border-radius: var(--nico-border-radius-md);
+  background: var(--nico-color-surface-raised);
+  box-shadow: var(--nico-effect-shadow-medium);
+  color: var(--nico-color-icon);
+}
+.icon-loading-dots {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.icon-loading-dots > span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: icon-loading-pulse 900ms ease-in-out infinite;
+}
+.icon-loading-dots > span:nth-child(2) {
+  animation-delay: 150ms;
+}
+.icon-loading-dots > span:nth-child(3) {
+  animation-delay: 300ms;
+}
+@keyframes icon-loading-pulse {
+  0%,
+  60%,
+  100% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.8);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .icon-loading-dots > span {
+    animation: none;
+  }
 }
 .icon-grid,
 .skeleton-grid {
