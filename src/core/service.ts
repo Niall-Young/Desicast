@@ -96,6 +96,8 @@ export class IconService {
     }
     this.store.saveSetting("preferences", {
       theme: settings.theme,
+      brandColor: settings.brandColor ?? previous.brandColor ?? "grey",
+      zoom: settings.zoom ?? previous.zoom ?? 100,
       model,
       modelProviders: providers.map((provider) =>
         provider.id === model.id

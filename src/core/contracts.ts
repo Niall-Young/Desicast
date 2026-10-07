@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { brandColors } from "./types";
 export const targetSchema = z.enum(["svg", "html", "react", "vue", "swiftui"]);
 export const searchSchema = z.object({
   query: z.string().max(300).default(""),
@@ -31,6 +32,16 @@ export const repositorySchema = z.object({
 });
 export const settingsSchema = z.object({
   theme: z.enum(["system", "light", "dark"]),
+  brandColor: z.enum(brandColors).optional(),
+  zoom: z
+    .union([
+      z.literal(100),
+      z.literal(110),
+      z.literal(125),
+      z.literal(150),
+      z.literal(200),
+    ])
+    .optional(),
   model: z.object({
     id: z.string().max(100).optional(),
     baseUrl: z.string().max(2000),

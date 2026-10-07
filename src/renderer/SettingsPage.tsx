@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { Select } from "./Select";
-import type { Settings } from "../core/types";
+import { brandColors, interfaceZooms, type Settings } from "../core/types";
+import { brandColorLabels } from "./appearance";
 import { api, type MCPInfo } from "./api";
 import { MCPClientPanel } from "./MCPSettings";
 import "./settings-page.css";
@@ -105,12 +106,14 @@ export function SettingsPage({
       mounted = false;
     };
   }, []);
-  async function saveTheme(theme: Settings["theme"]) {
+  async function saveAppearance(
+    patch: Partial<Pick<Settings, "theme" | "brandColor" | "zoom">>,
+  ) {
     setBusy(true);
     try {
       onSettings(
         await api<Settings>("saveSettings", {
-          settings: { ...settings, theme },
+          settings: { ...settings, ...patch },
         }),
       );
     } catch (error) {
@@ -185,8 +188,49 @@ export function SettingsPage({
                 value={settings.theme}
                 disabled={busy}
                 onValueChange={(value) => {
-                  if (value) saveTheme(value as Settings["theme"]);
+                  if (value)
+                    saveAppearance({ theme: value as Settings["theme"] });
                 }}
+              />
+            </div>
+            <div className="settings-cell">
+              <div>
+                <p>主题色</p>
+                <p className="settings-cell-description">切换默认主题色</p>
+              </div>
+              <Select
+                aria-label="主题色"
+                items={brandColors.map((value) => ({
+                  value,
+                  label: brandColorLabels[value],
+                }))}
+                value={settings.brandColor ?? "grey"}
+                disabled={busy}
+                onValueChange={(value) =>
+                  saveAppearance({
+                    brandColor: value as Settings["brandColor"],
+                  })
+                }
+              />
+            </div>
+            <div className="settings-cell">
+              <div>
+                <p>全局缩放</p>
+                <p className="settings-cell-description">
+                  调整整个界面的缩放比例
+                </p>
+              </div>
+              <Select
+                aria-label="全局缩放"
+                items={interfaceZooms.map((value) => ({
+                  value: String(value),
+                  label: `${value}%`,
+                }))}
+                value={String(settings.zoom ?? 100)}
+                disabled={busy}
+                onValueChange={(value) =>
+                  saveAppearance({ zoom: Number(value) as Settings["zoom"] })
+                }
               />
             </div>
           </div>

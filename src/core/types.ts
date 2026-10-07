@@ -87,8 +87,27 @@ export interface ModelSettings {
   hasKey?: boolean;
   consent: boolean;
 }
+export const brandColors = [
+  "grey",
+  "red",
+  "orange",
+  "yellow",
+  "lime",
+  "green",
+  "teal",
+  "sky",
+  "blue",
+  "purple",
+  "pink",
+] as const;
+export type BrandColor = (typeof brandColors)[number];
+export const interfaceZooms = [100, 110, 125, 150, 200] as const;
+export type InterfaceZoom = (typeof interfaceZooms)[number];
+
 export interface Settings {
   theme: "system" | "light" | "dark";
+  brandColor?: BrandColor;
+  zoom?: InterfaceZoom;
   model: ModelSettings;
   modelProviders?: (ModelSettings & { id: string })[];
 }

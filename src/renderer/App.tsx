@@ -7,6 +7,7 @@ import { AddLibraryDialog } from "./AddLibraryDialog";
 import { IconViewSwitch } from "./IconViewSwitch";
 import { HomeLibraryPager } from "./HomeLibraryPager";
 import { SettingsPage } from "./SettingsPage";
+import { applyBrandColor } from "./appearance";
 import { MCPSettings } from "./MCPSettings";
 import { LibraryFilterMenu } from "./LibraryFilterMenu";
 import {
@@ -315,16 +316,21 @@ export function App() {
   }, [sources, sourceId]);
   useEffect(() => {
     const media = matchMedia("(prefers-color-scheme: dark)");
-    const apply = () =>
-      document.documentElement.classList.toggle(
-        "dark",
+    const apply = () => {
+      const dark =
         settings.theme === "dark" ||
-          (settings.theme === "system" && media.matches),
+        (settings.theme === "system" && media.matches);
+      document.documentElement.classList.toggle("dark", dark);
+      applyBrandColor(
+        document.documentElement,
+        settings.brandColor ?? "grey",
+        dark,
       );
+    };
     apply();
     media.addEventListener("change", apply);
     return () => media.removeEventListener("change", apply);
-  }, [settings.theme]);
+  }, [settings.theme, settings.brandColor]);
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
       if ((event.metaKey || event.ctrlKey) && event.key === "k") {

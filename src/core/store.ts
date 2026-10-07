@@ -6,6 +6,8 @@ import type { Icon, Settings, Source } from "./types";
 
 export const defaults: Settings = {
   theme: "system",
+  brandColor: "grey",
+  zoom: 100,
   model: { baseUrl: "https://api.openai.com/v1", model: "", consent: false },
 };
 
@@ -47,7 +49,7 @@ export class Store {
       .run(key, JSON.stringify(value));
   }
   settings(): Settings {
-    return this.setting("preferences", defaults);
+    return { ...defaults, ...this.setting<Settings>("preferences", defaults) };
   }
   sources(): Source[] {
     return (

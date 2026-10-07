@@ -91,6 +91,8 @@ npm run dev
 
 ### 使用方法
 
+外观设置提供系统、浅色和深色模式；主题色默认灰色，可切换 Nico 的红、橙、黄、青柠、绿、青绿、天蓝、蓝、紫、粉色。彩色在浅色模式使用 500、悬停使用 600，深色模式使用 400、悬停使用 300；灰色保留原有中性色映射。全局缩放支持 100%（默认）、110%、125%、150%、200%，作用于整个界面。设置立即保存并在重启后保留。
+
 全局搜索通过侧栏或 ⌘K 打开弹窗，不再使用独立搜索页面；仅检索保留的默认公共图库和已添加的团队图库，已移除的图库不参与检索。输入框固定在窗口上方，加载、空结果和结果数量变化不会改变其位置；长列表在弹窗内滚动。弹窗宽度为 640px，顶部为 48px 搜索栏，结果行高为 40px。未输入时可直接打开图库，输入后按图标库和图标分组显示匹配结果；底部「全部 / 图标库 / 图标」可筛选结果类型，「查看全部」展开更多已加载的图标。右上角「以图搜图」选择上传图片后直接搜索整张图片；仅聚焦全局搜索框时可粘贴图片，图片会放入图标页面搜索框并直接执行全局图片搜索，文字粘贴保留原生输入行为。支持 ↑↓ 选择、Enter 打开及 Esc 或「退出」关闭。图标集下拉也仅显示保留的默认图库，“全部图标集”打开全局搜索弹窗。
 
 图标页面支持网格/列表切换，两种视图都在图标名称下方显示所属库名，点击图标打开独立详情面板，顶部代码按钮可收起详情。搜索框右侧提供独立的以图搜图与刷新按钮，图片搜索入口使用 MingCute `attachment_3_regular`；参考图片以包含缩略图和移除按钮的紧凑标签显示在搜索框内；仅聚焦搜索框时可粘贴图片，上传或粘贴后直接搜索整张图片，删除标签后恢复关键词搜索，网格/列表切换按设计使用 32px 分段控件；详情可复制名称、通过 32px 等宽 Segmented 切换导出格式和导出文件，单色图标默认跟随使用处的颜色，尺寸在项目中调整；来源与许可保留在复制的代码和导出的资源中。
@@ -238,6 +240,8 @@ Restart the development server after modifying the main process or shared core; 
 Use `VITE_UPDATE_MESSAGE_PREVIEW=1 npm run dev` to preview a mock notification for 199 updated icons. The bottom button can replay it; the preview never acknowledges real library changes and is absent from production builds.
 
 ### Usage
+
+Appearance settings offer system, light and dark modes. The theme color defaults to grey, with Nico red, orange, yellow, lime, green, teal, sky, blue, purple and pink options. Colors use shade 500 with 600 on hover in light mode, and 400 with 300 on hover in dark mode; grey retains the original neutral mapping. Global zoom scales the entire interface at 100% (default), 110%, 125%, 150% or 200%. Changes save immediately and persist across restarts.
 
 Global search opens a modal from the sidebar or ⌘K instead of a dedicated search page. It searches retained default public libraries and added team libraries, excluding removed libraries. The input stays anchored near the top of the window through loading, empty results and changes in result count; long lists scroll within the modal. The dialog is 640px wide with a 48px search header and 40px result rows. With an empty query, open a library directly; typing groups matching libraries and icons. The All / Libraries / Icons footer filters result types, and Show all expands more loaded icons. The image-search action uploads and searches the full image directly. Pasting an image is supported only in the focused global search input; it closes the modal, places the image in the workspace search field and runs global image search directly. Text pastes retain native input behavior. Use ↑↓ to select, Enter to open, and Esc or Exit to close. The collection dropdown also lists only retained default libraries; “All collections” opens global search.
 

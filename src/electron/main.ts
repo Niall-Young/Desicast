@@ -125,7 +125,9 @@ async function call(method: string, input: unknown) {
       const value = z
         .object({ settings: settingsSchema, apiKey: z.string().optional() })
         .parse(input);
-      return service.saveSettings(value.settings, value.apiKey);
+      const saved = await service.saveSettings(value.settings, value.apiKey);
+      window?.webContents.setZoomFactor((saved.zoom ?? 100) / 100);
+      return saved;
     }
     case "search":
       return service.search(searchSchema.parse(input));
@@ -277,6 +279,7 @@ function createWindow() {
     trafficLightPosition: { x: 20, y: 19 },
     backgroundColor: "#ffffff",
     webPreferences: {
+      zoomFactor: (service.store.settings().zoom ?? 100) / 100,
       preload: join(__dirname, "preload.cjs"),
       contextIsolation: true,
       nodeIntegration: false,
