@@ -1,4 +1,4 @@
-import imageSearch from "./design-assets/image-search.svg?url";
+import { Attachment3Regular } from "@mingcute/react/core-regular";
 import refreshLibrary from "./design-assets/refresh-library.svg?url";
 import code from "./design-assets/code.svg?url";
 import grid from "./design-assets/grid.svg?url";
@@ -28,7 +28,7 @@ import materialCard from "./design-assets/material-card.svg?url";
 import evaCard from "./design-assets/eva-card.svg?url";
 
 const controls = {
-  "image-search": imageSearch,
+  "image-search": Attachment3Regular,
   "refresh-library": refreshLibrary,
   code: code,
   grid: grid,
@@ -52,6 +52,9 @@ const controls = {
   "book-card": book_card,
 };
 export function DesignIcon({ name }: { name: keyof typeof controls }) {
+  if (name === "image-search") {
+    return <Attachment3Regular size={20} aria-hidden="true" />;
+  }
   return (
     <img
       className={`design-icon ${name === "check" ? "status-icon" : ""} ${name === "github" || name === "lucide-heading" ? "original-color" : ""}`}

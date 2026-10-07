@@ -973,6 +973,37 @@ export function App() {
                     <SearchBox
                       ref={searchInput}
                       wrapperClassName="main-search"
+                      prefix={
+                        visionEnabled && reference ? (
+                          <span className="reference-tag">
+                            <IconButton
+                              size="sm"
+                              kind="plain"
+                              aria-label="裁剪参考图并重新搜索"
+                              title="裁剪参考图并重新搜索"
+                              onClick={() => setCropOpen(true)}
+                            >
+                              <img src={reference} alt="图片搜索参考" />
+                            </IconButton>
+                            <IconButton
+                              size="sm"
+                              kind="plain"
+                              aria-label="移除参考图"
+                              onClick={() => {
+                                generation.current++;
+                                setBusy(false);
+                                setVisionResult(false);
+                                setReference(undefined);
+                                setCropOpen(false);
+                                setRevision((value) => value + 1);
+                                searchInput.current?.focus();
+                              }}
+                            >
+                              <CloseRegular size={16} />
+                            </IconButton>
+                          </span>
+                        ) : undefined
+                      }
                       size="md"
                       aria-label="搜索图标"
                       placeholder="搜索图标名称"
@@ -1071,38 +1102,6 @@ export function App() {
                       )}
                     </span>
                   </div>
-                  {visionEnabled && reference && (
-                    <div className="reference-strip">
-                      <img src={reference} alt="图片搜索参考" />
-                      <span>参考图片</span>
-                      <Button
-                        size="sm"
-                        kind="plain"
-                        onClick={() => setCropOpen(true)}
-                      >
-                        裁剪
-                      </Button>
-                      <Button
-                        size="sm"
-                        kind="plain"
-                        disabled={busy}
-                        onClick={() => searchImage(reference)}
-                      >
-                        重新搜索
-                      </Button>
-                      <IconButton
-                        size="sm"
-                        kind="plain"
-                        aria-label="移除参考图"
-                        onClick={() => {
-                          setReference(undefined);
-                          setRevision((value) => value + 1);
-                        }}
-                      >
-                        <CloseRegular size={16} />
-                      </IconButton>
-                    </div>
-                  )}
                   {result.warning && (
                     <div className="inline-warning" role="status">
                       {result.warning}

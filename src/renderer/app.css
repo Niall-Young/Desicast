@@ -851,24 +851,18 @@ pre {
   font-size: 11px;
   color: var(--nico-color-text-positive);
 }
-.reference-strip {
-  margin: 0 24px 14px;
-  display: flex;
+.reference-tag {
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-size: 11px;
-  color: var(--nico-color-text-subtle);
-  padding: 7px 9px;
-  border: 1px solid var(--nico-color-border);
-  border-radius: var(--nico-border-radius-sm);
-}
-.reference-strip > img {
-  width: 28px;
   height: 28px;
-  object-fit: contain;
+  border-radius: var(--nico-border-radius-sm);
+  background: var(--nico-color-surface);
 }
-.reference-strip > button:last-child {
-  margin-left: auto;
+.reference-tag img {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  border-radius: 2px;
 }
 .modal-backdrop {
   position: fixed;
