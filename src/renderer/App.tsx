@@ -16,6 +16,7 @@ import {
   type LibraryFilter,
 } from "./library-filter";
 import { LibraryContextMenu } from "./LibraryContextMenu";
+import { SidebarLibraryNavigation } from "./SidebarLibraryNavigation";
 import { RemoveLibraryDialog } from "./RemoveLibraryDialog";
 import { RepositoryEmptyState } from "./RepositoryEmptyState";
 import { LibraryUpdateMessage } from "./LibraryUpdateMessage";
@@ -823,60 +824,72 @@ export function App() {
                   <span>全部图标</span>
                 </Button>
               </div>
-              <div className="library-heading">
-                {librarySearchOpen ? (
-                  <SearchBox
-                    size="sm"
-                    wrapperClassName="library-heading-search"
-                    aria-label="搜索图标库"
-                    placeholder="搜索图标库"
-                    autoFocus
-                    value={libraryFilter}
-                    onValueChange={setLibraryFilter}
-                    onBlur={() => {
-                      if (!libraryFilter) setLibrarySearchOpen(false);
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key !== "Escape") return;
-                      event.preventDefault();
-                      setLibraryFilter("");
-                      setLibrarySearchOpen(false);
-                      requestAnimationFrame(() =>
-                        librarySearchButton.current?.focus(),
-                      );
-                    }}
-                  />
-                ) : (
-                  <span className="library-heading-title">图标库</span>
-                )}
-                <div className="library-heading-actions">
-                  {!librarySearchOpen && (
-                    <IconButton
-                      ref={librarySearchButton}
-                      kind="plain"
-                      size="sm"
-                      aria-label="搜索图标库"
-                      onClick={() => setLibrarySearchOpen(true)}
-                    >
-                      <DesignIcon name="library-search" />
-                    </IconButton>
-                  )}
-                  <LibraryFilterMenu
-                    value={libraryOptions}
-                    onChange={setLibraryOptions}
-                  />
-                  <IconButton
-                    kind="plain"
-                    size="sm"
-                    aria-label="添加图标库"
-                    onClick={openAddLibrary}
-                  >
-                    <AddRegular size={16} />
-                  </IconButton>
-                </div>
-              </div>
-              <div className="library-navigation">
-                {visibleLibraries.map((entry) => {
+              <SidebarLibraryNavigation
+                entries={visibleLibraries}
+                getId={(entry) => entry.library?.id ?? entry.source!.id}
+                isPinned={(id) => Boolean(libraryPreferences[id]?.pinned)}
+                onUnpin={(id) =>
+                  saveLibrary(id, { pinned: false }).catch(report)
+                }
+                pinnedLabel="置顶"
+                unpinLabel="取消置顶"
+                emptyLabel="没有符合条件的图标库"
+                heading={
+                  <div className="library-heading">
+                    {librarySearchOpen ? (
+                      <SearchBox
+                        size="sm"
+                        wrapperClassName="library-heading-search"
+                        aria-label="搜索图标库"
+                        placeholder="搜索图标库"
+                        autoFocus
+                        value={libraryFilter}
+                        onValueChange={setLibraryFilter}
+                        onBlur={() => {
+                          if (!libraryFilter) setLibrarySearchOpen(false);
+                        }}
+                        onKeyDown={(event) => {
+                          if (event.key !== "Escape") return;
+                          event.preventDefault();
+                          setLibraryFilter("");
+                          setLibrarySearchOpen(false);
+                          requestAnimationFrame(() =>
+                            librarySearchButton.current?.focus(),
+                          );
+                        }}
+                      />
+                    ) : (
+                      <span className="library-heading-title">图标库</span>
+                    )}
+                    <div className="library-heading-actions">
+                      {!librarySearchOpen && (
+                        <IconButton
+                          ref={librarySearchButton}
+                          kind="plain"
+                          size="sm"
+                          aria-label="搜索图标库"
+                          onClick={() => setLibrarySearchOpen(true)}
+                        >
+                          <DesignIcon name="library-search" />
+                        </IconButton>
+                      )}
+                      <LibraryFilterMenu
+                        value={libraryOptions}
+                        onChange={setLibraryOptions}
+                      />
+                      <IconButton
+                        kind="plain"
+                        size="sm"
+                        aria-label="添加图标库"
+                        onClick={openAddLibrary}
+                      >
+                        <AddRegular size={16} />
+                      </IconButton>
+                    </div>
+                  </div>
+                }
+              >
+                {(entry) => {
                   const library = entry.library;
                   const source = entry.source;
                   const metadata = library
@@ -924,11 +937,8 @@ export function App() {
                       </span>
                     </Button>,
                   );
-                })}
-                {visibleLibraries.length === 0 && (
-                  <p className="library-filter-empty">没有符合条件的图标库</p>
-                )}
-              </div>
+                }}
+              </SidebarLibraryNavigation>
               <div className="sidebar-foot">
                 <IconButton
                   kind="plain"

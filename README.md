@@ -68,7 +68,7 @@ DesiCast 是 macOS Electron 应用，使用 [Gendesign Design System](https://gi
 
 首页每页最多显示 8 个图标库（4 列 × 2 行），超过 8 个时在下方居中显示上一页、下一页图标按钮和页码。下一页向左滑动，上一页向右滑动；系统开启减少动态效果时取消滑动过渡。
 
-右键侧栏或首页中的任意图标库，可打开、置顶/取消置顶或查看来源；默认公共图标库不提供配置和移除操作。置顶状态保存在本机，置顶优先于侧栏排序。团队图库另提供配置和移除：配置在当前页面打开与添加图标库相同的弹窗，预填现有仓库信息；移除须确认，仅删除本地索引和凭证，不修改远端仓库。此前已隐藏的公共图库仍可重新添加。
+右键侧栏或首页中的任意图标库，可打开、置顶/取消置顶或查看来源；默认公共图标库不提供配置和移除操作。置顶状态保存在本机，侧栏在图标库上方单独显示置顶分组，分组标题不带操作按钮；没有符合当前筛选的置顶项时不显示。置顶行悬停或键盘聚焦时显示填充 pin 按钮，点击取消置顶并回到普通图标库列表。团队图库另提供配置和移除：配置在当前页面打开与添加图标库相同的弹窗，预填现有仓库信息；移除须确认，仅删除本地索引和凭证，不修改远端仓库。此前已隐藏的公共图库仍可重新添加。
 
 首页、侧栏、图标网格和详情面板按用户的 Figma 设计还原，图库标识与控件 SVG 随应用打包；设计节点、尺寸与校验值见 [设计素材来源记录](src/renderer/design-assets/provenance.json)，原始品牌来源见 [来源记录](src/renderer/library-marks/provenance.json)。Lucide 保留官方深色版本，其余品牌保留设计原色。Unicons 使用用户提供图片的矢量重建版本，并非官方原始 SVG。品牌归各自所有者，图标许可不代表品牌使用授权。
 
@@ -220,7 +220,7 @@ Default shortcuts include Lucide, Tabler Icons, Unicons, MingCute, Google Materi
 
 The home screen shows up to 8 libraries per page (4 columns × 2 rows). With more than 8 libraries, centered previous/next icon buttons and a page counter appear below the grid. Next slides left and previous slides right; the system reduced-motion preference disables the sliding transition.
 
-Right-click any library in the sidebar or home screen to open it, pin/unpin it, or view its source. Default public libraries have no configure or remove actions. Pinning persists locally and takes precedence over sidebar sorting. Team libraries also offer configuration and removal: configuration opens the same modal as Add Library on the current page, prefilled with the existing repository settings. Removal requires confirmation and deletes only the local index and credentials without changing the remote repository. Previously hidden public libraries can still be restored.
+Right-click any library in the sidebar or home screen to open it, pin/unpin it, or view its source. Default public libraries have no configure or remove actions. Pinning persists locally. The sidebar displays pinned libraries in a separate group above Libraries, with no heading actions; the group is hidden when no pinned entries match the current filters. Hovering or focusing a pinned row reveals a filled pin button that unpins the library and returns it to the regular list. Team libraries also offer configuration and removal: configuration opens the same modal as Add Library on the current page, prefilled with the existing repository settings. Removal requires confirmation and deletes only the local index and credentials without changing the remote repository. Previously hidden public libraries can still be restored.
 
 The home screen, sidebar, icon grid, and detail panel follow the user's Figma design, with library marks and control SVGs bundled locally. [Design asset provenance](src/renderer/design-assets/provenance.json) records nodes, dimensions, and checksums; [original brand sources](src/renderer/library-marks/provenance.json) remain available. Lucide retains its official dark variant; other brands retain the design's colors. Unicons uses a vector reconstruction of the user-supplied image, not an official original SVG. Brands belong to their respective owners; icon licenses do not grant brand usage rights.
 

@@ -1,0 +1,31 @@
+.sidebar-library-groups {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.sidebar-library-groups .library-navigation {
+  overflow-y: visible;
+}
+
+.pinned-library-row {
+  position: relative;
+}
+
+.pinned-library-unpin {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  visibility: hidden;
+}
+
+.pinned-library-row:hover .pinned-library-unpin,
+.pinned-library-row:focus-within .pinned-library-unpin {
+  visibility: visible;
+}
+
+.pinned-library-row:hover .nav-count,
+.pinned-library-row:focus-within .nav-count {
+  visibility: hidden;
+}
