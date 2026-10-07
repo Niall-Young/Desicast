@@ -87,6 +87,8 @@ npm run dev
 
 开发模式下修改主进程或共享核心后需重启；界面通过 Vite 热更新。
 
+使用 `VITE_UPDATE_MESSAGE_PREVIEW=1 npm run dev` 可预览「更新了 199 个图标」的假数据通知，底部按钮可重复触发；此预览不会标记真实图库已读，生产构建不显示预览入口。
+
 ### 使用方法
 
 全局搜索通过侧栏或 ⌘K 打开弹窗，不再使用独立搜索页面；仅检索保留的默认公共图库和已添加的团队图库，已移除的图库不参与检索。输入框固定在窗口上方，加载、空结果和结果数量变化不会改变其位置；长列表在弹窗内滚动。弹窗宽度为 640px，顶部为 48px 搜索栏，结果行高为 40px。未输入时可直接打开图库，输入后按图标库和图标分组显示匹配结果；底部「全部 / 图标库 / 图标」可筛选结果类型，「查看全部」展开更多已加载的图标。右上角「以图搜图」使用现有上传与裁剪流程。支持 ↑↓ 选择、Enter 打开及 Esc 或「退出」关闭。图标集下拉也仅显示保留的默认图库，“全部图标集”打开全局搜索弹窗。
@@ -232,6 +234,8 @@ npm run dev
 The development server prefers port 5173. If it is occupied, it selects an available port and passes the actual address to Electron and the hot-reload connection.
 
 Restart the development server after modifying the main process or shared core; the renderer UI updates via Vite hot module replacement (HMR).
+
+Use `VITE_UPDATE_MESSAGE_PREVIEW=1 npm run dev` to preview a mock notification for 199 updated icons. The bottom button can replay it; the preview never acknowledges real library changes and is absent from production builds.
 
 ### Usage
 
