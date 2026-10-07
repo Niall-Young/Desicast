@@ -695,7 +695,9 @@ export function App() {
         {page === "library" && !settingsOpen ? (
           <div className="library-window-heading">
             <span className="window-library-title">
-              {collection === "lucide" ? (
+              {!sourceId && !collection ? (
+                <ClassifyRegular size={16} aria-hidden="true" />
+              ) : collection === "lucide" ? (
                 <DesignIcon name="lucide-heading" />
               ) : defaultLibraries.find(
                   (library) => library.id === collection,
