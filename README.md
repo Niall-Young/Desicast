@@ -191,7 +191,7 @@ MCP stdout 仅用于标准 JSON-RPC 协议消息。可用工具列表：
 
 ### 许可证
 
-本项目尚未声明开源发行许可证。Gendesign 源码由仓库所有者明确授权用于本应用，上游未声明许可证；详见来源记录。公共图标及第三方依赖保留各自独立许可，Iconify 框架的许可不替代具体图标集的许可证。
+本项目采用 [MIT 许可证](LICENSE)。Gendesign 源码由仓库所有者明确授权用于本应用，上游未声明许可证；详见来源记录。公共图标及第三方依赖保留各自独立许可，Iconify 框架的许可不替代具体图标集的许可证。
 
 <p align="right"><a href="#readme-top">↑ 回到顶部</a></p>
 
@@ -347,6 +347,6 @@ Vision search can take longer than default client timeouts. In Codex, add `tool_
 
 ### License
 
-No public distribution license has been declared for DesiCast. Gendesign source code is explicitly authorized by its repository owner for use in this application; upstream does not declare a license (see provenance records). Public icon sets and third-party dependencies retain their respective licenses; the Iconify framework license does not supersede individual collection licenses.
+DesiCast is licensed under the [MIT License](LICENSE). Gendesign source code is explicitly authorized by its repository owner for use in this application; upstream does not declare a license (see provenance records). Public icon sets and third-party dependencies retain their respective licenses; the Iconify framework license does not supersede individual collection licenses.
 
 <p align="right"><a href="#readme-top">↑ Back to Top</a></p>
