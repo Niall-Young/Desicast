@@ -189,7 +189,6 @@ async function call(method: string, input: unknown) {
         // Confirm the native item exists before persisting an enabled preference
         updateMenuBar({
           ...value.settings,
-          language: value.settings.language ?? previous.language,
           showInMenuBar: value.settings.showInMenuBar ?? previous.showInMenuBar,
         });
         saved = await service.saveSettings(value.settings, value.apiKey);
@@ -289,7 +288,7 @@ async function call(method: string, input: unknown) {
       const info = mcpInfo(),
         client = new Client({
           name: "desicast-desktop-check",
-          version: "0.1.0",
+          version: "0.0.1",
         });
       const env = Object.fromEntries(
         Object.entries({ ...process.env, ...info.env }).filter(
